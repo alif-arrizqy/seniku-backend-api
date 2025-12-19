@@ -1,6 +1,7 @@
 import prisma from '../config/database';
 import { UserRole } from '@prisma/client';
 import { PaginationResult } from '../utils/pagination';
+import { ErrorMessages } from '../constants/error-messages';
 
 export interface UserFilters {
   role?: UserRole;
@@ -100,7 +101,7 @@ export class UserService {
     });
 
     if (!user) {
-      throw new Error('User not found');
+      throw new Error(ErrorMessages.RESOURCE.USER_NOT_FOUND);
     }
 
     return formatUserResponse(user);
