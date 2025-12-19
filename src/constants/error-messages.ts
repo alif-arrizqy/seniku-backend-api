@@ -32,6 +32,9 @@ export const ErrorMessages = {
   RESOURCE: {
     NOT_FOUND: 'Resource not found',
     USER_NOT_FOUND: 'User not found',
+    ASSIGNMENT_NOT_FOUND: 'Assignment not found',
+    CLASS_NOT_FOUND: 'Class not found',
+    SUBMISSION_NOT_FOUND: 'Submission not found',
     ALREADY_EXISTS: 'already exists',
     DUPLICATE_ENTRY: 'Duplicate entry',
     CANNOT_DELETE: 'Cannot delete resource',

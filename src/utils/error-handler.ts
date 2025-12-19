@@ -1,5 +1,6 @@
 import { FastifyReply } from 'fastify';
 import { ZodError } from 'zod';
+import { Prisma } from '@prisma/client';
 import { ResponseFormatter } from './response';
 import { ErrorMessages, ErrorStatusCodes } from '../constants/error-messages';
 import logger from './logger';
@@ -70,6 +71,51 @@ export function handleError(
   // Log error
   logError(error, context, additionalContext);
 
+  // Handle Prisma errors
+  if (error instanceof Prisma.PrismaClientKnownRequestError) {
+    if (error.code === 'P2025') {
+      // Record not found
+      return ResponseFormatter.error(
+        reply,
+        ErrorMessages.RESOURCE.NOT_FOUND,
+        ErrorStatusCodes.NOT_FOUND
+      );
+    }
+    if (error.code === 'P2002') {
+      // Unique constraint violation
+      const target = (error.meta as any)?.target;
+      const field = Array.isArray(target) ? target[0] : 'field';
+      return ResponseFormatter.error(
+        reply,
+        `${field} already exists`,
+        ErrorStatusCodes.CONFLICT
+      );
+    }
+    if (error.code === 'P2003') {
+      // Foreign key constraint failed
+      return ResponseFormatter.error(
+        reply,
+        'Related resource not found',
+        ErrorStatusCodes.BAD_REQUEST
+      );
+    }
+    logger.error({ code: error.code, meta: error.meta }, 'Prisma error');
+    return ResponseFormatter.error(
+      reply,
+      ErrorMessages.SERVER.DATABASE_ERROR,
+      ErrorStatusCodes.INTERNAL_SERVER_ERROR
+    );
+  }
+
+  // Handle Prisma validation errors
+  if (error instanceof Prisma.PrismaClientValidationError) {
+    return ResponseFormatter.error(
+      reply,
+      ErrorMessages.VALIDATION.INVALID_INPUT,
+      ErrorStatusCodes.VALIDATION_ERROR
+    );
+  }
+
   // Handle Zod validation errors
   if (error?.name === 'ZodError' || error instanceof ZodError) {
     try {
@@ -132,12 +178,18 @@ export function handleError(
   // Handle not found errors
   if (
     error?.message === ErrorMessages.RESOURCE.USER_NOT_FOUND ||
+    error?.message === ErrorMessages.RESOURCE.ASSIGNMENT_NOT_FOUND ||
+    error?.message === ErrorMessages.RESOURCE.CLASS_NOT_FOUND ||
+    error?.message === ErrorMessages.RESOURCE.SUBMISSION_NOT_FOUND ||
     error?.message === 'User not found' ||
+    error?.message === 'Assignment not found' ||
+    error?.message === 'Class not found' ||
+    error?.message === 'Submission not found' ||
     error?.message?.includes('not found')
   ) {
     return ResponseFormatter.error(
       reply,
-      error.message || ErrorMessages.RESOURCE.USER_NOT_FOUND,
+      error.message || ErrorMessages.RESOURCE.NOT_FOUND,
       ErrorStatusCodes.NOT_FOUND
     );
   }
