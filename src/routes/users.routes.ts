@@ -4,62 +4,16 @@ import { authenticate } from '../middleware/auth.middleware';
 import { requireTeacher } from '../middleware/role.middleware';
 
 export default async function usersRoutes(fastify: FastifyInstance) {
-  fastify.get(
-    '/',
-    {
-      preHandler: [authenticate, requireTeacher()],
-      schema: {
-        tags: ['users'],
-        description: 'Get all users',
-        security: [{ sessionCookie: [] }],
-      },
-    },
-    userController.getUsers.bind(userController)
-  );
+  // Get all users - Teacher only
+  fastify.get('/', { preHandler: [authenticate, requireTeacher()] }, userController.getUsers.bind(userController));
 
-  fastify.get(
-    '/:id',
-    {
-      preHandler: [authenticate],
-      schema: {
-        tags: ['users'],
-        description: 'Get user by ID',
-        security: [{ sessionCookie: [] }],
-        params: {
-          type: 'object',
-          properties: {
-            id: { type: 'string', format: 'uuid' },
-          },
-        },
-      },
-    },
-    userController.getUserById.bind(userController)
-  );
+  // Get user by ID - Protected
+  fastify.get('/:id', { preHandler: [authenticate] }, userController.getUserById.bind(userController));
 
-  fastify.put(
-    '/:id',
-    {
-      preHandler: [authenticate],
-      schema: {
-        tags: ['users'],
-        description: 'Update user',
-        security: [{ sessionCookie: [] }],
-      },
-    },
-    userController.updateUser.bind(userController)
-  );
+  // Update user - Protected
+  fastify.put('/:id', { preHandler: [authenticate] }, userController.updateUser.bind(userController));
 
-  fastify.delete(
-    '/:id',
-    {
-      preHandler: [authenticate, requireTeacher()],
-      schema: {
-        tags: ['users'],
-        description: 'Delete user',
-        security: [{ sessionCookie: [] }],
-      },
-    },
-    userController.deleteUser.bind(userController)
-  );
+  // Delete user - Teacher only
+  fastify.delete('/:id', { preHandler: [authenticate, requireTeacher()] }, userController.deleteUser.bind(userController));
 }
 

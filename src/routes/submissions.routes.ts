@@ -12,96 +12,25 @@ export default async function submissionsRoutes(fastify: FastifyInstance) {
     },
   });
 
-  fastify.get(
-    '/',
-    {
-      preHandler: [authenticate],
-      schema: {
-        tags: ['submissions'],
-        description: 'Get all submissions',
-        security: [{ sessionCookie: [] }],
-      },
-    },
-    submissionController.getSubmissions.bind(submissionController)
-  );
+  // Get all submissions - Protected
+  fastify.get('/', { preHandler: [authenticate] }, submissionController.getSubmissions.bind(submissionController));
 
-  fastify.get(
-    '/:id',
-    {
-      preHandler: [authenticate],
-      schema: {
-        tags: ['submissions'],
-        description: 'Get submission by ID',
-        security: [{ sessionCookie: [] }],
-      },
-    },
-    submissionController.getSubmissionById.bind(submissionController)
-  );
+  // Get submission by ID - Protected
+  fastify.get('/:id', { preHandler: [authenticate] }, submissionController.getSubmissionById.bind(submissionController));
 
-  fastify.post(
-    '/',
-    {
-      preHandler: [authenticate],
-      schema: {
-        tags: ['submissions'],
-        description: 'Create submission (with image upload)',
-        security: [{ sessionCookie: [] }],
-        consumes: ['multipart/form-data'],
-      },
-    },
-    submissionController.createSubmission.bind(submissionController)
-  );
+  // Create submission (with image upload) - Protected
+  fastify.post('/', { preHandler: [authenticate] }, submissionController.createSubmission.bind(submissionController));
 
-  fastify.put(
-    '/:id',
-    {
-      preHandler: [authenticate],
-      schema: {
-        tags: ['submissions'],
-        description: 'Update submission',
-        security: [{ sessionCookie: [] }],
-      },
-    },
-    submissionController.updateSubmission.bind(submissionController)
-  );
+  // Update submission - Protected
+  fastify.put('/:id', { preHandler: [authenticate] }, submissionController.updateSubmission.bind(submissionController));
 
-  fastify.post(
-    '/:id/grade',
-    {
-      preHandler: [authenticate, requireTeacher()],
-      schema: {
-        tags: ['submissions'],
-        description: 'Grade submission',
-        security: [{ sessionCookie: [] }],
-      },
-    },
-    submissionController.gradeSubmission.bind(submissionController)
-  );
+  // Grade submission - Teacher only
+  fastify.post('/:id/grade', { preHandler: [authenticate, requireTeacher()] }, submissionController.gradeSubmission.bind(submissionController));
 
-  fastify.post(
-    '/:id/revision',
-    {
-      preHandler: [authenticate, requireTeacher()],
-      schema: {
-        tags: ['submissions'],
-        description: 'Return submission for revision',
-        security: [{ sessionCookie: [] }],
-      },
-    },
-    submissionController.returnForRevision.bind(submissionController)
-  );
+  // Return submission for revision - Teacher only
+  fastify.post('/:id/revision', { preHandler: [authenticate, requireTeacher()] }, submissionController.returnForRevision.bind(submissionController));
 
-  fastify.delete(
-    '/:id',
-    {
-      preHandler: [authenticate],
-      schema: {
-        tags: ['submissions'],
-        description: 'Delete submission',
-        security: [{ sessionCookie: [] }],
-      },
-    },
-    submissionController.deleteSubmission.bind(submissionController)
-  );
+  // Delete submission - Protected
+  fastify.delete('/:id', { preHandler: [authenticate] }, submissionController.deleteSubmission.bind(submissionController));
 }
 

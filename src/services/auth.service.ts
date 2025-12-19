@@ -157,7 +157,43 @@ export class AuthService {
       name: user.name,
       role: user.role,
       avatar: user.avatar,
+      tokenVersion: user.tokenVersion,
     };
+  }
+
+  async incrementTokenVersion(userId: string): Promise<void> {
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        tokenVersion: {
+          increment: 1,
+        },
+      },
+    });
+    logger.info({ userId }, 'Token version incremented');
+  }
+
+  async getUserWithTokenVersion(userId: string) {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        email: true,
+        nip: true,
+        nis: true,
+        name: true,
+        role: true,
+        avatar: true,
+        tokenVersion: true,
+        isActive: true,
+      },
+    });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    return user;
   }
 
   async getUserById(userId: string) {

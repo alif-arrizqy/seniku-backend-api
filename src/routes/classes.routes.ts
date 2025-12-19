@@ -4,69 +4,19 @@ import { authenticate } from '../middleware/auth.middleware';
 import { requireTeacher } from '../middleware/role.middleware';
 
 export default async function classesRoutes(fastify: FastifyInstance) {
-  fastify.get(
-    '/',
-    {
-      preHandler: [authenticate],
-      schema: {
-        tags: ['classes'],
-        description: 'Get all classes',
-        security: [{ sessionCookie: [] }],
-      },
-    },
-    classController.getClasses.bind(classController)
-  );
+  // Get all classes - Protected
+  fastify.get('/', { preHandler: [authenticate] }, classController.getClasses.bind(classController));
 
-  fastify.get(
-    '/:id',
-    {
-      preHandler: [authenticate],
-      schema: {
-        tags: ['classes'],
-        description: 'Get class by ID',
-        security: [{ sessionCookie: [] }],
-      },
-    },
-    classController.getClassById.bind(classController)
-  );
+  // Get class by ID - Protected
+  fastify.get('/:id', { preHandler: [authenticate] }, classController.getClassById.bind(classController));
 
-  fastify.post(
-    '/',
-    {
-      preHandler: [authenticate, requireTeacher()],
-      schema: {
-        tags: ['classes'],
-        description: 'Create class',
-        security: [{ sessionCookie: [] }],
-      },
-    },
-    classController.createClass.bind(classController)
-  );
+  // Create class - Teacher only
+  fastify.post('/', { preHandler: [authenticate, requireTeacher()] }, classController.createClass.bind(classController));
 
-  fastify.put(
-    '/:id',
-    {
-      preHandler: [authenticate, requireTeacher()],
-      schema: {
-        tags: ['classes'],
-        description: 'Update class',
-        security: [{ sessionCookie: [] }],
-      },
-    },
-    classController.updateClass.bind(classController)
-  );
+  // Update class - Teacher only
+  fastify.put('/:id', { preHandler: [authenticate, requireTeacher()] }, classController.updateClass.bind(classController));
 
-  fastify.delete(
-    '/:id',
-    {
-      preHandler: [authenticate, requireTeacher()],
-      schema: {
-        tags: ['classes'],
-        description: 'Delete class',
-        security: [{ sessionCookie: [] }],
-      },
-    },
-    classController.deleteClass.bind(classController)
-  );
+  // Delete class - Teacher only
+  fastify.delete('/:id', { preHandler: [authenticate, requireTeacher()] }, classController.deleteClass.bind(classController));
 }
 
