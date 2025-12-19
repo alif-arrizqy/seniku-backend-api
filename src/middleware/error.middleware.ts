@@ -6,13 +6,22 @@ import logger from '../utils/logger';
 
 export default function errorHandler(fastify: FastifyInstance) {
   fastify.setErrorHandler((error: FastifyError, request: FastifyRequest, reply: FastifyReply) => {
-    // Log error
+    // Log error with full context
     logger.error(
       {
         error: error.message,
         stack: error.stack,
+        name: error.name,
+        code: (error as any).code,
+        statusCode: error.statusCode,
         url: request.url,
         method: request.method,
+        params: request.params,
+        query: request.query,
+        body: request.body,
+        userId: (request as any).user?.id,
+        ip: request.ip,
+        userAgent: request.headers['user-agent'],
       },
       'Request error'
     );
