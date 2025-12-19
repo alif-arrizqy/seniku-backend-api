@@ -1,6 +1,32 @@
 import { z } from 'zod';
 import { UserRole } from '@prisma/client';
 
+
+// Custom schema for birthdate that accepts YYYY-MM-DD format
+const birthdateSchema = z.preprocess(
+  (val) => {
+    if (val instanceof Date) {
+      return val;
+    }
+    if (typeof val === 'string') {
+      // Check if it's in YYYY-MM-DD format
+      if (/^\d{4}-\d{2}-\d{2}$/.test(val)) {
+        const date = new Date(val);
+        if (!isNaN(date.getTime())) {
+          return date;
+        }
+      }
+      // Try to parse as date string
+      const date = new Date(val);
+      if (!isNaN(date.getTime())) {
+        return date;
+      }
+    }
+    return val;
+  },
+  z.date().optional()
+);
+
 export const createUserSchema = z
   .object({
     email: z.string().email().optional(),
@@ -12,7 +38,7 @@ export const createUserSchema = z
     phone: z.string().optional(),
     address: z.string().optional(),
     bio: z.string().optional(),
-    birthdate: z.string().datetime().or(z.date()).optional(),
+    birthdate: birthdateSchema,
     classId: z.string().uuid().optional(),
   })
   .refine(
@@ -39,14 +65,14 @@ export const updateUserSchema = z.object({
   phone: z.string().optional(),
   address: z.string().optional(),
   bio: z.string().optional(),
-  birthdate: z.string().datetime().or(z.date()).optional(),
+  birthdate: birthdateSchema,
   classId: z.string().uuid().optional(),
   isActive: z.boolean().optional(),
 });
 
 export const queryUsersSchema = z.object({
-  page: z.string().transform(Number).pipe(z.number().int().positive()).optional().default('1'),
-  limit: z.string().transform(Number).pipe(z.number().int().positive().max(100)).optional().default('10'),
+  page: z.string().transform(Number).pipe(z.number().int().positive()).optional().default(() => 1),
+  limit: z.string().transform(Number).pipe(z.number().int().positive().max(100)).optional().default(() => 10),
   role: z.nativeEnum(UserRole).optional(),
   search: z.string().optional(),
   classId: z.string().uuid().optional(),

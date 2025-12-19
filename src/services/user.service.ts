@@ -8,6 +8,25 @@ export interface UserFilters {
   classId?: string;
 }
 
+// Helper function to format date to YYYY-MM-DD
+function formatDateToYYYYMMDD(date: Date | null | undefined): string | null {
+  if (!date) return null;
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+// Helper function to format user object with formatted birthdate
+function formatUserResponse(user: any): any {
+  if (!user) return user;
+  return {
+    ...user,
+    birthdate: formatDateToYYYYMMDD(user.birthdate),
+  };
+}
+
 export class UserService {
   async findUsers(filters: UserFilters, pagination: PaginationResult) {
     const where: any = {};
@@ -72,6 +91,15 @@ export class UserService {
   }
 
   async updateUser(userId: string, data: any) {
+    // Ensure birthdate is a Date object if provided (fallback if validator is bypassed)
+    const updateData = { ...data };
+    if (updateData.birthdate && typeof updateData.birthdate === 'string') {
+      // If it's a string in YYYY-MM-DD format, convert to Date
+      if (/^\d{4}-\d{2}-\d{2}$/.test(updateData.birthdate)) {
+        updateData.birthdate = new Date(updateData.birthdate);
+      }
+    }
+
     const user = await prisma.user.update({
       where: { id: userId },
       data,

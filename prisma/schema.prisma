@@ -48,7 +48,7 @@ model User {
   phone         String?
   address       String?
   bio           String?
-  birthdate     DateTime?
+  birthdate     DateTime? @db.Date
   avatar        String?
   className     String?   @map("class_name")
   classId       String?   @map("class_id")
