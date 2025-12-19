@@ -58,12 +58,16 @@ let env: Env;
 try {
   env = envSchema.parse(process.env);
 } catch (error: any) {
-  if (error instanceof z.ZodError && error.issues) {
+  if (error instanceof z.ZodError && error.issues && Array.isArray(error.issues)) {
     console.error('❌ Invalid environment variables:');
     error.issues.forEach((issue: any) => {
-      const path = issue.path ? issue.path.join('.') : 'unknown';
-      const message = issue.message || 'Validation error';
-      console.error(`  - ${path}: ${message}`);
+      if (issue && typeof issue === 'object') {
+        const path = (issue.path && Array.isArray(issue.path))
+          ? issue.path.join('.')
+          : 'unknown';
+        const message = issue.message || 'Validation error';
+        console.error(`  - ${path}: ${message}`);
+      }
     });
     process.exit(1);
   } else {
