@@ -18,13 +18,24 @@ export interface ErrorContext {
  */
 export function formatZodErrors(error: ZodError): Record<string, string[]> {
   const errors: Record<string, string[]> = {};
-  error.errors.forEach((err) => {
-    const path = err.path.join('.');
-    if (!errors[path]) {
-      errors[path] = [];
+  try {
+    if (error && error.issues && Array.isArray(error.issues) && error.issues.length > 0) {
+      error.issues.forEach((issue) => {
+        if (issue && typeof issue === 'object') {
+          const path = (issue.path && Array.isArray(issue.path))
+            ? issue.path.join('.')
+            : 'unknown';
+          const message = issue.message || 'Validation error';
+          if (!errors[path]) {
+            errors[path] = [];
+          }
+          errors[path].push(message);
+        }
+      });
     }
-    errors[path].push(err.message);
-  });
+  } catch (formatError: any) {
+    logger.error({ formatError, originalError: error }, 'Error formatting Zod errors');
+  }
   return errors;
 }
 
@@ -61,14 +72,35 @@ export function handleError(
 
   // Handle Zod validation errors
   if (error?.name === 'ZodError' || error instanceof ZodError) {
-    const zodError = error as ZodError;
-    const errors = formatZodErrors(zodError);
-    return ResponseFormatter.error(
-      reply,
-      ErrorMessages.VALIDATION.INVALID_INPUT,
-      ErrorStatusCodes.VALIDATION_ERROR,
-      errors
-    );
+    try {
+      const zodError = error as ZodError;
+      const errors = formatZodErrors(zodError);
+      // Only include errors object if it has content
+      if (Object.keys(errors).length > 0) {
+        // Create a more user-friendly message
+        const firstErrorKey = Object.keys(errors)[0];
+        const firstErrorMessage = errors[firstErrorKey]?.[0] || ErrorMessages.VALIDATION.INVALID_INPUT;
+        return ResponseFormatter.error(
+          reply,
+          firstErrorMessage,
+          ErrorStatusCodes.VALIDATION_ERROR,
+          errors
+        );
+      }
+      // Fallback if errors object is empty
+      return ResponseFormatter.error(
+        reply,
+        ErrorMessages.VALIDATION.INVALID_INPUT,
+        ErrorStatusCodes.VALIDATION_ERROR
+      );
+    } catch (formatError: any) {
+      logger.error({ formatError, originalError: error }, 'Error handling ZodError');
+      return ResponseFormatter.error(
+        reply,
+        ErrorMessages.VALIDATION.INVALID_INPUT,
+        ErrorStatusCodes.VALIDATION_ERROR
+      );
+    }
   }
 
   // Handle authentication errors
@@ -98,10 +130,14 @@ export function handleError(
   }
 
   // Handle not found errors
-  if (error?.message === 'User not found' || error?.message?.includes('not found')) {
+  if (
+    error?.message === ErrorMessages.RESOURCE.USER_NOT_FOUND ||
+    error?.message === 'User not found' ||
+    error?.message?.includes('not found')
+  ) {
     return ResponseFormatter.error(
       reply,
-      error.message || ErrorMessages.RESOURCE.NOT_FOUND,
+      error.message || ErrorMessages.RESOURCE.USER_NOT_FOUND,
       ErrorStatusCodes.NOT_FOUND
     );
   }
