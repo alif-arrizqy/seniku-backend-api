@@ -6,11 +6,10 @@ import {
   createAssignmentSchema,
   updateAssignmentSchema,
   queryAssignmentsSchema,
-  gradeSubmissionSchema,
   bulkStatusSchema,
   bulkDeleteSchema,
-  idParamSchema,
 } from '../validators/assignment.validator';
+import { idParamSchema } from '../validators/common.validator';
 import { handleError } from '../utils/error-handler';
 
 export class AssignmentController {
@@ -29,7 +28,16 @@ export class AssignmentController {
 
       const { assignments, total } = await assignmentService.findAssignments(filters, pagination);
 
-      return ResponseFormatter.paginated(reply, assignments, pagination, 'Assignments retrieved successfully');
+      return ResponseFormatter.paginated(
+        reply,
+        assignments,
+        {
+          page: pagination.page,
+          limit: pagination.limit,
+          total,
+        },
+        'Assignments retrieved successfully'
+      );
     } catch (error: any) {
       return handleError(reply, error, 'Get assignments error', {
         query: request.query,

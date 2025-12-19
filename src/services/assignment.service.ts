@@ -1,6 +1,7 @@
 import prisma from '../config/database';
-import { AssignmentStatus } from '@prisma/client';
-import { parsePagination, PaginationResult } from '../utils/pagination';
+import { AssignmentStatus, Prisma } from '@prisma/client';
+import { PaginationResult } from '../utils/pagination';
+import { ErrorMessages } from '../constants/error-messages';
 
 export interface AssignmentFilters {
   status?: AssignmentStatus;
@@ -79,46 +80,55 @@ export class AssignmentService {
   }
 
   async findAssignmentById(assignmentId: string) {
-    const assignment = await prisma.assignment.findUnique({
-      where: { id: assignmentId },
-      include: {
-        createdBy: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
+    try {
+      const assignment = await prisma.assignment.findUnique({
+        where: { id: assignmentId },
+        include: {
+          createdBy: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
           },
-        },
-        classes: {
-          include: {
-            class: {
-              select: {
-                id: true,
-                name: true,
+          classes: {
+            include: {
+              class: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
+            },
+          },
+          submissions: {
+            include: {
+              student: {
+                select: {
+                  id: true,
+                  name: true,
+                  nis: true,
+                  avatar: true,
+                },
               },
             },
           },
         },
-        submissions: {
-          include: {
-            student: {
-              select: {
-                id: true,
-                name: true,
-                nis: true,
-                avatar: true,
-              },
-            },
-          },
-        },
-      },
-    });
+      });
 
-    if (!assignment) {
-      throw new Error('Assignment not found');
+      if (!assignment) {
+        throw new Error(ErrorMessages.RESOURCE.ASSIGNMENT_NOT_FOUND);
+      }
+
+      return assignment;
+    } catch (error: any) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2025') {
+          throw new Error(ErrorMessages.RESOURCE.ASSIGNMENT_NOT_FOUND);
+        }
+      }
+      throw error;
     }
-
-    return assignment;
   }
 
   async createAssignment(
@@ -132,42 +142,65 @@ export class AssignmentService {
       classIds: string[];
     }
   ) {
-    const assignment = await prisma.assignment.create({
-      data: {
-        title: data.title,
-        description: data.description,
-        category: data.category,
-        deadline: data.deadline,
-        status: data.status,
-        createdById: data.createdById,
-        classes: {
-          create: data.classIds.map((classId) => ({
-            classId,
-          })),
-        },
-      },
-      include: {
-        createdBy: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
+    try {
+      // Verify that all classes exist
+      const classes = await prisma.class.findMany({
+        where: { id: { in: data.classIds } },
+      });
+
+      if (classes.length !== data.classIds.length) {
+        throw new Error(ErrorMessages.RESOURCE.CLASS_NOT_FOUND);
+      }
+
+      const assignment = await prisma.assignment.create({
+        data: {
+          title: data.title,
+          description: data.description,
+          category: data.category,
+          deadline: data.deadline,
+          status: data.status,
+          createdById: data.createdById,
+          classes: {
+            create: data.classIds.map((classId) => ({
+              classId,
+            })),
           },
         },
-        classes: {
-          include: {
-            class: {
-              select: {
-                id: true,
-                name: true,
+        include: {
+          createdBy: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+          classes: {
+            include: {
+              class: {
+                select: {
+                  id: true,
+                  name: true,
+                },
               },
             },
           },
         },
-      },
-    });
+      });
 
-    return assignment;
+      return assignment;
+    } catch (error: any) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2003') {
+          throw new Error(ErrorMessages.RESOURCE.CLASS_NOT_FOUND);
+        }
+        if (error.code === 'P2002') {
+          const target = (error.meta as any)?.target;
+          const field = Array.isArray(target) ? target[0] : 'field';
+          throw new Error(`${field} ${ErrorMessages.RESOURCE.ALREADY_EXISTS}`);
+        }
+      }
+      throw error;
+    }
   }
 
   async updateAssignment(
@@ -181,55 +214,91 @@ export class AssignmentService {
       classIds?: string[];
     }
   ) {
-    // If classIds provided, update the classes
-    if (data.classIds) {
-      // Delete existing class assignments
-      await prisma.assignmentClass.deleteMany({
-        where: { assignmentId },
+    try {
+      // Check if assignment exists
+      const existingAssignment = await prisma.assignment.findUnique({
+        where: { id: assignmentId },
       });
 
-      // Create new class assignments
-      await prisma.assignmentClass.createMany({
-        data: data.classIds.map((classId) => ({
-          assignmentId,
-          classId,
-        })),
-      });
-    }
+      if (!existingAssignment) {
+        throw new Error(ErrorMessages.RESOURCE.ASSIGNMENT_NOT_FOUND);
+      }
 
-    const { classIds, ...updateData } = data;
+      // If classIds provided, update the classes
+      if (data.classIds) {
+        // Delete existing class assignments
+        await prisma.assignmentClass.deleteMany({
+          where: { assignmentId },
+        });
 
-    const assignment = await prisma.assignment.update({
-      where: { id: assignmentId },
-      data: updateData,
-      include: {
-        createdBy: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
+        // Create new class assignments
+        await prisma.assignmentClass.createMany({
+          data: data.classIds.map((classId) => ({
+            assignmentId,
+            classId,
+          })),
+        });
+      }
+
+      const { classIds, ...updateData } = data;
+
+      const assignment = await prisma.assignment.update({
+        where: { id: assignmentId },
+        data: updateData,
+        include: {
+          createdBy: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
           },
-        },
-        classes: {
-          include: {
-            class: {
-              select: {
-                id: true,
-                name: true,
+          classes: {
+            include: {
+              class: {
+                select: {
+                  id: true,
+                  name: true,
+                },
               },
             },
           },
         },
-      },
-    });
+      });
 
-    return assignment;
+      return assignment;
+    } catch (error: any) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2025') {
+          throw new Error(ErrorMessages.RESOURCE.ASSIGNMENT_NOT_FOUND);
+        }
+      }
+      throw error;
+    }
   }
 
   async deleteAssignment(assignmentId: string) {
-    await prisma.assignment.delete({
-      where: { id: assignmentId },
-    });
+    try {
+      // Check if assignment exists first
+      const assignment = await prisma.assignment.findUnique({
+        where: { id: assignmentId },
+      });
+
+      if (!assignment) {
+        throw new Error(ErrorMessages.RESOURCE.ASSIGNMENT_NOT_FOUND);
+      }
+
+      await prisma.assignment.delete({
+        where: { id: assignmentId },
+      });
+    } catch (error: any) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2025') {
+          throw new Error(ErrorMessages.RESOURCE.ASSIGNMENT_NOT_FOUND);
+        }
+      }
+      throw error;
+    }
   }
 
   async bulkUpdateStatus(assignmentIds: string[], status: AssignmentStatus) {
