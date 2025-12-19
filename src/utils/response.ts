@@ -4,7 +4,6 @@ export interface ApiResponse<T = any> {
   success: boolean;
   message?: string;
   data?: T;
-  error?: string;
   errors?: Record<string, string[]>;
 }
 
@@ -41,7 +40,7 @@ export class ResponseFormatter {
     const errorMessage = error instanceof Error ? error.message : error;
     const response: ApiResponse = {
       success: false,
-      error: errorMessage,
+      message: errorMessage,
       errors,
     };
     return reply.code(statusCode).send(response);
