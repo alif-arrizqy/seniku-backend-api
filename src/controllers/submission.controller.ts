@@ -6,13 +6,12 @@ import storageService from '../services/storage.service';
 import imageService from '../services/image.service';
 import env from '../config/env';
 import {
-  createSubmissionSchema,
   updateSubmissionSchema,
   querySubmissionsSchema,
-  gradeSubmissionSchema,
   returnForRevisionSchema,
-  idParamSchema,
 } from '../validators/submission.validator';
+import { gradeSubmissionSchema } from '../validators/assignment.validator';
+import { idParamSchema } from '../validators/common.validator';
 import { generateFileName, validateFileType, validateFileSize } from '../utils/file';
 import { handleError } from '../utils/error-handler';
 
@@ -31,7 +30,16 @@ export class SubmissionController {
 
       const { submissions, total } = await submissionService.findSubmissions(filters, pagination);
 
-      return ResponseFormatter.paginated(reply, submissions, pagination, 'Submissions retrieved successfully');
+      return ResponseFormatter.paginated(
+        reply,
+        submissions,
+        {
+          page: pagination.page,
+          limit: pagination.limit,
+          total,
+        },
+        'Submissions retrieved successfully'
+      );
     } catch (error: any) {
       return handleError(reply, error, 'Get submissions error', {
         query: request.query,
@@ -153,16 +161,106 @@ export class SubmissionController {
 
   async updateSubmission(request: FastifyRequest, reply: FastifyReply) {
     try {
-      const { id } = idParamSchema.parse(request.params);
-      const validated = updateSubmissionSchema.parse(request.body);
+      if (!request.user) {
+        return ResponseFormatter.error(reply, 'Unauthorized', 401);
+      }
 
-      const submission = await submissionService.updateSubmission(id, validated);
+      const { id } = idParamSchema.parse(request.params);
+
+      // Check if request has file (multipart/form-data)
+      const data = await request.file();
+      
+      let updateData: {
+        title?: string;
+        description?: string;
+        imageUrl?: string;
+        imageThumbnail?: string;
+        imageMedium?: string;
+      } = {};
+
+      if (data) {
+        // Handle file upload (multipart/form-data)
+        // Validate file type
+        const fileTypeValidation = validateFileType(data.mimetype);
+        if (!fileTypeValidation.valid) {
+          return ResponseFormatter.error(reply, fileTypeValidation.error || 'Invalid file type', 400);
+        }
+
+        // Validate file size
+        const buffer = await data.toBuffer();
+        const fileSizeValidation = validateFileSize(buffer.length);
+        if (!fileSizeValidation.valid) {
+          return ResponseFormatter.error(reply, fileSizeValidation.error || 'File too large', 400);
+        }
+
+        // Validate and process image
+        const imageValidation = await imageService.validateImage(buffer);
+        if (!imageValidation.valid) {
+          return ResponseFormatter.error(reply, imageValidation.error || 'Invalid image', 400);
+        }
+
+        // Process image (generate thumbnails)
+        const processed = await imageService.processImage(buffer, true);
+
+        // Parse form fields
+        const body = data.fields as any;
+        const title = body.title?.value;
+        const description = body.description?.value;
+
+        // Upload images to MinIO
+        const fileName = generateFileName(data.filename, 'submission');
+        const imageUrl = await storageService.uploadFile(
+          env.MINIO_BUCKET_SUBMISSIONS,
+          fileName,
+          processed.full,
+          'image/jpeg',
+          processed.full.length
+        );
+
+        let imageThumbnail: string | undefined;
+        let imageMedium: string | undefined;
+
+        if (processed.thumbnail) {
+          const thumbName = `thumb-${fileName}`;
+          imageThumbnail = await storageService.uploadFile(
+            env.MINIO_BUCKET_SUBMISSIONS,
+            thumbName,
+            processed.thumbnail,
+            'image/jpeg',
+            processed.thumbnail.length
+          );
+        }
+
+        if (processed.medium) {
+          const mediumName = `medium-${fileName}`;
+          imageMedium = await storageService.uploadFile(
+            env.MINIO_BUCKET_SUBMISSIONS,
+            mediumName,
+            processed.medium,
+            'image/jpeg',
+            processed.medium.length
+          );
+        }
+
+        updateData = {
+          title,
+          description,
+          imageUrl,
+          imageThumbnail,
+          imageMedium,
+        };
+      } else {
+        // Handle JSON body (no file upload)
+        const validated = updateSubmissionSchema.parse(request.body);
+        updateData = validated;
+      }
+
+      const submission = await submissionService.updateSubmission(id, updateData);
 
       return ResponseFormatter.success(reply, { submission }, 'Submission updated successfully');
     } catch (error: any) {
       return handleError(reply, error, 'Update submission error', {
         params: request.params,
-        body: request.body,
         userId: request.user?.id,
       });
     }
