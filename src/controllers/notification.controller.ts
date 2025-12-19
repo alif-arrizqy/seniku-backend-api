@@ -28,8 +28,25 @@ export class NotificationController {
       };
 
       const { notifications, total } = await notificationService.findNotifications(filters, pagination);
+      const unreadCount = await notificationService.getUnreadCount(request.user.id);
 
-      return ResponseFormatter.paginated(reply, notifications, pagination, 'Notifications retrieved successfully');
+      const totalPages = Math.ceil(total / pagination.limit);
+      return reply.code(200).send({
+        success: true,
+        message: 'Notifications retrieved successfully',
+        data: {
+          notifications,
+          unreadCount,
+        },
+        pagination: {
+          page: pagination.page,
+          limit: pagination.limit,
+          total,
+          totalPages,
+          hasNext: pagination.page < totalPages,
+          hasPrev: pagination.page > 1,
+        },
+      });
     } catch (error: any) {
       return handleError(reply, error, 'Get notifications error', {
         query: request.query,
@@ -40,8 +57,17 @@ export class NotificationController {
 
   async getNotificationById(request: FastifyRequest, reply: FastifyReply) {
     try {
+      if (!request.user) {
+        return ResponseFormatter.error(reply, 'Unauthorized', 401);
+      }
+
       const { id } = idParamSchema.parse(request.params);
       const notification = await notificationService.findNotificationById(id);
+
+      // Verify that notification belongs to the current user
+      if (notification.userId !== request.user.id) {
+        return ResponseFormatter.error(reply, 'Notification not found', 404);
+      }
 
       return ResponseFormatter.success(reply, { notification }, 'Notification retrieved successfully');
     } catch (error: any) {
@@ -54,10 +80,21 @@ export class NotificationController {
 
   async markAsRead(request: FastifyRequest, reply: FastifyReply) {
     try {
-      const { id } = idParamSchema.parse(request.params);
-      const notification = await notificationService.markAsRead(id);
+      if (!request.user) {
+        return ResponseFormatter.error(reply, 'Unauthorized', 401);
+      }
 
-      return ResponseFormatter.success(reply, { notification }, 'Notification marked as read');
+      const { id } = idParamSchema.parse(request.params);
+      const notification = await notificationService.findNotificationById(id);
+
+      // Verify that notification belongs to the current user
+      if (notification.userId !== request.user.id) {
+        return ResponseFormatter.error(reply, 'Notification not found', 404);
+      }
+
+      const updatedNotification = await notificationService.markAsRead(id);
+
+      return ResponseFormatter.success(reply, { notification: updatedNotification }, 'Notification marked as read');
     } catch (error: any) {
       return handleError(reply, error, 'Mark notification as read error', {
         params: request.params,
