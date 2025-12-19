@@ -4,6 +4,7 @@ import { ResponseFormatter } from '../utils/response';
 import { parsePagination } from '../utils/pagination';
 import { idParamSchema } from '../validators/common.validator';
 import { z } from 'zod';
+import { handleError } from '../utils/error-handler';
 
 const createClassSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -35,7 +36,10 @@ export class ClassController {
 
       return ResponseFormatter.paginated(reply, classes, pagination, 'Classes retrieved successfully');
     } catch (error: any) {
-      throw error;
+      return handleError(reply, error, 'Get classes error', {
+        query: request.query,
+        userId: request.user?.id,
+      });
     }
   }
 
@@ -46,7 +50,10 @@ export class ClassController {
 
       return ResponseFormatter.success(reply, { class: classData }, 'Class retrieved successfully');
     } catch (error: any) {
-      throw error;
+      return handleError(reply, error, 'Get class by ID error', {
+        params: request.params,
+        userId: request.user?.id,
+      });
     }
   }
 
@@ -57,7 +64,10 @@ export class ClassController {
 
       return ResponseFormatter.success(reply, { class: classData }, 'Class created successfully', 201);
     } catch (error: any) {
-      throw error;
+      return handleError(reply, error, 'Create class error', {
+        body: request.body,
+        userId: request.user?.id,
+      });
     }
   }
 
@@ -70,7 +80,11 @@ export class ClassController {
 
       return ResponseFormatter.success(reply, { class: classData }, 'Class updated successfully');
     } catch (error: any) {
-      throw error;
+      return handleError(reply, error, 'Update class error', {
+        params: request.params,
+        body: request.body,
+        userId: request.user?.id,
+      });
     }
   }
 
@@ -81,7 +95,10 @@ export class ClassController {
 
       return ResponseFormatter.success(reply, null, 'Class deleted successfully');
     } catch (error: any) {
-      throw error;
+      return handleError(reply, error, 'Delete class error', {
+        params: request.params,
+        userId: request.user?.id,
+      });
     }
   }
 }

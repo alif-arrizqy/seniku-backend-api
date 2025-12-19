@@ -4,6 +4,7 @@ import { ResponseFormatter } from '../utils/response';
 import { parsePagination } from '../utils/pagination';
 import { idParamSchema } from '../validators/common.validator';
 import { z } from 'zod';
+import { handleError } from '../utils/error-handler';
 
 const queryNotificationsSchema = z.object({
   page: z.string().transform(Number).pipe(z.number().int().positive()).optional().default('1'),
@@ -30,7 +31,10 @@ export class NotificationController {
 
       return ResponseFormatter.paginated(reply, notifications, pagination, 'Notifications retrieved successfully');
     } catch (error: any) {
-      throw error;
+      return handleError(reply, error, 'Get notifications error', {
+        query: request.query,
+        userId: request.user?.id,
+      });
     }
   }
 
@@ -41,7 +45,10 @@ export class NotificationController {
 
       return ResponseFormatter.success(reply, { notification }, 'Notification retrieved successfully');
     } catch (error: any) {
-      throw error;
+      return handleError(reply, error, 'Get notification by ID error', {
+        params: request.params,
+        userId: request.user?.id,
+      });
     }
   }
 
@@ -52,7 +59,10 @@ export class NotificationController {
 
       return ResponseFormatter.success(reply, { notification }, 'Notification marked as read');
     } catch (error: any) {
-      throw error;
+      return handleError(reply, error, 'Mark notification as read error', {
+        params: request.params,
+        userId: request.user?.id,
+      });
     }
   }
 
@@ -66,7 +76,9 @@ export class NotificationController {
 
       return ResponseFormatter.success(reply, null, 'All notifications marked as read');
     } catch (error: any) {
-      throw error;
+      return handleError(reply, error, 'Mark all notifications as read error', {
+        userId: request.user?.id,
+      });
     }
   }
 
@@ -80,7 +92,9 @@ export class NotificationController {
 
       return ResponseFormatter.success(reply, { count }, 'Unread count retrieved');
     } catch (error: any) {
-      throw error;
+      return handleError(reply, error, 'Get unread count error', {
+        userId: request.user?.id,
+      });
     }
   }
 }

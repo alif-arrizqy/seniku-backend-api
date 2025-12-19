@@ -14,6 +14,7 @@ import {
   idParamSchema,
 } from '../validators/submission.validator';
 import { generateFileName, validateFileType, validateFileSize } from '../utils/file';
+import { handleError } from '../utils/error-handler';
 
 export class SubmissionController {
   async getSubmissions(request: FastifyRequest, reply: FastifyReply) {
@@ -32,7 +33,10 @@ export class SubmissionController {
 
       return ResponseFormatter.paginated(reply, submissions, pagination, 'Submissions retrieved successfully');
     } catch (error: any) {
-      throw error;
+      return handleError(reply, error, 'Get submissions error', {
+        query: request.query,
+        userId: request.user?.id,
+      });
     }
   }
 
@@ -43,7 +47,10 @@ export class SubmissionController {
 
       return ResponseFormatter.success(reply, { submission }, 'Submission retrieved successfully');
     } catch (error: any) {
-      throw error;
+      return handleError(reply, error, 'Get submission by ID error', {
+        params: request.params,
+        userId: request.user?.id,
+      });
     }
   }
 
@@ -138,7 +145,9 @@ export class SubmissionController {
 
       return ResponseFormatter.success(reply, { submission }, 'Submission created successfully', 201);
     } catch (error: any) {
-      throw error;
+      return handleError(reply, error, 'Create submission error', {
+        userId: request.user?.id,
+      });
     }
   }
 
@@ -151,7 +160,11 @@ export class SubmissionController {
 
       return ResponseFormatter.success(reply, { submission }, 'Submission updated successfully');
     } catch (error: any) {
-      throw error;
+      return handleError(reply, error, 'Update submission error', {
+        params: request.params,
+        body: request.body,
+        userId: request.user?.id,
+      });
     }
   }
 
@@ -164,7 +177,11 @@ export class SubmissionController {
 
       return ResponseFormatter.success(reply, { submission }, 'Submission graded successfully');
     } catch (error: any) {
-      throw error;
+      return handleError(reply, error, 'Grade submission error', {
+        params: request.params,
+        body: request.body,
+        userId: request.user?.id,
+      });
     }
   }
 
@@ -179,7 +196,11 @@ export class SubmissionController {
 
       return ResponseFormatter.success(reply, { submission }, 'Submission returned for revision');
     } catch (error: any) {
-      throw error;
+      return handleError(reply, error, 'Return submission for revision error', {
+        params: request.params,
+        body: request.body,
+        userId: request.user?.id,
+      });
     }
   }
 
@@ -190,7 +211,10 @@ export class SubmissionController {
 
       return ResponseFormatter.success(reply, null, 'Submission deleted successfully');
     } catch (error: any) {
-      throw error;
+      return handleError(reply, error, 'Delete submission error', {
+        params: request.params,
+        userId: request.user?.id,
+      });
     }
   }
 }

@@ -11,6 +11,7 @@ import {
   bulkDeleteSchema,
   idParamSchema,
 } from '../validators/assignment.validator';
+import { handleError } from '../utils/error-handler';
 
 export class AssignmentController {
   async getAssignments(request: FastifyRequest, reply: FastifyReply) {
@@ -30,7 +31,10 @@ export class AssignmentController {
 
       return ResponseFormatter.paginated(reply, assignments, pagination, 'Assignments retrieved successfully');
     } catch (error: any) {
-      throw error;
+      return handleError(reply, error, 'Get assignments error', {
+        query: request.query,
+        userId: request.user?.id,
+      });
     }
   }
 
@@ -41,7 +45,10 @@ export class AssignmentController {
 
       return ResponseFormatter.success(reply, { assignment }, 'Assignment retrieved successfully');
     } catch (error: any) {
-      throw error;
+      return handleError(reply, error, 'Get assignment by ID error', {
+        params: request.params,
+        userId: request.user?.id,
+      });
     }
   }
 
@@ -60,7 +67,10 @@ export class AssignmentController {
 
       return ResponseFormatter.success(reply, { assignment }, 'Assignment created successfully', 201);
     } catch (error: any) {
-      throw error;
+      return handleError(reply, error, 'Create assignment error', {
+        body: request.body,
+        userId: request.user?.id,
+      });
     }
   }
 
@@ -78,7 +88,11 @@ export class AssignmentController {
 
       return ResponseFormatter.success(reply, { assignment }, 'Assignment updated successfully');
     } catch (error: any) {
-      throw error;
+      return handleError(reply, error, 'Update assignment error', {
+        params: request.params,
+        body: request.body,
+        userId: request.user?.id,
+      });
     }
   }
 
@@ -89,7 +103,10 @@ export class AssignmentController {
 
       return ResponseFormatter.success(reply, null, 'Assignment deleted successfully');
     } catch (error: any) {
-      throw error;
+      return handleError(reply, error, 'Delete assignment error', {
+        params: request.params,
+        userId: request.user?.id,
+      });
     }
   }
 
@@ -100,7 +117,10 @@ export class AssignmentController {
 
       return ResponseFormatter.success(reply, null, 'Assignments status updated successfully');
     } catch (error: any) {
-      throw error;
+      return handleError(reply, error, 'Bulk update status error', {
+        body: request.body,
+        userId: request.user?.id,
+      });
     }
   }
 
@@ -111,7 +131,10 @@ export class AssignmentController {
 
       return ResponseFormatter.success(reply, null, 'Assignments deleted successfully');
     } catch (error: any) {
-      throw error;
+      return handleError(reply, error, 'Bulk delete assignments error', {
+        body: request.body,
+        userId: request.user?.id,
+      });
     }
   }
 }

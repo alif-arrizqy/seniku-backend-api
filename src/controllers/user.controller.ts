@@ -2,7 +2,9 @@ import { FastifyRequest, FastifyReply } from 'fastify';
 import userService from '../services/user.service';
 import { ResponseFormatter } from '../utils/response';
 import { parsePagination } from '../utils/pagination';
-import { queryUsersSchema, updateUserSchema, idParamSchema } from '../validators/user.validator';
+import { queryUsersSchema, updateUserSchema } from '../validators/user.validator';
+import { idParamSchema } from '../validators/common.validator';
+import { handleError } from '../utils/error-handler';
 
 export class UserController {
   async getUsers(request: FastifyRequest, reply: FastifyReply) {
@@ -18,9 +20,12 @@ export class UserController {
 
       const { users, total } = await userService.findUsers(filters, pagination);
 
-      return ResponseFormatter.paginated(reply, users, pagination, 'Users retrieved successfully');
+      return ResponseFormatter.paginated(reply, users, { ...pagination, total }, 'Users retrieved successfully');
     } catch (error: any) {
-      throw error;
+      return handleError(reply, error, 'Get users error', {
+        query: request.query,
+        userId: request.user?.id,
+      });
     }
   }
 
@@ -31,7 +36,10 @@ export class UserController {
 
       return ResponseFormatter.success(reply, { user }, 'User retrieved successfully');
     } catch (error: any) {
-      throw error;
+      return handleError(reply, error, 'Get user by ID error', {
+        params: request.params,
+        userId: request.user?.id,
+      });
     }
   }
 
@@ -44,7 +52,11 @@ export class UserController {
 
       return ResponseFormatter.success(reply, { user }, 'User updated successfully');
     } catch (error: any) {
-      throw error;
+      return handleError(reply, error, 'Update user error', {
+        params: request.params,
+        body: request.body,
+        userId: request.user?.id,
+      });
     }
   }
 
@@ -55,7 +67,10 @@ export class UserController {
 
       return ResponseFormatter.success(reply, null, 'User deleted successfully');
     } catch (error: any) {
-      throw error;
+      return handleError(reply, error, 'Delete user error', {
+        params: request.params,
+        userId: request.user?.id,
+      });
     }
   }
 }
