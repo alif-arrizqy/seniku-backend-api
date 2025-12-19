@@ -27,6 +27,11 @@ export async function buildApp(): Promise<FastifyInstance> {
   // Register routes with prefix
   await app.register(routes, { prefix: '/api/v1' });
 
+  // Welcome endpoint
+  app.get('/', async (request, reply) => {
+    return { message: 'Welcome to the Seniku API ;)' };
+  });
+
   // Health check endpoint
   app.get('/health', async (request, reply) => {
     return { status: 'ok', timestamp: new Date().toISOString() };
