@@ -1,6 +1,6 @@
 import prisma from '../config/database';
 import { UserRole } from '@prisma/client';
-import { parsePagination, PaginationResult } from '../utils/pagination';
+import { PaginationResult } from '../utils/pagination';
 
 export interface UserFilters {
   role?: UserRole;
@@ -63,7 +63,7 @@ export class UserService {
         className: true,
         classId: true,
         isActive: true,
-        createdAt: true,
+        birthdate: true
       },
         skip: pagination.skip,
         take: pagination.take,
@@ -72,22 +72,38 @@ export class UserService {
       prisma.user.count({ where }),
     ]);
 
-    return { users, total };
+    // Format birthdate for all users
+    const formattedUsers = users.map(formatUserResponse);
+
+    return { users: formattedUsers, total };
   }
 
   async findUserById(userId: string) {
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      include: {
-        class: true,
-      },
+      select: {
+        id: true,
+        email: true,
+        nip: true,
+        nis: true,
+        name: true,
+        role: true,
+        avatar: true,
+        phone: true,
+        address: true,
+        bio: true,
+        birthdate: true,
+        className: true,
+        classId: true,
+        isActive: true
+      }
     });
 
     if (!user) {
       throw new Error('User not found');
     }
 
-    return user;
+    return formatUserResponse(user);
   }
 
   async updateUser(userId: string, data: any) {
@@ -102,7 +118,7 @@ export class UserService {
 
     const user = await prisma.user.update({
       where: { id: userId },
-      data,
+      data: updateData,
       select: {
         id: true,
         email: true,
@@ -122,7 +138,7 @@ export class UserService {
       },
     });
 
-    return user;
+    return formatUserResponse(user);
   }
 
   async deleteUser(userId: string) {
