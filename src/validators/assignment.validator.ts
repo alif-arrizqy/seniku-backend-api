@@ -1,0 +1,44 @@
+import { z } from 'zod';
+import { AssignmentStatus } from '@prisma/client';
+
+export const createAssignmentSchema = z.object({
+  title: z.string().min(1, 'Title is required'),
+  description: z.string().min(1, 'Description is required'),
+  category: z.string().min(1, 'Category is required'),
+  deadline: z.string().datetime().or(z.date()),
+  status: z.nativeEnum(AssignmentStatus).default(AssignmentStatus.DRAFT),
+  classIds: z.array(z.string().uuid()).min(1, 'At least one class is required'),
+});
+
+export const updateAssignmentSchema = z.object({
+  title: z.string().min(1).optional(),
+  description: z.string().min(1).optional(),
+  category: z.string().min(1).optional(),
+  deadline: z.string().datetime().or(z.date()).optional(),
+  status: z.nativeEnum(AssignmentStatus).optional(),
+  classIds: z.array(z.string().uuid()).optional(),
+});
+
+export const queryAssignmentsSchema = z.object({
+  page: z.string().transform(Number).pipe(z.number().int().positive()).optional().default('1'),
+  limit: z.string().transform(Number).pipe(z.number().int().positive().max(100)).optional().default('10'),
+  status: z.nativeEnum(AssignmentStatus).optional(),
+  category: z.string().optional(),
+  classId: z.string().uuid().optional(),
+  search: z.string().optional(),
+});
+
+export const gradeSubmissionSchema = z.object({
+  grade: z.number().int().min(0).max(100),
+  feedback: z.string().optional(),
+});
+
+export const bulkStatusSchema = z.object({
+  assignmentIds: z.array(z.string().uuid()).min(1),
+  status: z.nativeEnum(AssignmentStatus),
+});
+
+export const bulkDeleteSchema = z.object({
+  assignmentIds: z.array(z.string().uuid()).min(1),
+});
+
