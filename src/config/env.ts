@@ -9,22 +9,24 @@ const envSchema = z.object({
   DATABASE_URL: z.string().min(1),
 
   // Server
-  PORT: z.string().default('8989').transform(Number).pipe(z.number().int().positive()),
-  HOST: z.string().default('localhost'),
+  PORT: z.string().default('3000').transform(Number).pipe(z.number().int().positive()),
+  HOST: z.string().default('0.0.0.0'),
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
 
   // JWT
   JWT_SECRET: z.string().min(32, 'JWT_SECRET must be at least 32 characters long'),
-  JWT_ACCESS_EXPIRES: z.string().default('15m'),
+  JWT_ACCESS_EXPIRES: z.string().default('1h'),
   JWT_REFRESH_EXPIRES: z.string().default('7d'),
 
   // File Upload
-  MAX_FILE_SIZE: z.string().default('5242880').transform(Number).pipe(z.number().int().positive()),
+  MAX_FILE_SIZE: z.string().default('10485760').transform(Number).pipe(z.number().int().positive()), // 10MB default
   UPLOAD_DIR: z.string().default('./uploads'),
 
   // Image Processing
-  IMAGE_MAX_WIDTH: z.string().default('2400').transform(Number).pipe(z.number().int().positive()),
-  IMAGE_MAX_HEIGHT: z.string().default('1600').transform(Number).pipe(z.number().int().positive()),
+  IMAGE_MIN_WIDTH: z.string().default('800').transform(Number).pipe(z.number().int().positive()),
+  IMAGE_MIN_HEIGHT: z.string().default('600').transform(Number).pipe(z.number().int().positive()),
+  IMAGE_MAX_WIDTH: z.string().default('8000').transform(Number).pipe(z.number().int().positive()),
+  IMAGE_MAX_HEIGHT: z.string().default('8000').transform(Number).pipe(z.number().int().positive()),
   IMAGE_THUMBNAIL_SIZE: z.string().default('300').transform(Number).pipe(z.number().int().positive()),
   IMAGE_MEDIUM_SIZE: z.string().default('800').transform(Number).pipe(z.number().int().positive()),
   IMAGE_QUALITY: z.string().default('90').transform(Number).pipe(z.number().int().min(1).max(100)),
@@ -41,7 +43,7 @@ const envSchema = z.object({
   MINIO_PUBLIC_URL: z.string().url().default('http://localhost:9000'),
 
   // CORS
-  CORS_ORIGIN: z.string().url().default('http://localhost:8080'),
+  CORS_ORIGIN: z.string().url().default('http://localhost:5173'),
 
   // Logging
   LOG_LEVEL: z.enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal']).default('info'),
