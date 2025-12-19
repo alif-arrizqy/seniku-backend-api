@@ -1,4 +1,5 @@
 import { Readable } from 'stream';
+import env from '../config/env';
 
 export interface FileValidationResult {
   valid: boolean;
@@ -6,11 +7,15 @@ export interface FileValidationResult {
 }
 
 export const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-export const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
-export const MIN_IMAGE_WIDTH = 800;
-export const MIN_IMAGE_HEIGHT = 600;
-export const MAX_IMAGE_WIDTH = 5000;
-export const MAX_IMAGE_HEIGHT = 5000;
+
+// File size limit from environment (in bytes)
+export const MAX_FILE_SIZE = env.MAX_FILE_SIZE;
+
+// Image dimension limits from environment
+export const MIN_IMAGE_WIDTH = env.IMAGE_MIN_WIDTH;
+export const MIN_IMAGE_HEIGHT = env.IMAGE_MIN_HEIGHT;
+export const MAX_IMAGE_WIDTH = env.IMAGE_MAX_WIDTH;
+export const MAX_IMAGE_HEIGHT = env.IMAGE_MAX_HEIGHT;
 
 export function validateFileType(mimetype: string): FileValidationResult {
   if (!ALLOWED_IMAGE_TYPES.includes(mimetype)) {

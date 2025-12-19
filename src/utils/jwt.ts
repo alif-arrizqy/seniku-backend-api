@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken';
+import jwt, { SignOptions } from 'jsonwebtoken';
 import env from '../config/env';
 import { UserRole } from '@prisma/client';
 
@@ -23,12 +23,12 @@ export interface RefreshTokenPayload {
 
 export class JWTService {
   /**
-   * Generate access token (short-lived, 15 minutes)
+   * Generate access token (short-lived, 1 hour by default)
    */
   static generateAccessToken(payload: Omit<AccessTokenPayload, 'iat' | 'exp'>): string {
     return jwt.sign(payload, env.JWT_SECRET, {
       expiresIn: env.JWT_ACCESS_EXPIRES,
-    });
+    } as SignOptions);
   }
 
   /**
@@ -42,7 +42,7 @@ export class JWTService {
     };
     return jwt.sign(payload, env.JWT_SECRET, {
       expiresIn: env.JWT_REFRESH_EXPIRES,
-    });
+    } as SignOptions);
   }
 
   /**
