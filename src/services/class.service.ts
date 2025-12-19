@@ -19,7 +19,10 @@ export class ClassService {
     const [classes, total] = await Promise.all([
       prisma.class.findMany({
         where,
-        include: {
+        select: {
+          id: true,
+          name: true,
+          description: true,
           _count: {
             select: {
               students: true,
@@ -66,34 +69,57 @@ export class ClassService {
   }
 
   async createClass(data: { name: string; description?: string }) {
-    const classData = await prisma.class.create({
-      data,
-      include: {
-        _count: {
-          select: {
-            students: true,
+    // find if class already exists
+    const classExists = await prisma.class.findUnique({
+      where: { name: data.name },
+    });
+    if (classExists) {
+      throw new Error('Class already exists');
+    }
+    try {
+      const classData = await prisma.class.create({
+        data,
+        include: {
+          _count: {
+            select: {
+              students: true,
+            },
           },
         },
-      },
-    });
-
-    return classData;
+      });
+  
+      return classData;
+    } catch (error) {
+      throw new Error('Failed to create class', { cause: error });
+    }
   }
 
   async updateClass(classId: string, data: { name?: string; description?: string }) {
-    const classData = await prisma.class.update({
-      where: { id: classId },
-      data,
-      include: {
-        _count: {
-          select: {
-            students: true,
+    // find if class already exists
+    const classExists = await prisma.class.findUnique({
+      where: { name: data.name },
+    });
+    if (classExists) {
+      throw new Error('Class already exists');
+    }
+
+    try {
+      const classData = await prisma.class.update({
+        where: { id: classId },
+        data,
+        include: {
+          _count: {
+            select: {
+              students: true,
+            },
           },
         },
-      },
-    });
-
-    return classData;
+      });
+  
+      return classData;
+    } catch (error) {
+      throw new Error('Failed to update class', { cause: error });
+    }
   }
 
   async deleteClass(classId: string) {
