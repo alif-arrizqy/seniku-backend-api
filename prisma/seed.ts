@@ -1,7 +1,6 @@
-import { PrismaClient, UserRole } from '@prisma/client';
+import prisma from '../src/config/database';
+import { UserRole } from '@prisma/client';
 import bcrypt from 'bcrypt';
-
-const prisma = new PrismaClient();
 
 async function main() {
   console.log('🌱 Starting database seed...');
@@ -110,7 +109,7 @@ async function main() {
     'Indra Permana',
   ];
 
-  const students = [];
+  const students: any[] = [];
   let nisCounter = 2025123456789;
 
   for (const classData of classes) {
