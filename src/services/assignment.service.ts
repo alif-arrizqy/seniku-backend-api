@@ -1,7 +1,8 @@
 import prisma from '../config/database';
-import { AssignmentStatus, Prisma } from '@prisma/client';
+import { AssignmentStatus, Prisma, NotificationType } from '@prisma/client';
 import { PaginationResult } from '../utils/pagination';
 import { ErrorMessages } from '../constants/error-messages';
+import notificationService from './notification.service';
 
 export interface AssignmentFilters {
   status?: AssignmentStatus;
@@ -181,13 +182,45 @@ export class AssignmentService {
                   id: true,
                   name: true,
                 },
-              },
             },
           },
         },
+      },
+    });
+
+    // Create notifications for all students in assigned classes (only if status is ACTIVE)
+    if (data.status === AssignmentStatus.ACTIVE) {
+      // Get all students from assigned classes
+      const students = await prisma.user.findMany({
+        where: {
+          role: 'STUDENT',
+          classId: {
+            in: data.classIds,
+          },
+        },
+        select: {
+          id: true,
+        },
       });
 
-      return assignment;
+      // Create notification for each student
+      const notificationPromises = students.map((student) =>
+        notificationService.createNotification({
+          userId: student.id,
+          type: NotificationType.ASSIGNMENT_CREATED,
+          title: 'Tugas Baru',
+          message: `Tugas baru '${data.title}' telah dibuat. Deadline: ${new Date(data.deadline).toLocaleDateString('id-ID')}`,
+          link: `/assignments/${assignment.id}`,
+        })
+      );
+
+      // Create notifications in parallel (don't wait for completion to avoid blocking)
+      Promise.all(notificationPromises).catch((error) => {
+        console.error('Error creating assignment notifications:', error);
+      });
+    }
+
+    return assignment;
     } catch (error: any) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2003') {
