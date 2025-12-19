@@ -14,7 +14,7 @@ async function start() {
     });
 
     logger.info(`🚀 Server is running on http://${env.HOST}:${env.PORT}`);
-    logger.info(`📚 API Documentation: http://${env.HOST}:${env.PORT}/api-docs`);
+    logger.info(`📚 API Documentation: http://${env.HOST}:${env.PORT}/docs`);
     logger.info(`🏥 Health Check: http://${env.HOST}:${env.PORT}/health`);
   } catch (error) {
     logger.error({ error }, 'Failed to start server');
