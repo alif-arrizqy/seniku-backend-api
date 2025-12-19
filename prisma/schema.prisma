@@ -1,0 +1,223 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  TEACHER
+  STUDENT
+  ADMIN
+}
+
+enum AssignmentStatus {
+  DRAFT
+  ACTIVE
+  COMPLETED
+}
+
+enum SubmissionStatus {
+  NOT_SUBMITTED
+  PENDING
+  REVISION
+  GRADED
+}
+
+enum NotificationType {
+  ASSIGNMENT_CREATED
+  ASSIGNMENT_DEADLINE
+  SUBMISSION_GRADED
+  SUBMISSION_REVISION
+  ACHIEVEMENT_UNLOCKED
+  GENERAL
+}
+
+model User {
+  id            String    @id @default(uuid())
+  email         String?   @unique
+  nip           String?   @unique @map("nip") // Nomor Induk Pegawai, untuk TEACHER
+  nis           String?   @unique @map("nis") // Nomor Induk Siswa, untuk STUDENT
+  password      String
+  name          String
+  role          UserRole  @default(STUDENT)
+  phone         String?
+  address       String?
+  bio           String?
+  birthdate     DateTime?
+  avatar        String?
+  className     String?   @map("class_name")
+  classId       String?   @map("class_id")
+  isActive      Boolean   @default(true) @map("is_active")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  class         Class?            @relation(fields: [classId], references: [id])
+  createdAssignments Assignment[]  @relation("AssignmentCreator")
+  submissions   Submission[]
+  notifications Notification[]
+  achievements  UserAchievement[]
+
+  @@index([email])
+  @@index([nip])
+  @@index([nis])
+  @@index([role])
+  @@index([classId])
+  @@map("users")
+}
+
+model Class {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  students    User[]
+  assignments AssignmentClass[]
+
+  @@index([name])
+  @@map("classes")
+}
+
+model Assignment {
+  id          String            @id @default(uuid())
+  title       String
+  description String
+  category    String
+  deadline    DateTime
+  status      AssignmentStatus @default(DRAFT)
+  createdById String            @map("created_by_id")
+  createdAt   DateTime          @default(now()) @map("created_at")
+  updatedAt   DateTime          @updatedAt @map("updated_at")
+
+  // Relations
+  createdBy   User              @relation("AssignmentCreator", fields: [createdById], references: [id])
+  submissions Submission[]
+  classes     AssignmentClass[]
+
+  @@index([createdById])
+  @@index([status])
+  @@index([deadline])
+  @@index([category])
+  @@map("assignments")
+}
+
+model AssignmentClass {
+  id           String     @id @default(uuid())
+  assignmentId String     @map("assignment_id")
+  classId      String     @map("class_id")
+  createdAt    DateTime   @default(now()) @map("created_at")
+
+  // Relations
+  assignment   Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  class        Class      @relation(fields: [classId], references: [id], onDelete: Cascade)
+
+  @@unique([assignmentId, classId])
+  @@index([assignmentId])
+  @@index([classId])
+  @@map("assignment_classes")
+}
+
+model Submission {
+  id            String            @id @default(uuid())
+  assignmentId String             @map("assignment_id")
+  studentId     String             @map("student_id")
+  title         String
+  description   String?
+  imageUrl      String              @map("image_url")
+  imageThumbnail String?            @map("image_thumbnail")
+  imageMedium    String?            @map("image_medium")
+  status        SubmissionStatus    @default(NOT_SUBMITTED)
+  grade         Int?
+  feedback      String?
+  revisionCount Int                 @default(0) @map("revision_count")
+  submittedAt   DateTime?          @map("submitted_at")
+  gradedAt      DateTime?           @map("graded_at")
+  createdAt     DateTime            @default(now()) @map("created_at")
+  updatedAt     DateTime            @updatedAt @map("updated_at")
+
+  // Relations
+  assignment    Assignment         @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  student       User               @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  revisions     SubmissionRevision[]
+
+  @@unique([assignmentId, studentId])
+  @@index([assignmentId])
+  @@index([studentId])
+  @@index([status])
+  @@index([submittedAt])
+  @@map("submissions")
+}
+
+model SubmissionRevision {
+  id           String   @id @default(uuid())
+  submissionId String   @map("submission_id")
+  revisionNote String   @map("revision_note")
+  imageUrl     String   @map("image_url")
+  submittedAt  DateTime @default(now()) @map("submitted_at")
+
+  // Relations
+  submission   Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+
+  @@index([submissionId])
+  @@map("submission_revisions")
+}
+
+model Notification {
+  id        String           @id @default(uuid())
+  userId    String           @map("user_id")
+  type      NotificationType
+  title     String
+  message   String
+  link      String?
+  isRead    Boolean          @default(false) @map("is_read")
+  createdAt DateTime         @default(now()) @map("created_at")
+
+  // Relations
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([isRead])
+  @@index([createdAt])
+  @@map("notifications")
+}
+
+model Achievement {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String
+  icon        String
+  criteria    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  users       UserAchievement[]
+
+  @@index([name])
+  @@map("achievements")
+}
+
+model UserAchievement {
+  id            String      @id @default(uuid())
+  userId        String      @map("user_id")
+  achievementId String      @map("achievement_id")
+  unlockedAt    DateTime    @default(now()) @map("unlocked_at")
+
+  // Relations
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievement   Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, achievementId])
+  @@index([userId])
+  @@index([achievementId])
+  @@map("user_achievements")
+}
+
