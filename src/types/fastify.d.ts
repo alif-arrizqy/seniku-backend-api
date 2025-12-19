@@ -1,4 +1,4 @@
-import { FastifyRequest } from 'fastify';
+import 'fastify';
 import { UserRole } from '@prisma/client';
 
 declare module 'fastify' {
@@ -13,17 +13,5 @@ declare module 'fastify' {
       avatar?: string | null;
     };
   }
-}
-
-export interface AuthenticatedRequest extends FastifyRequest {
-  user: {
-    id: string;
-    email?: string | null;
-    nip?: string | null;
-    nis?: string | null;
-    name: string;
-    role: UserRole;
-    avatar?: string | null;
-  };
 }
 
