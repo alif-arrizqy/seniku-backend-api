@@ -11,7 +11,7 @@
     "prisma:migrate": "npx prisma migrate dev",
     "prisma:push": "npx prisma db push",
     "prisma:studio": "npx prisma studio",
-    "prisma:seed": "tsx src/prisma/seed.ts",
+    "prisma:seed": "tsx prisma/seed.ts",
     "setup:minio": "tsx scripts/setup-minio.ts",
     "lint": "eslint src --ext .ts",
     "lint:fix": "eslint src --ext .ts --fix",
