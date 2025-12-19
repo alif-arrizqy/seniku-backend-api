@@ -14,10 +14,22 @@ async function start() {
     });
 
     logger.info(`🚀 Server is running on http://${env.HOST}:${env.PORT}`);
-    logger.info(`📚 API Documentation: http://${env.HOST}:${env.PORT}/docs`);
     logger.info(`🏥 Health Check: http://${env.HOST}:${env.PORT}/health`);
-  } catch (error) {
-    logger.error({ error }, 'Failed to start server');
+    logger.info(`📚 API Documentation: See /docs folder`);
+  } catch (error: any) {
+    logger.error(
+      {
+        error: error?.message || 'Unknown error',
+        stack: error?.stack,
+        name: error?.name,
+        code: error?.code,
+      },
+      'Failed to start server'
+    );
+    console.error('❌ Server startup error:', error?.message || error);
+    if (error?.stack) {
+      console.error('Stack trace:', error.stack);
+    }
     process.exit(1);
   }
 }
