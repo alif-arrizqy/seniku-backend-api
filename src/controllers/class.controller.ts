@@ -34,7 +34,16 @@ export class ClassController {
 
       const { classes, total } = await classService.findClasses(filters, pagination);
 
-      return ResponseFormatter.paginated(reply, classes, pagination, 'Classes retrieved successfully');
+      return ResponseFormatter.paginated(
+        reply,
+        classes,
+        {
+          page: pagination.page,
+          limit: pagination.limit,
+          total,
+        },
+        'Classes retrieved successfully'
+      );
     } catch (error: any) {
       return handleError(reply, error, 'Get classes error', {
         query: request.query,

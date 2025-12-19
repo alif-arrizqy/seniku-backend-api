@@ -1,5 +1,7 @@
 import prisma from '../config/database';
-import { parsePagination, PaginationResult } from '../utils/pagination';
+import { Prisma } from '@prisma/client';
+import { PaginationResult } from '../utils/pagination';
+import { ErrorMessages } from '../constants/error-messages';
 
 export interface ClassFilters {
   search?: string;
@@ -40,43 +42,54 @@ export class ClassService {
   }
 
   async findClassById(classId: string) {
-    const classData = await prisma.class.findUnique({
-      where: { id: classId },
-      include: {
-        students: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-            nis: true,
-            avatar: true,
+    try {
+      const classData = await prisma.class.findUnique({
+        where: { id: classId },
+        include: {
+          students: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              nis: true,
+              avatar: true,
+            },
+          },
+          _count: {
+            select: {
+              students: true,
+              assignments: true,
+            },
           },
         },
-        _count: {
-          select: {
-            students: true,
-            assignments: true,
-          },
-        },
-      },
-    });
+      });
 
-    if (!classData) {
-      throw new Error('Class not found');
+      if (!classData) {
+        throw new Error(ErrorMessages.RESOURCE.CLASS_NOT_FOUND);
+      }
+
+      return classData;
+    } catch (error: any) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2025') {
+          throw new Error(ErrorMessages.RESOURCE.CLASS_NOT_FOUND);
+        }
+      }
+      throw error;
     }
-
-    return classData;
   }
 
   async createClass(data: { name: string; description?: string }) {
-    // find if class already exists
-    const classExists = await prisma.class.findUnique({
-      where: { name: data.name },
-    });
-    if (classExists) {
-      throw new Error('Class already exists');
-    }
     try {
+      // Check if class already exists
+      const classExists = await prisma.class.findUnique({
+        where: { name: data.name },
+      });
+      
+      if (classExists) {
+        throw new Error(`Class name ${ErrorMessages.RESOURCE.ALREADY_EXISTS}`);
+      }
+
       const classData = await prisma.class.create({
         data,
         include: {
@@ -87,23 +100,48 @@ export class ClassService {
           },
         },
       });
-  
+
       return classData;
-    } catch (error) {
-      throw new Error('Failed to create class', { cause: error });
+    } catch (error: any) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2002') {
+          const target = (error.meta as any)?.target;
+          const field = Array.isArray(target) ? target[0] : 'name';
+          throw new Error(`${field} ${ErrorMessages.RESOURCE.ALREADY_EXISTS}`);
+        }
+        if (error.code === 'P2025') {
+          throw new Error(ErrorMessages.RESOURCE.CLASS_NOT_FOUND);
+        }
+      }
+      // Re-throw custom errors
+      if (error.message?.includes(ErrorMessages.RESOURCE.ALREADY_EXISTS)) {
+        throw error;
+      }
+      throw new Error('Failed to create class');
     }
   }
 
   async updateClass(classId: string, data: { name?: string; description?: string }) {
-    // find if class already exists
-    const classExists = await prisma.class.findUnique({
-      where: { name: data.name },
-    });
-    if (classExists) {
-      throw new Error('Class already exists');
-    }
-
     try {
+      // Check if class exists
+      const existingClass = await prisma.class.findUnique({
+        where: { id: classId },
+      });
+
+      if (!existingClass) {
+        throw new Error(ErrorMessages.RESOURCE.CLASS_NOT_FOUND);
+      }
+
+      // Check if new name already exists (if name is being updated)
+      if (data.name && data.name !== existingClass.name) {
+        const classExists = await prisma.class.findUnique({
+          where: { name: data.name },
+        });
+        if (classExists) {
+          throw new Error(`Class name ${ErrorMessages.RESOURCE.ALREADY_EXISTS}`);
+        }
+      }
+
       const classData = await prisma.class.update({
         where: { id: classId },
         data,
@@ -115,17 +153,59 @@ export class ClassService {
           },
         },
       });
-  
+
       return classData;
-    } catch (error) {
-      throw new Error('Failed to update class', { cause: error });
+    } catch (error: any) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2025') {
+          throw new Error(ErrorMessages.RESOURCE.CLASS_NOT_FOUND);
+        }
+        if (error.code === 'P2002') {
+          const target = (error.meta as any)?.target;
+          const field = Array.isArray(target) ? target[0] : 'name';
+          throw new Error(`${field} ${ErrorMessages.RESOURCE.ALREADY_EXISTS}`);
+        }
+      }
+      // Re-throw custom errors
+      if (
+        error.message === ErrorMessages.RESOURCE.CLASS_NOT_FOUND ||
+        error.message?.includes(ErrorMessages.RESOURCE.ALREADY_EXISTS)
+      ) {
+        throw error;
+      }
+      throw new Error('Failed to update class');
     }
   }
 
   async deleteClass(classId: string) {
-    await prisma.class.delete({
-      where: { id: classId },
-    });
+    try {
+      // Check if class exists first
+      const classData = await prisma.class.findUnique({
+        where: { id: classId },
+      });
+
+      if (!classData) {
+        throw new Error(ErrorMessages.RESOURCE.CLASS_NOT_FOUND);
+      }
+
+      await prisma.class.delete({
+        where: { id: classId },
+      });
+    } catch (error: any) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2025') {
+          throw new Error(ErrorMessages.RESOURCE.CLASS_NOT_FOUND);
+        }
+        if (error.code === 'P2003') {
+          throw new Error('Cannot delete class: Class has students or assignments');
+        }
+      }
+      // Re-throw custom errors
+      if (error.message === ErrorMessages.RESOURCE.CLASS_NOT_FOUND) {
+        throw error;
+      }
+      throw error;
+    }
   }
 }
 
