@@ -245,7 +245,7 @@ export class ExportService {
     filters: ExportGradesFilters,
     userId: string,
     userRole: UserRole,
-    format: 'summary' | 'detailed' = 'detailed'
+    reportFormat: 'summary' | 'detailed' = 'detailed'
   ): Promise<Buffer> {
     const submissions = await this.getGradesData(filters, userId, userRole);
 
@@ -280,7 +280,7 @@ export class ExportService {
       doc.text(`Average Score: ${averageScore.toFixed(2)}`);
       doc.moveDown(2);
 
-      if (format === 'detailed') {
+      if (reportFormat === 'detailed') {
         // Detailed grades table
         doc.fontSize(16).text('Detailed Grades', { underline: true });
         doc.moveDown(0.5);
@@ -309,7 +309,7 @@ export class ExportService {
 
         // Table rows
         doc.font('Helvetica').fontSize(9);
-        submissions.forEach((submission, index) => {
+        submissions.forEach((submission) => {
           if (yPosition > 750) {
             // New page
             doc.addPage();
@@ -341,7 +341,7 @@ export class ExportService {
     });
   }
 
-  async exportReportCard(studentId: string, userId: string, userRole: UserRole, format: 'summary' | 'detailed' = 'detailed'): Promise<Buffer> {
+  async exportReportCard(studentId: string, userId: string, userRole: UserRole, reportFormat: 'summary' | 'detailed' = 'detailed'): Promise<Buffer> {
     // Check permission
     if (userRole === 'STUDENT' && studentId !== userId) {
       throw new Error('Forbidden: You can only export your own report card');
@@ -425,7 +425,7 @@ export class ExportService {
       doc.text(`Highest Score: ${highestScore}`);
       doc.moveDown(2);
 
-      if (format === 'detailed' && student.submissions.length > 0) {
+      if (reportFormat === 'detailed' && student.submissions.length > 0) {
         // Detailed assignments list
         doc.fontSize(16).text('Assignments', { underline: true });
         doc.moveDown(0.5);

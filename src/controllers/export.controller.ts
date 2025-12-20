@@ -39,9 +39,9 @@ export class ExportController {
       const body = exportGradesPdfSchema.parse(request.body);
       const userId = request.user!.id;
       const userRole = request.user!.role;
-      const format = body.format || 'detailed';
+      const reportFormat = body.format || 'detailed';
 
-      const buffer = await exportService.exportGradesToPdf(body, userId, userRole, format);
+      const buffer = await exportService.exportGradesToPdf(body, userId, userRole, reportFormat);
 
       const filename = `seniku-grades-report-${format(new Date(), 'yyyy-MM-dd')}.pdf`;
 
@@ -68,9 +68,9 @@ export class ExportController {
       const query = exportReportCardSchema.parse(request.query);
       const userId = request.user!.id;
       const userRole = request.user!.role;
-      const format = query.format || 'detailed';
+      const reportFormat = query.format || 'detailed';
 
-      const buffer = await exportService.exportReportCard(params.id, userId, userRole, format);
+      const buffer = await exportService.exportReportCard(params.id, userId, userRole, reportFormat);
 
       const student = await prisma.user.findUnique({
         where: { id: params.id },
