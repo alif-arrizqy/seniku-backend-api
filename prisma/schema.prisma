@@ -87,11 +87,28 @@ model Class {
   @@map("classes")
 }
 
+model Category {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  icon        String?  // Optional icon/emoji untuk category
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  assignments Assignment[]
+
+  @@index([name])
+  @@index([isActive])
+  @@map("categories")
+}
+
 model Assignment {
   id          String            @id @default(uuid())
   title       String
   description String
-  category    String
+  categoryId  String            @map("category_id")
   deadline    DateTime
   status      AssignmentStatus @default(DRAFT)
   createdById String            @map("created_by_id")
@@ -100,13 +117,14 @@ model Assignment {
 
   // Relations
   createdBy   User              @relation("AssignmentCreator", fields: [createdById], references: [id])
+  category    Category          @relation(fields: [categoryId], references: [id])
   submissions Submission[]
   classes     AssignmentClass[]
 
   @@index([createdById])
   @@index([status])
   @@index([deadline])
-  @@index([category])
+  @@index([categoryId])
   @@map("assignments")
 }
 

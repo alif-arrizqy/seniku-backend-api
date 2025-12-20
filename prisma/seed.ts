@@ -146,10 +146,43 @@ async function main() {
 
   console.log(`✅ Created ${students.length} students`);
 
+  // Category
+  const categoryData = [
+    {
+      'name': 'Lukisan',
+      'description': '',
+      'icon': '🎨',
+      'isActive': true,
+    },
+    {
+      'name': 'Digital Art',
+      'description': '',
+      'icon': '🖼️',
+      'isActive': true,
+    },
+    {
+      'name': 'Seni Rupa',
+      'description': '',
+      'icon': '📍',
+      'isActive': true,
+    },
+  ];
+
+  const categories = await Promise.all(categoryData.map(async (category) => {
+    return await prisma.category.upsert({
+      where: { name: category.name },
+      update: {},
+      create: category,
+    });
+  }));
+
+
+
   console.log('\n📊 Seed Summary:');
   console.log(`   - Classes: ${classes.length}`);
   console.log(`   - Teachers: ${teachers.length}`);
   console.log(`   - Students: ${students.length}`);
+  console.log(`   - Categories: ${categories.length}`);
   console.log('\n✅ Database seed completed!');
 }
 
