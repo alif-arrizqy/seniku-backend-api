@@ -7,8 +7,8 @@ import { z } from 'zod';
 import { handleError } from '../utils/error-handler';
 
 const queryNotificationsSchema = z.object({
-  page: z.string().transform(Number).pipe(z.number().int().positive()).optional().default('1'),
-  limit: z.string().transform(Number).pipe(z.number().int().positive().max(100)).optional().default('10'),
+  page: z.string().transform(Number).pipe(z.number().int().positive()).optional().default(() => 1),
+  limit: z.string().transform(Number).pipe(z.number().int().positive().max(100)).optional().default(() => 10),
   isRead: z.string().transform((val) => val === 'true').optional(),
 });
 

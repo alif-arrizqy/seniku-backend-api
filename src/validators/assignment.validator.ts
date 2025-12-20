@@ -20,8 +20,8 @@ export const updateAssignmentSchema = z.object({
 });
 
 export const queryAssignmentsSchema = z.object({
-  page: z.string().transform(Number).pipe(z.number().int().positive()).optional().default('1'),
-  limit: z.string().transform(Number).pipe(z.number().int().positive().max(100)).optional().default('10'),
+  page: z.string().transform(Number).pipe(z.number().int().positive()).optional().default(() => 1),
+  limit: z.string().transform(Number).pipe(z.number().int().positive().max(100)).optional().default(() => 10),
   status: z.nativeEnum(AssignmentStatus).optional(),
   categoryId: z.string().uuid().optional(),
   classId: z.string().uuid().optional(),

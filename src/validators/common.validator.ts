@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
 export const paginationSchema = z.object({
-  page: z.string().transform(Number).pipe(z.number().int().positive()).optional().default('1'),
-  limit: z.string().transform(Number).pipe(z.number().int().positive().max(100)).optional().default('10'),
+  page: z.string().transform(Number).pipe(z.number().int().positive()).optional().default(() => 1),
+  limit: z.string().transform(Number).pipe(z.number().int().positive().max(100)).optional().default(() => 10),
 });
 
 export const idParamSchema = z.object({

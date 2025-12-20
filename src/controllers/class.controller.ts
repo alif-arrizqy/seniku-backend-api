@@ -17,8 +17,8 @@ const updateClassSchema = z.object({
 });
 
 const queryClassesSchema = z.object({
-  page: z.string().transform(Number).pipe(z.number().int().positive()).optional().default('1'),
-  limit: z.string().transform(Number).pipe(z.number().int().positive().max(100)).optional().default('10'),
+  page: z.string().transform(Number).pipe(z.number().int().positive()).optional().default(() => 1),
+  limit: z.string().transform(Number).pipe(z.number().int().positive().max(100)).optional().default(() => 10),
   search: z.string().optional(),
 });
 
