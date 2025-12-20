@@ -1,0 +1,1333 @@
+{
+	"info": {
+		"_postman_id": "test-collection-seniku-2025",
+		"name": "SeniKu App - Automated Tests",
+		"description": "Automated test collection for SeniKu API with complete flow testing",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "00 - Setup & Authentication",
+			"item": [
+				{
+					"name": "Register Teacher",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Use fixed NIP for testing (or get from environment)",
+									"const teacherNip = pm.collectionVariables.get('teacherNip') || pm.environment.get('teacherNip') || '0987654321';",
+									"const teacherEmail = pm.collectionVariables.get('teacherEmail') || pm.environment.get('teacherEmail') || `teacher.test.${Date.now()}@seniku.com`;",
+									"",
+									"// Save to collection variables",
+									"pm.collectionVariables.set('teacherEmail', teacherEmail);",
+									"pm.collectionVariables.set('teacherNip', teacherNip);",
+									"",
+									"// Update request body with saved NIP",
+									"const body = JSON.parse(pm.request.body.raw);",
+									"body.email = teacherEmail;",
+									"body.nip = teacherNip;",
+									"pm.request.body.raw = JSON.stringify(body);",
+									"",
+									"// Test assertions",
+									"pm.test('Status code is 201', function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test('Response has success true', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"});",
+									"",
+									"pm.test('Save teacher ID', function () {",
+									"    const jsonData = pm.response.json();",
+									"    if (jsonData.data && jsonData.data.user && jsonData.data.user.id) {",
+									"        pm.collectionVariables.set('teacherId', jsonData.data.user.id);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"teacher@test.com\",\n    \"password\": \"password123\",\n    \"nip\": \"0987654321\",\n    \"name\": \"Teacher Test\",\n    \"role\": \"TEACHER\",\n    \"phone\": \"081234567890\"\n}"
+						},
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{AUTH_PREFIX}}/register",
+							"host": ["{{HOST}}"],
+							"port": "{{PORT}}",
+							"path": ["{{AUTH_PREFIX}}", "register"]
+						}
+					}
+				},
+				{
+					"name": "Login Teacher",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response has accessToken', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"    pm.expect(jsonData.data).to.have.property('accessToken');",
+									"    ",
+									"    // Save tokens",
+									"    pm.collectionVariables.set('teacherAccessToken', jsonData.data.accessToken);",
+									"    if (jsonData.data.refreshToken) {",
+									"        pm.collectionVariables.set('teacherRefreshToken', jsonData.data.refreshToken);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Use teacher credentials from collection variables",
+									"const teacherEmail = pm.collectionVariables.get('teacherEmail');",
+									"const teacherNip = pm.collectionVariables.get('teacherNip');",
+									"",
+									"// Update request body",
+									"const body = JSON.parse(pm.request.body.raw);",
+									"body.identifier = teacherNip || teacherEmail;",
+									"pm.request.body.raw = JSON.stringify(body);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"identifier\": \"{{teacherNip}}\",\n    \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{AUTH_PREFIX}}/login",
+							"host": ["{{HOST}}"],
+							"port": "{{PORT}}",
+							"path": ["{{AUTH_PREFIX}}", "login"]
+						}
+					}
+				},
+				{
+					"name": "Register Student",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Use fixed NIS for testing (or get from environment)",
+									"const studentNis = pm.collectionVariables.get('studentNis') || pm.environment.get('studentNis') || '2025123456789';",
+									"const studentName = pm.collectionVariables.get('studentName') || pm.environment.get('studentName') || 'Student Test';",
+									"",
+									"// Save to collection variables",
+									"pm.collectionVariables.set('studentNis', studentNis);",
+									"pm.collectionVariables.set('studentName', studentName);",
+									"",
+									"// Update request body with saved NIS",
+									"const body = JSON.parse(pm.request.body.raw);",
+									"body.nis = studentNis;",
+									"body.name = studentName;",
+									"pm.request.body.raw = JSON.stringify(body);",
+									"",
+									"// Test assertions",
+									"pm.test('Status code is 201', function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test('Response has success true', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"});",
+									"",
+									"pm.test('Save student ID', function () {",
+									"    const jsonData = pm.response.json();",
+									"    if (jsonData.data && jsonData.data.user && jsonData.data.user.id) {",
+									"        pm.collectionVariables.set('studentId', jsonData.data.user.id);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nis\": \"2025123456789\",\n    \"name\": \"Student Test\",\n    \"role\": \"STUDENT\",\n    \"password\": \"123456\",\n    \"phone\": \"081234567890\",\n    \"classId\": \"{{classId}}\"\n}"
+						},
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{AUTH_PREFIX}}/register",
+							"host": ["{{HOST}}"],
+							"port": "{{PORT}}",
+							"path": ["{{AUTH_PREFIX}}", "register"]
+						}
+					}
+				},
+				{
+					"name": "Login Student",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response has accessToken', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"    pm.expect(jsonData.data).to.have.property('accessToken');",
+									"    ",
+									"    // Save tokens",
+									"    pm.collectionVariables.set('studentAccessToken', jsonData.data.accessToken);",
+									"    if (jsonData.data.refreshToken) {",
+									"        pm.collectionVariables.set('studentRefreshToken', jsonData.data.refreshToken);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Use student credentials from collection variables",
+									"const studentNis = pm.collectionVariables.get('studentNis');",
+									"",
+									"// Update request body",
+									"const body = JSON.parse(pm.request.body.raw);",
+									"body.identifier = studentNis;",
+									"pm.request.body.raw = JSON.stringify(body);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"identifier\": \"{{studentNis}}\",\n    \"password\": \"123456\"\n}"
+						},
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{AUTH_PREFIX}}/login",
+							"host": ["{{HOST}}"],
+							"port": "{{PORT}}",
+							"path": ["{{AUTH_PREFIX}}", "login"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "01 - Teacher: Create Category",
+			"item": [
+				{
+					"name": "Create Category",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 201', function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test('Response has category data', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"    pm.expect(jsonData.data).to.have.property('category');",
+									"    ",
+									"    // Save category ID",
+									"    if (jsonData.data.category && jsonData.data.category.id) {",
+									"        pm.collectionVariables.set('categoryId', jsonData.data.category.id);",
+									"        console.log('Category ID saved:', jsonData.data.category.id);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Set authorization header",
+									"pm.request.headers.add({",
+									"    key: 'Authorization',",
+									"    value: 'Bearer ' + pm.collectionVariables.get('teacherAccessToken')",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Lukisan\",\n    \"description\": \"Kategori untuk karya lukisan\",\n    \"icon\": \"🎨\"\n}"
+						},
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{CATEGORIES_PREFIX}}",
+							"host": ["{{HOST}}"],
+							"port": "{{PORT}}",
+							"path": ["{{CATEGORIES_PREFIX}}"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "02 - Teacher: Create Assignment",
+			"item": [
+				{
+					"name": "Get Classes (for assignment)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response has classes data', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"    pm.expect(jsonData.data).to.be.an('array');",
+									"    ",
+									"    // Save first class ID if available",
+									"    if (jsonData.data && jsonData.data.length > 0 && jsonData.data[0].id) {",
+									"        pm.collectionVariables.set('classId', jsonData.data[0].id);",
+									"        console.log('Class ID saved:', jsonData.data[0].id);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Set authorization header",
+									"pm.request.headers.add({",
+									"    key: 'Authorization',",
+									"    value: 'Bearer ' + pm.collectionVariables.get('teacherAccessToken')",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{CLASSES_PREFIX}}?page=1&limit=10",
+							"host": ["{{HOST}}"],
+							"port": "{{PORT}}",
+							"path": ["{{CLASSES_PREFIX}}"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Create Assignment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 201', function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test('Response has assignment data', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"    pm.expect(jsonData.data).to.have.property('assignment');",
+									"    ",
+									"    // Save assignment ID",
+									"    if (jsonData.data.assignment && jsonData.data.assignment.id) {",
+									"        pm.collectionVariables.set('assignmentId', jsonData.data.assignment.id);",
+									"        console.log('Assignment ID saved:', jsonData.data.assignment.id);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Set authorization header",
+									"pm.request.headers.add({",
+									"    key: 'Authorization',",
+									"    value: 'Bearer ' + pm.collectionVariables.get('teacherAccessToken')",
+									"});",
+									"",
+									"// Update request body with saved IDs",
+									"const categoryId = pm.collectionVariables.get('categoryId');",
+									"const classId = pm.collectionVariables.get('classId');",
+									"",
+									"if (categoryId && classId) {",
+									"    const body = JSON.parse(pm.request.body.raw);",
+									"    body.categoryId = categoryId;",
+									"    body.classIds = [classId];",
+									"    pm.request.body.raw = JSON.stringify(body);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Lukisan Tema Alam\",\n    \"description\": \"Buat lukisan dengan tema pemandangan alam Indonesia\",\n    \"categoryId\": \"{{categoryId}}\",\n    \"deadline\": \"2026-12-31T23:59:59.000Z\",\n    \"classIds\": [\"{{classId}}\"]\n}"
+						},
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{ASSIGNMENTS_PREFIX}}",
+							"host": ["{{HOST}}"],
+							"port": "{{PORT}}",
+							"path": ["{{ASSIGNMENTS_PREFIX}}"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "03 - Student: Upload Submission",
+			"item": [
+				{
+					"name": "Upload Submission",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 201', function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test('Response has submission data', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"    pm.expect(jsonData.data).to.have.property('submission');",
+									"    ",
+									"    // Save submission ID",
+									"    if (jsonData.data.submission && jsonData.data.submission.id) {",
+									"        pm.collectionVariables.set('submissionId', jsonData.data.submission.id);",
+									"        console.log('Submission ID saved:', jsonData.data.submission.id);",
+									"    }",
+									"    ",
+									"    // Verify status is PENDING",
+									"    pm.expect(jsonData.data.submission.status).to.equal('PENDING');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Set authorization header",
+									"pm.request.headers.add({",
+									"    key: 'Authorization',",
+									"    value: 'Bearer ' + pm.collectionVariables.get('studentAccessToken')",
+									"});",
+									"",
+									"// Update form data with saved assignment ID",
+									"const assignmentId = pm.collectionVariables.get('assignmentId');",
+									"if (assignmentId) {",
+									"    // Note: For form-data, we need to update the formdata array",
+									"    // This is handled in the request body",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "assignmentId",
+									"value": "{{assignmentId}}",
+									"type": "text"
+								},
+								{
+									"key": "title",
+									"value": "Karya Lukisan Alam",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "Lukisan pemandangan alam dengan tema gunung dan danau",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{SUBMISSIONS_PREFIX}}",
+							"host": ["{{HOST}}"],
+							"port": "{{PORT}}",
+							"path": ["{{SUBMISSIONS_PREFIX}}"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "04 - Teacher: Grade Submission (Direct)",
+			"item": [
+				{
+					"name": "Grade Submission Directly",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response has graded submission', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"    pm.expect(jsonData.data).to.have.property('submission');",
+									"    ",
+									"    // Verify status is GRADED",
+									"    pm.expect(jsonData.data.submission.status).to.equal('GRADED');",
+									"    pm.expect(jsonData.data.submission.grade).to.be.a('number');",
+									"    pm.expect(jsonData.data.submission.feedback).to.be.a('string');",
+									"    ",
+									"    // Save grade for later tests",
+									"    pm.collectionVariables.set('submissionGrade', jsonData.data.submission.grade);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Set authorization header",
+									"pm.request.headers.add({",
+									"    key: 'Authorization',",
+									"    value: 'Bearer ' + pm.collectionVariables.get('teacherAccessToken')",
+									"});",
+									"",
+									"// Update URL with saved submission ID",
+									"const submissionId = pm.collectionVariables.get('submissionId');",
+									"if (submissionId) {",
+									"    const url = pm.request.url.toString();",
+									"    pm.request.url = url.replace('/:id/', `/${submissionId}/`);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"grade\": 85,\n    \"feedback\": \"Karya yang bagus! Penggunaan warna sangat harmonis dan komposisi sudah baik.\"\n}"
+						},
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{SUBMISSIONS_PREFIX}}/{{submissionId}}/grade",
+							"host": ["{{HOST}}"],
+							"port": "{{PORT}}",
+							"path": ["{{SUBMISSIONS_PREFIX}}", "{{submissionId}}", "grade"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "05 - Teacher: Request Revision",
+			"item": [
+				{
+					"name": "Request Revision",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response has revision submission', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"    pm.expect(jsonData.data).to.have.property('submission');",
+									"    ",
+									"    // Verify status is REVISION",
+									"    pm.expect(jsonData.data.submission.status).to.equal('REVISION');",
+									"    pm.expect(jsonData.data.submission.revisionCount).to.be.at.least(1);",
+									"    ",
+									"    // Verify revision note exists",
+									"    pm.expect(jsonData.data.submission.revisions).to.be.an('array');",
+									"    pm.expect(jsonData.data.submission.revisions.length).to.be.at.least(1);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Set authorization header",
+									"pm.request.headers.add({",
+									"    key: 'Authorization',",
+									"    value: 'Bearer ' + pm.collectionVariables.get('teacherAccessToken')",
+									"});",
+									"",
+									"// Update URL with saved submission ID",
+									"const submissionId = pm.collectionVariables.get('submissionId');",
+									"if (submissionId) {",
+									"    const url = pm.request.url.toString();",
+									"    pm.request.url = url.replace('/:id/', `/${submissionId}/`);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"revisionNote\": \"Warna kurang kontras, tolong perbaiki bagian langit dan tambahkan detail pada bagian foreground\"\n}"
+						},
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{SUBMISSIONS_PREFIX}}/{{submissionId}}/revision",
+							"host": ["{{HOST}}"],
+							"port": "{{PORT}}",
+							"path": ["{{SUBMISSIONS_PREFIX}}", "{{submissionId}}", "revision"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "06 - Student: Resubmit After Revision",
+			"item": [
+				{
+					"name": "Update Submission (Resubmit)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response has updated submission', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"    pm.expect(jsonData.data).to.have.property('submission');",
+									"    ",
+									"    // Verify status is back to PENDING",
+									"    pm.expect(jsonData.data.submission.status).to.equal('PENDING');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Set authorization header",
+									"pm.request.headers.add({",
+									"    key: 'Authorization',",
+									"    value: 'Bearer ' + pm.collectionVariables.get('studentAccessToken')",
+									"});",
+									"",
+									"// Update URL with saved submission ID",
+									"const submissionId = pm.collectionVariables.get('submissionId');",
+									"if (submissionId) {",
+									"    const url = pm.request.url.toString();",
+									"    pm.request.url = url.replace('/:id/', `/${submissionId}/`);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Karya Lukisan Alam (Revisi)\",\n    \"description\": \"Lukisan pemandangan alam dengan perbaikan kontras warna dan detail foreground\"\n}"
+						},
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{SUBMISSIONS_PREFIX}}/{{submissionId}}",
+							"host": ["{{HOST}}"],
+							"port": "{{PORT}}",
+							"path": ["{{SUBMISSIONS_PREFIX}}", "{{submissionId}}"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "07 - Teacher: Final Grade",
+			"item": [
+				{
+					"name": "Grade Revised Submission",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response has final graded submission', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"    pm.expect(jsonData.data).to.have.property('submission');",
+									"    ",
+									"    // Verify status is GRADED",
+									"    pm.expect(jsonData.data.submission.status).to.equal('GRADED');",
+									"    pm.expect(jsonData.data.submission.grade).to.be.a('number');",
+									"    ",
+									"    // Verify revision count increased",
+									"    pm.expect(jsonData.data.submission.revisionCount).to.be.at.least(1);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Set authorization header",
+									"pm.request.headers.add({",
+									"    key: 'Authorization',",
+									"    value: 'Bearer ' + pm.collectionVariables.get('teacherAccessToken')",
+									"});",
+									"",
+									"// Update URL with saved submission ID",
+									"const submissionId = pm.collectionVariables.get('submissionId');",
+									"if (submissionId) {",
+									"    const url = pm.request.url.toString();",
+									"    pm.request.url = url.replace('/:id/', `/${submissionId}/`);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"grade\": 92,\n    \"feedback\": \"Sangat bagus! Perbaikan yang dilakukan sudah sesuai dengan saran. Karya menjadi lebih menarik dengan kontras warna yang lebih baik.\"\n}"
+						},
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{SUBMISSIONS_PREFIX}}/{{submissionId}}/grade",
+							"host": ["{{HOST}}"],
+							"port": "{{PORT}}",
+							"path": ["{{SUBMISSIONS_PREFIX}}", "{{submissionId}}", "grade"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "08 - Achievement Tests",
+			"item": [
+				{
+					"name": "Create Achievement",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 201', function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test('Response has achievement data', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"    pm.expect(jsonData.data).to.have.property('achievement');",
+									"    ",
+									"    // Save achievement ID",
+									"    if (jsonData.data.achievement && jsonData.data.achievement.id) {",
+									"        pm.collectionVariables.set('achievementId', jsonData.data.achievement.id);",
+									"        console.log('Achievement ID saved:', jsonData.data.achievement.id);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Set authorization header",
+									"pm.request.headers.add({",
+									"    key: 'Authorization',",
+									"    value: 'Bearer ' + pm.collectionVariables.get('teacherAccessToken')",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Seniman Pemula\",\n    \"description\": \"Menyelesaikan 1 tugas pertama\",\n    \"icon\": \"🎨\",\n    \"criteria\": {\n        \"type\": \"total_graded_submissions\",\n        \"value\": 1,\n        \"operator\": \">=\"\n    }\n}"
+						},
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{ACHIEVEMENTS_PREFIX}}",
+							"host": ["{{HOST}}"],
+							"port": "{{PORT}}",
+							"path": ["{{ACHIEVEMENTS_PREFIX}}"]
+						}
+					}
+				},
+				{
+					"name": "Check Student Achievements (After Grading)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response has achievements array', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"    pm.expect(jsonData.data).to.be.an('array');",
+									"    ",
+									"    // Check if achievement was unlocked",
+									"    const achievementId = pm.collectionVariables.get('achievementId');",
+									"    if (achievementId) {",
+									"        const unlocked = jsonData.data.find(a => a.id === achievementId);",
+									"        if (unlocked) {",
+									"            console.log('Achievement unlocked!', unlocked);",
+									"            pm.expect(unlocked).to.have.property('unlockedAt');",
+									"        } else {",
+									"            console.log('Achievement not yet unlocked');",
+									"        }",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Set authorization header",
+									"pm.request.headers.add({",
+									"    key: 'Authorization',",
+									"    value: 'Bearer ' + pm.collectionVariables.get('studentAccessToken')",
+									"});",
+									"",
+									"// Wait a bit for achievement checker to run (async process)",
+									"setTimeout(() => {}, 2000);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{ACHIEVEMENTS_PREFIX}}/me/achievements",
+							"host": ["{{HOST}}"],
+							"port": "{{PORT}}",
+							"path": ["{{ACHIEVEMENTS_PREFIX}}", "me", "achievements"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "09 - Dashboard Tests",
+			"item": [
+				{
+					"name": "Get Dashboard Overview (Teacher)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response has dashboard data', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"    pm.expect(jsonData.data).to.be.an('object');",
+									"    ",
+									"    // Verify dashboard structure",
+									"    pm.expect(jsonData.data).to.have.property('statistics');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Set authorization header",
+									"pm.request.headers.add({",
+									"    key: 'Authorization',",
+									"    value: 'Bearer ' + pm.collectionVariables.get('teacherAccessToken')",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{DASHBOARD_PREFIX}}/overview",
+							"host": ["{{HOST}}"],
+							"port": "{{PORT}}",
+							"path": ["{{DASHBOARD_PREFIX}}", "overview"]
+						}
+					}
+				},
+				{
+					"name": "Get Dashboard Overview (Student)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response has dashboard data', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"    pm.expect(jsonData.data).to.be.an('object');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Set authorization header",
+									"pm.request.headers.add({",
+									"    key: 'Authorization',",
+									"    value: 'Bearer ' + pm.collectionVariables.get('studentAccessToken')",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{DASHBOARD_PREFIX}}/overview",
+							"host": ["{{HOST}}"],
+							"port": "{{PORT}}",
+							"path": ["{{DASHBOARD_PREFIX}}", "overview"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "10 - Portfolio Tests",
+			"item": [
+				{
+					"name": "Get Portfolio",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response has portfolio data', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"    pm.expect(jsonData.data).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Set authorization header",
+									"pm.request.headers.add({",
+									"    key: 'Authorization',",
+									"    value: 'Bearer ' + pm.collectionVariables.get('studentAccessToken')",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{PORTFOLIO_PREFIX}}?page=1&limit=10",
+							"host": ["{{HOST}}"],
+							"port": "{{PORT}}",
+							"path": ["{{PORTFOLIO_PREFIX}}"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "11 - Notifications Tests",
+			"item": [
+				{
+					"name": "Get Notifications (Student)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response has notifications', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"    pm.expect(jsonData.data).to.be.an('array');",
+									"    ",
+									"    // Check if achievement notification exists",
+									"    const achievementNotifications = jsonData.data.filter(n => n.type === 'ACHIEVEMENT_UNLOCKED');",
+									"    if (achievementNotifications.length > 0) {",
+									"        console.log('Achievement notification found!');",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Set authorization header",
+									"pm.request.headers.add({",
+									"    key: 'Authorization',",
+									"    value: 'Bearer ' + pm.collectionVariables.get('studentAccessToken')",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{NOTIFICATIONS_PREFIX}}?page=1&limit=10",
+							"host": ["{{HOST}}"],
+							"port": "{{PORT}}",
+							"path": ["{{NOTIFICATIONS_PREFIX}}"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Unread Count",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response has unread count', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"    pm.expect(jsonData.data).to.have.property('count');",
+									"    pm.expect(jsonData.data.count).to.be.a('number');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Set authorization header",
+									"pm.request.headers.add({",
+									"    key: 'Authorization',",
+									"    value: 'Bearer ' + pm.collectionVariables.get('studentAccessToken')",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{NOTIFICATIONS_PREFIX}}/unread/count",
+							"host": ["{{HOST}}"],
+							"port": "{{PORT}}",
+							"path": ["{{NOTIFICATIONS_PREFIX}}", "unread", "count"]
+						}
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Global pre-request script",
+					"// This runs before every request",
+					"",
+					"// Log request info",
+					"console.log('Request:', pm.request.method, pm.request.url.toString());"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Global test script",
+					"// This runs after every request",
+					"",
+					"// Log response time",
+					"console.log('Response time:', pm.response.responseTime + 'ms');",
+					"",
+					"// Log response status",
+					"if (pm.response.code >= 400) {",
+					"    console.error('Error response:', pm.response.text());",
+					"}"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "HOST",
+			"value": "http://localhost",
+			"type": "string"
+		},
+		{
+			"key": "PORT",
+			"value": "8989",
+			"type": "string"
+		},
+		{
+			"key": "AUTH_PREFIX",
+			"value": "api/v1/auth",
+			"type": "string"
+		},
+		{
+			"key": "CATEGORIES_PREFIX",
+			"value": "api/v1/categories",
+			"type": "string"
+		},
+		{
+			"key": "CLASSES_PREFIX",
+			"value": "api/v1/classes",
+			"type": "string"
+		},
+		{
+			"key": "ASSIGNMENTS_PREFIX",
+			"value": "api/v1/assignments",
+			"type": "string"
+		},
+		{
+			"key": "SUBMISSIONS_PREFIX",
+			"value": "api/v1/submissions",
+			"type": "string"
+		},
+		{
+			"key": "ACHIEVEMENTS_PREFIX",
+			"value": "api/v1/achievements",
+			"type": "string"
+		},
+		{
+			"key": "DASHBOARD_PREFIX",
+			"value": "api/v1/dashboard",
+			"type": "string"
+		},
+		{
+			"key": "PORTFOLIO_PREFIX",
+			"value": "api/v1/portfolio",
+			"type": "string"
+		},
+		{
+			"key": "NOTIFICATIONS_PREFIX",
+			"value": "api/v1/notifications",
+			"type": "string"
+		}
+	]
+}
+

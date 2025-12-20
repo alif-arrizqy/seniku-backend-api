@@ -1,0 +1,3499 @@
+{
+	"info": {
+		"_postman_id": "d032269b-a29b-4d86-9295-eca615125887",
+		"name": "SeniKu App",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "11529019"
+	},
+	"item": [
+		{
+			"name": "/auth",
+			"item": [
+				{
+					"name": "/register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"teacher@test.com\",\r\n    \"password\": \"password123\",\r\n    \"nip\": \"0987654321\",\r\n    \"name\": \"PamBudi\",\r\n    \"role\": \"TEACHER\",\r\n    \"phone\": \"081234567890\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{AUTH_PREFIX}}/register",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{AUTH_PREFIX}}",
+								"register"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\": \"teacher@test.com\",\r\n    \"password\": \"password123\",\r\n    \"nip\": \"0987654321\",\r\n    \"name\": \"PamBudi\",\r\n    \"role\": \"TEACHER\",\r\n    \"phone\": \"081234567890\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{HOST}}:{{PORT}}/{{AUTH_PREFIX}}/register",
+									"host": [
+										"{{HOST}}"
+									],
+									"port": "{{PORT}}",
+									"path": [
+										"{{AUTH_PREFIX}}",
+										"register"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "content-length",
+									"value": "263"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 19 Dec 2025 03:58:11 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=72"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"User registered successfully\",\n    \"data\": {\n        \"user\": {\n            \"id\": \"66e93cc4-f77b-4a65-b064-d41e05082580\",\n            \"email\": \"teacher@test.com\",\n            \"nip\": \"0987654321\",\n            \"nis\": null,\n            \"name\": \"PamBudi\",\n            \"role\": \"TEACHER\",\n            \"avatar\": null,\n            \"createdAt\": \"2025-12-19T03:58:11.244Z\"\n        }\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "/login",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Parse response JSON\r",
+									"const response = pm.response.json();\r",
+									"\r",
+									"// Extract accessToken dari response\r",
+									"if (response.data && response.data.accessToken) {\r",
+									"    // Simpan ke collection variable\r",
+									"    pm.collectionVariables.set(\"accessToken\", response.data.accessToken);\r",
+									"    \r",
+									"    // Simpan refreshToken juga (optional)\r",
+									"    if (response.data.refreshToken) {\r",
+									"        pm.collectionVariables.set(\"refreshToken\", response.data.refreshToken);\r",
+									"    }\r",
+									"    \r",
+									"    console.log(\"Access token saved successfully\");\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"identifier\": \"2025123456789\",\r\n    \"password\": \"123456\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{AUTH_PREFIX}}/login",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{AUTH_PREFIX}}",
+								"login"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"identifier\": \"0987654321\",\r\n  \"password\": \"password123\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{HOST}}:{{PORT}}/{{AUTH_PREFIX}}/login",
+									"host": [
+										"{{HOST}}"
+									],
+									"port": "{{PORT}}",
+									"path": [
+										"{{AUTH_PREFIX}}",
+										"login"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "content-length",
+									"value": "787"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 19 Dec 2025 06:44:08 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=72"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"Login successful\",\n    \"data\": {\n        \"user\": {\n            \"id\": \"9e0a78fa-07d5-417e-81c7-9892956b15db\",\n            \"email\": \"teacher@test.com\",\n            \"nip\": \"0987654321\",\n            \"nis\": null,\n            \"name\": \"PamBudi\",\n            \"role\": \"TEACHER\",\n            \"avatar\": null\n        },\n        \"accessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjllMGE3OGZhLTA3ZDUtNDE3ZS04MWM3LTk4OTI5NTZiMTVkYiIsImVtYWlsIjoidGVhY2hlckB0ZXN0LmNvbSIsIm5pcCI6IjA5ODc2NTQzMjEiLCJuaXMiOm51bGwsIm5hbWUiOiJQYW1CdWRpIiwicm9sZSI6IlRFQUNIRVIiLCJpYXQiOjE3NjYxMjY2NDgsImV4cCI6MTc2NjEyNzU0OH0.YdZHM9E4MgSw5GURRQtoBPqgcOgvQp8yIhzmMHwt58g\",\n        \"refreshToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjllMGE3OGZhLTA3ZDUtNDE3ZS04MWM3LTk4OTI5NTZiMTVkYiIsInRva2VuVmVyc2lvbiI6MCwidHlwZSI6InJlZnJlc2giLCJpYXQiOjE3NjYxMjY2NDgsImV4cCI6MTc2NjczMTQ0OH0.eibjl-RxBa1Bv-90LJUghyh21J_77AKwdED3WagqHzM\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "/me",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// refreshToken\r",
+									"// Jika dapat 401, auto refresh token\r",
+									"if (pm.response.code === 401) {\r",
+									"    // Panggil refresh token endpoint\r",
+									"    pm.sendRequest({\r",
+									"        url: pm.collectionVariables.get(\"HOST\") + \":\" + pm.collectionVariables.get(\"PORT\") + \"/\" + pm.collectionVariables.get(\"AUTH_PREFIX\") + \"/refresh\",\r",
+									"        method: 'POST',\r",
+									"        header: {\r",
+									"            'Content-Type': 'application/json'\r",
+									"        },\r",
+									"        body: {\r",
+									"            refreshToken: JSON.stringify({\r",
+									"                refreshToken: pm.collectionVariables.get(\"refreshToken\")\r",
+									"            })\r",
+									"        }\r",
+									"    }, function (err, res) {\r",
+									"        if (!err) {\r",
+									"            const refreshResponse = res.json();\r",
+									"            if (refreshResponse.data && refreshResponse.data.accessToken) {\r",
+									"                pm.collectionVariables.set(\"accessToken\", refreshResponse.data.accessToken);\r",
+									"                console.log(\"Token refreshed automatically\");\r",
+									"            }\r",
+									"        }\r",
+									"    });\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{AUTH_PREFIX}}/me",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{AUTH_PREFIX}}",
+								"me"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Unauthorized",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}:{{PORT}}/{{AUTH_PREFIX}}/me",
+									"host": [
+										"{{HOST}}"
+									],
+									"port": "{{PORT}}",
+									"path": [
+										"{{AUTH_PREFIX}}",
+										"me"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "content-length",
+									"value": "61"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 19 Dec 2025 06:46:23 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=72"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": false,\n    \"error\": \"Unauthorized. Please login first.\"\n}"
+						},
+						{
+							"name": "success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}:{{PORT}}/{{AUTH_PREFIX}}/me",
+									"host": [
+										"{{HOST}}"
+									],
+									"port": "{{PORT}}",
+									"path": [
+										"{{AUTH_PREFIX}}",
+										"me"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "content-length",
+									"value": "399"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 19 Dec 2025 06:47:39 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=72"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"User retrieved successfully\",\n    \"data\": {\n        \"user\": {\n            \"id\": \"9e0a78fa-07d5-417e-81c7-9892956b15db\",\n            \"email\": \"teacher@test.com\",\n            \"nip\": \"0987654321\",\n            \"nis\": null,\n            \"name\": \"PamBudi\",\n            \"role\": \"TEACHER\",\n            \"avatar\": null,\n            \"phone\": \"081234567890\",\n            \"address\": null,\n            \"bio\": null,\n            \"birthdate\": null,\n            \"className\": null,\n            \"classId\": null,\n            \"createdAt\": \"2025-12-19T06:43:34.967Z\",\n            \"updatedAt\": \"2025-12-19T06:43:34.967Z\"\n        }\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "logout",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{AUTH_PREFIX}}/logout",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{AUTH_PREFIX}}",
+								"logout"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}:{{PORT}}/{{AUTH_PREFIX}}/logout",
+									"host": [
+										"{{HOST}}"
+									],
+									"port": "{{PORT}}",
+									"path": [
+										"{{AUTH_PREFIX}}",
+										"logout"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "content-length",
+									"value": "58"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 19 Dec 2025 07:01:04 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=72"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"Logout successful\",\n    \"data\": null\n}"
+						}
+					]
+				},
+				{
+					"name": "/refresh",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"refreshToken\": \"{{refreshToken}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{AUTH_PREFIX}}/refresh",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{AUTH_PREFIX}}",
+								"refresh"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"refreshToken\": \"{{refreshToken}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{HOST}}:{{PORT}}/{{AUTH_PREFIX}}/refresh",
+									"host": [
+										"{{HOST}}"
+									],
+									"port": "{{PORT}}",
+									"path": [
+										"{{AUTH_PREFIX}}",
+										"refresh"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "content-length",
+									"value": "391"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 19 Dec 2025 07:20:56 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=72"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"Token refreshed successfully\",\n    \"data\": {\n        \"accessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjllMGE3OGZhLTA3ZDUtNDE3ZS04MWM3LTk4OTI5NTZiMTVkYiIsImVtYWlsIjoidGVhY2hlckB0ZXN0LmNvbSIsIm5pcCI6IjA5ODc2NTQzMjEiLCJuaXMiOm51bGwsIm5hbWUiOiJQYW1CdWRpIiwicm9sZSI6IlRFQUNIRVIiLCJpYXQiOjE3NjYxMjg4NTYsImV4cCI6MTc2NjEyODkxNn0.bxMZRw4oUXZZ8L87Ki5VRgkhQ1t8uscSCSO7Y7OlCcE\"\n    }\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "/users",
+			"item": [
+				{
+					"name": "/",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{USERS_PREFIX}}?page=1&limit=10&search=Wanda Oke",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{USERS_PREFIX}}"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "optional): Page number (default: 1)"
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"description": "(optional): Items per page (default: 10, max: 100)"
+								},
+								{
+									"key": "role",
+									"value": "TEACHER",
+									"description": "(optional): Filter by role (STUDENT, TEACHER)",
+									"disabled": true
+								},
+								{
+									"key": "search",
+									"value": "Wanda Oke",
+									"description": "(optional): Search by name, NIS, NIP, or email"
+								},
+								{
+									"key": "classId",
+									"value": "96ece2d7-a19a-4fd0-b251-ba9c53c646f2",
+									"description": "(optional): Filter by class",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "find classes",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}:{{PORT}}/{{USERS_PREFIX}}?page=1&limit=5&classId=96ece2d7-a19a-4fd0-b251-ba9c53c646f2",
+									"host": [
+										"{{HOST}}"
+									],
+									"port": "{{PORT}}",
+									"path": [
+										"{{USERS_PREFIX}}"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1",
+											"description": "optional): Page number (default: 1)"
+										},
+										{
+											"key": "limit",
+											"value": "5",
+											"description": "(optional): Items per page (default: 10, max: 100)"
+										},
+										{
+											"key": "role",
+											"value": "TEACHER",
+											"description": "(optional): Filter by role (STUDENT, TEACHER)",
+											"disabled": true
+										},
+										{
+											"key": "search",
+											"value": null,
+											"description": "(optional): Search by name, NIS, NIP, or email",
+											"disabled": true
+										},
+										{
+											"key": "classId",
+											"value": "96ece2d7-a19a-4fd0-b251-ba9c53c646f2",
+											"description": "(optional): Filter by class"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "content-length",
+									"value": "1600"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 19 Dec 2025 08:01:50 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=72"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"Users retrieved successfully\",\n    \"data\": [\n        {\n            \"id\": \"de536d7e-5207-40d0-80d1-44ffc4e31835\",\n            \"email\": null,\n            \"nip\": null,\n            \"nis\": \"2025123456839\",\n            \"name\": \"Wahyu Dwi\",\n            \"role\": \"STUDENT\",\n            \"avatar\": null,\n            \"phone\": \"081234567890\",\n            \"className\": \"2C\",\n            \"classId\": \"96ece2d7-a19a-4fd0-b251-ba9c53c646f2\",\n            \"isActive\": true,\n            \"createdAt\": \"2021-01-01T00:00:00.000Z\"\n        },\n        {\n            \"id\": \"f02fb848-66e9-4f99-88b8-cf351dc14d7b\",\n            \"email\": null,\n            \"nip\": null,\n            \"nis\": \"2025123456840\",\n            \"name\": \"Ahmad Fauzi\",\n            \"role\": \"STUDENT\",\n            \"avatar\": null,\n            \"phone\": \"081234567890\",\n            \"className\": \"2C\",\n            \"classId\": \"96ece2d7-a19a-4fd0-b251-ba9c53c646f2\",\n            \"isActive\": true,\n            \"createdAt\": \"2021-01-01T00:00:00.000Z\"\n        },\n        {\n            \"id\": \"33512910-d0b8-4d85-ba31-946e716430a6\",\n            \"email\": null,\n            \"nip\": null,\n            \"nis\": \"2025123456841\",\n            \"name\": \"Siti Nurhaliza\",\n            \"role\": \"STUDENT\",\n            \"avatar\": null,\n            \"phone\": \"081234567890\",\n            \"className\": \"2C\",\n            \"classId\": \"96ece2d7-a19a-4fd0-b251-ba9c53c646f2\",\n            \"isActive\": true,\n            \"createdAt\": \"2021-01-01T00:00:00.000Z\"\n        },\n        {\n            \"id\": \"3f4aeda2-c001-4377-9cd5-bd67d257b214\",\n            \"email\": null,\n            \"nip\": null,\n            \"nis\": \"2025123456842\",\n            \"name\": \"Budi Santoso\",\n            \"role\": \"STUDENT\",\n            \"avatar\": null,\n            \"phone\": \"081234567890\",\n            \"className\": \"2C\",\n            \"classId\": \"96ece2d7-a19a-4fd0-b251-ba9c53c646f2\",\n            \"isActive\": true,\n            \"createdAt\": \"2021-01-01T00:00:00.000Z\"\n        },\n        {\n            \"id\": \"daef77e1-d0ae-49b9-a518-e2f95a589b20\",\n            \"email\": null,\n            \"nip\": null,\n            \"nis\": \"2025123456843\",\n            \"name\": \"Dewi Lestari\",\n            \"role\": \"STUDENT\",\n            \"avatar\": null,\n            \"phone\": \"081234567890\",\n            \"className\": \"2C\",\n            \"classId\": \"96ece2d7-a19a-4fd0-b251-ba9c53c646f2\",\n            \"isActive\": true,\n            \"createdAt\": \"2021-01-01T00:00:00.000Z\"\n        }\n    ],\n    \"pagination\": {\n        \"page\": 1,\n        \"limit\": 5,\n        \"total\": 10,\n        \"totalPages\": 2,\n        \"hasNext\": true,\n        \"hasPrev\": false\n    }\n}"
+						},
+						{
+							"name": "find Role",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}:{{PORT}}/{{USERS_PREFIX}}?page=1&limit=10&role=TEACHER",
+									"host": [
+										"{{HOST}}"
+									],
+									"port": "{{PORT}}",
+									"path": [
+										"{{USERS_PREFIX}}"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1",
+											"description": "optional): Page number (default: 1)"
+										},
+										{
+											"key": "limit",
+											"value": "10",
+											"description": "(optional): Items per page (default: 10, max: 100)"
+										},
+										{
+											"key": "role",
+											"value": "TEACHER",
+											"description": "(optional): Filter by role (STUDENT, TEACHER)"
+										},
+										{
+											"key": "search",
+											"value": null,
+											"description": "(optional): Search by name, NIS, NIP, or email",
+											"disabled": true
+										},
+										{
+											"key": "classId",
+											"value": "96ece2d7-a19a-4fd0-b251-ba9c53c646f2",
+											"description": "(optional): Filter by class",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "content-length",
+									"value": "918"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 19 Dec 2025 08:02:25 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=72"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"Users retrieved successfully\",\n    \"data\": [\n        {\n            \"id\": \"9e0a78fa-07d5-417e-81c7-9892956b15db\",\n            \"email\": \"teacher@test.com\",\n            \"nip\": \"0987654321\",\n            \"nis\": null,\n            \"name\": \"PamBudi\",\n            \"role\": \"TEACHER\",\n            \"avatar\": null,\n            \"phone\": \"081234567890\",\n            \"className\": null,\n            \"classId\": null,\n            \"isActive\": true,\n            \"createdAt\": \"2025-12-19T06:43:34.967Z\"\n        },\n        {\n            \"id\": \"6568998f-6f1a-4369-bd52-a7336c8396bc\",\n            \"email\": null,\n            \"nip\": \"918291812121\",\n            \"nis\": null,\n            \"name\": \"Budi Arie\",\n            \"role\": \"TEACHER\",\n            \"avatar\": null,\n            \"phone\": \"081234567890\",\n            \"className\": null,\n            \"classId\": null,\n            \"isActive\": true,\n            \"createdAt\": \"2021-01-01T00:00:00.000Z\"\n        },\n        {\n            \"id\": \"355d26a9-c38b-4c73-948f-78987d0c5e94\",\n            \"email\": null,\n            \"nip\": \"918219212\",\n            \"nis\": null,\n            \"name\": \"Wanda Oke\",\n            \"role\": \"TEACHER\",\n            \"avatar\": null,\n            \"phone\": \"081234567890\",\n            \"className\": null,\n            \"classId\": null,\n            \"isActive\": true,\n            \"createdAt\": \"2021-01-01T00:00:00.000Z\"\n        }\n    ],\n    \"pagination\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"total\": 3,\n        \"totalPages\": 1,\n        \"hasNext\": false,\n        \"hasPrev\": false\n    }\n}"
+						},
+						{
+							"name": "find name",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}:{{PORT}}/{{USERS_PREFIX}}?page=1&limit=10&search=Wanda Oke",
+									"host": [
+										"{{HOST}}"
+									],
+									"port": "{{PORT}}",
+									"path": [
+										"{{USERS_PREFIX}}"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1",
+											"description": "optional): Page number (default: 1)"
+										},
+										{
+											"key": "limit",
+											"value": "10",
+											"description": "(optional): Items per page (default: 10, max: 100)"
+										},
+										{
+											"key": "role",
+											"value": "TEACHER",
+											"description": "(optional): Filter by role (STUDENT, TEACHER)",
+											"disabled": true
+										},
+										{
+											"key": "search",
+											"value": "Wanda Oke",
+											"description": "(optional): Search by name, NIS, NIP, or email"
+										},
+										{
+											"key": "classId",
+											"value": "96ece2d7-a19a-4fd0-b251-ba9c53c646f2",
+											"description": "(optional): Filter by class",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "content-length",
+									"value": "406"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 19 Dec 2025 08:03:02 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=72"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"Users retrieved successfully\",\n    \"data\": [\n        {\n            \"id\": \"355d26a9-c38b-4c73-948f-78987d0c5e94\",\n            \"email\": null,\n            \"nip\": \"918219212\",\n            \"nis\": null,\n            \"name\": \"Wanda Oke\",\n            \"role\": \"TEACHER\",\n            \"avatar\": null,\n            \"phone\": \"081234567890\",\n            \"className\": null,\n            \"classId\": null,\n            \"isActive\": true,\n            \"createdAt\": \"2021-01-01T00:00:00.000Z\"\n        }\n    ],\n    \"pagination\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"total\": 1,\n        \"totalPages\": 1,\n        \"hasNext\": false,\n        \"hasPrev\": false\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "/:id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{USERS_PREFIX}}/80be51f1-62df-4b0e-9b28-aaaaa80682ae",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{USERS_PREFIX}}",
+								"80be51f1-62df-4b0e-9b28-aaaaa80682ae"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 - success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}:{{PORT}}/{{USERS_PREFIX}}/80be51f1-62df-4b0e-9b28-aaaaa80682ae",
+									"host": [
+										"{{HOST}}"
+									],
+									"port": "{{PORT}}",
+									"path": [
+										"{{USERS_PREFIX}}",
+										"80be51f1-62df-4b0e-9b28-aaaaa80682ae"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "content-length",
+									"value": "418"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 19 Dec 2025 08:50:12 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=72"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"User retrieved successfully\",\n    \"data\": {\n        \"user\": {\n            \"id\": \"80be51f1-62df-4b0e-9b28-aaaaa80682ae\",\n            \"email\": \"newemail@mail.com\",\n            \"nip\": null,\n            \"nis\": \"2025123456848\",\n            \"name\": \"Rina Dewi Updated\",\n            \"role\": \"STUDENT\",\n            \"avatar\": null,\n            \"phone\": \"081234567891\",\n            \"address\": \"Bandung, Indonesia\",\n            \"bio\": \"Updated bio\",\n            \"birthdate\": \"2008-05-08\",\n            \"className\": \"2C\",\n            \"classId\": \"96ece2d7-a19a-4fd0-b251-ba9c53c646f2\",\n            \"isActive\": true\n        }\n    }\n}"
+						},
+						{
+							"name": "422 - Unprocessable Entity",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}:{{PORT}}/{{USERS_PREFIX}}/9c2df534-3f2c-4ca2-a955-0d3bf774e1cz",
+									"host": [
+										"{{HOST}}"
+									],
+									"port": "{{PORT}}",
+									"path": [
+										"{{USERS_PREFIX}}",
+										"9c2df534-3f2c-4ca2-a955-0d3bf774e1cz"
+									]
+								}
+							},
+							"status": "Unprocessable Entity",
+							"code": 422,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "content-length",
+									"value": "85"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 19 Dec 2025 09:32:10 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=72"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": false,\n    \"message\": \"Invalid ID format\",\n    \"errors\": {\n        \"id\": [\n            \"Invalid ID format\"\n        ]\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "/:id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Fauzan Nako\",\r\n  \"phone\": \"081234567891\",\r\n  \"address\": \"Bandung, Indonesia\",\r\n  \"bio\": \"Updated bio\",\r\n  \"birthdate\": \"2008-05-08\",\r\n  \"email\": \"newemail@mail.com\"  // Optional\r\n  //\"classId\": \"uuid\"  // Optional, hanya bisa diubah oleh teacher\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{USERS_PREFIX}}/80be51f1-62df-4b0e-9b28-aaaaa80682ae",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{USERS_PREFIX}}",
+								"80be51f1-62df-4b0e-9b28-aaaaa80682ae"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 - success",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"name\": \"Rina Dewi Updated\",\r\n  \"phone\": \"081234567891\",\r\n  \"address\": \"Bandung, Indonesia\",\r\n  \"bio\": \"Updated bio\",\r\n  \"birthdate\": \"2008-05-15\",\r\n  \"email\": \"newemail@mail.com\"  // Optional\r\n  //\"classId\": \"uuid\"  // Optional, hanya bisa diubah oleh teacher\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{HOST}}:{{PORT}}/{{USERS_PREFIX}}/80be51f1-62df-4b0e-9b28-aaaaa80682ae",
+									"host": [
+										"{{HOST}}"
+									],
+									"port": "{{PORT}}",
+									"path": [
+										"{{USERS_PREFIX}}",
+										"80be51f1-62df-4b0e-9b28-aaaaa80682ae"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "content-length",
+									"value": "469"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 19 Dec 2025 08:32:29 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=72"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"User updated successfully\",\n    \"data\": {\n        \"user\": {\n            \"id\": \"80be51f1-62df-4b0e-9b28-aaaaa80682ae\",\n            \"email\": \"newemail@mail.com\",\n            \"nip\": null,\n            \"nis\": \"2025123456848\",\n            \"name\": \"Rina Dewi Updated\",\n            \"role\": \"STUDENT\",\n            \"avatar\": null,\n            \"phone\": \"081234567891\",\n            \"address\": \"Bandung, Indonesia\",\n            \"bio\": \"Updated bio\",\n            \"birthdate\": \"2008-05-15T00:00:00.000Z\",\n            \"className\": \"2C\",\n            \"classId\": \"96ece2d7-a19a-4fd0-b251-ba9c53c646f2\",\n            \"isActive\": true,\n            \"updatedAt\": \"2025-12-19T08:32:29.785Z\"\n        }\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "/import (Teacher only)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"value": "",
+									"description": "Excel file (.xlsx) dengan kolom: NIS, Nama, Email (optional), Phone (optional), Class, Password (optional)",
+									"type": "file"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{USERS_PREFIX}}/import",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{USERS_PREFIX}}",
+								"import"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/:id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{USERS_PREFIX}}/9e0a78fa-07d5-417e-81c7-9892956b15db",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{USERS_PREFIX}}",
+								"9e0a78fa-07d5-417e-81c7-9892956b15db"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 - success",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}:{{PORT}}/{{USERS_PREFIX}}/9e0a78fa-07d5-417e-81c7-9892956b15db",
+									"host": [
+										"{{HOST}}"
+									],
+									"port": "{{PORT}}",
+									"path": [
+										"{{USERS_PREFIX}}",
+										"9e0a78fa-07d5-417e-81c7-9892956b15db"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "content-length",
+									"value": "66"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 19 Dec 2025 08:56:15 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=72"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"User deleted successfully\",\n    \"data\": null\n}"
+						},
+						{
+							"name": "401 - Unauthorized",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}:{{PORT}}/{{USERS_PREFIX}}/9e0a78fa-07d5-417e-81c7-9892956b15db",
+									"host": [
+										"{{HOST}}"
+									],
+									"port": "{{PORT}}",
+									"path": [
+										"{{USERS_PREFIX}}",
+										"9e0a78fa-07d5-417e-81c7-9892956b15db"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "content-length",
+									"value": "54"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 19 Dec 2025 08:56:39 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=72"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": false,\n    \"error\": \"User not found or inactive\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "/classes",
+			"item": [
+				{
+					"name": "/",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{CLASSES_PREFIX}}?page=1&limit=10&search",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{CLASSES_PREFIX}}"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": " (optional): Page number (default: 1)"
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"description": "(optional): Items per page (default: 10, max: 100)"
+								},
+								{
+									"key": "search",
+									"value": null,
+									"description": "(optional): Search by name"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}:{{PORT}}/{{CLASSES_PREFIX}}?page=1&limit=10&search",
+									"host": [
+										"{{HOST}}"
+									],
+									"port": "{{PORT}}",
+									"path": [
+										"{{CLASSES_PREFIX}}"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1",
+											"description": " (optional): Page number (default: 1)"
+										},
+										{
+											"key": "limit",
+											"value": "10",
+											"description": "(optional): Items per page (default: 10, max: 100)"
+										},
+										{
+											"key": "search",
+											"value": null,
+											"description": "(optional): Search by name"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "content-length",
+									"value": "765"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 19 Dec 2025 09:06:05 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=72"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"Classes retrieved successfully\",\n    \"data\": [\n        {\n            \"id\": \"b3468127-68bd-4303-a65a-b6290b51846a\",\n            \"name\": \"1A\",\n            \"description\": null,\n            \"_count\": {\n                \"students\": 10\n            }\n        },\n        {\n            \"id\": \"d6692329-1c71-4b96-9b8c-9c93cdcff4d5\",\n            \"name\": \"1B\",\n            \"description\": null,\n            \"_count\": {\n                \"students\": 10\n            }\n        },\n        {\n            \"id\": \"9c050333-8288-4563-a7da-d4f0154118e6\",\n            \"name\": \"1C\",\n            \"description\": null,\n            \"_count\": {\n                \"students\": 10\n            }\n        },\n        {\n            \"id\": \"f25bcf68-9e15-4970-a88a-62d72702872e\",\n            \"name\": \"2A\",\n            \"description\": null,\n            \"_count\": {\n                \"students\": 10\n            }\n        },\n        {\n            \"id\": \"2b7bd002-a8b2-4237-b3a0-cf8f68c568c0\",\n            \"name\": \"2B\",\n            \"description\": null,\n            \"_count\": {\n                \"students\": 10\n            }\n        },\n        {\n            \"id\": \"96ece2d7-a19a-4fd0-b251-ba9c53c646f2\",\n            \"name\": \"2C\",\n            \"description\": null,\n            \"_count\": {\n                \"students\": 10\n            }\n        }\n    ],\n    \"pagination\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"totalPages\": null,\n        \"hasNext\": false,\n        \"hasPrev\": false\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "/:id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{CLASSES_PREFIX}}/d6692329-1c71-4b96-9b8c-9c93cdcff4d5",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{CLASSES_PREFIX}}",
+								"d6692329-1c71-4b96-9b8c-9c93cdcff4d5"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}:{{PORT}}/{{CLASSES_PREFIX}}/d6692329-1c71-4b96-9b8c-9c93cdcff4d5",
+									"host": [
+										"{{HOST}}"
+									],
+									"port": "{{PORT}}",
+									"path": [
+										"{{CLASSES_PREFIX}}",
+										"d6692329-1c71-4b96-9b8c-9c93cdcff4d5"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "content-length",
+									"value": "1457"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 19 Dec 2025 09:06:51 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=72"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"Class retrieved successfully\",\n    \"data\": {\n        \"class\": {\n            \"id\": \"d6692329-1c71-4b96-9b8c-9c93cdcff4d5\",\n            \"name\": \"1B\",\n            \"description\": null,\n            \"createdAt\": \"2025-12-19T06:39:59.905Z\",\n            \"updatedAt\": \"2025-12-19T06:39:59.905Z\",\n            \"students\": [\n                {\n                    \"id\": \"e7f74064-17d2-4180-90a9-c332e707b6d7\",\n                    \"name\": \"Wahyu Dwi\",\n                    \"email\": null,\n                    \"nis\": \"2025123456799\",\n                    \"avatar\": null\n                },\n                {\n                    \"id\": \"fe7bb679-52a0-4cca-ae36-1eaeb7c732df\",\n                    \"name\": \"Ahmad Fauzi\",\n                    \"email\": null,\n                    \"nis\": \"2025123456800\",\n                    \"avatar\": null\n                },\n                {\n                    \"id\": \"737baa33-b773-49af-8b51-68ea7fb5fb34\",\n                    \"name\": \"Siti Nurhaliza\",\n                    \"email\": null,\n                    \"nis\": \"2025123456801\",\n                    \"avatar\": null\n                },\n                {\n                    \"id\": \"14f753f1-4956-49d9-ba19-88107198e940\",\n                    \"name\": \"Budi Santoso\",\n                    \"email\": null,\n                    \"nis\": \"2025123456802\",\n                    \"avatar\": null\n                },\n                {\n                    \"id\": \"c1437609-03b1-4b96-a6a8-286a37bdd99d\",\n                    \"name\": \"Dewi Lestari\",\n                    \"email\": null,\n                    \"nis\": \"2025123456803\",\n                    \"avatar\": null\n                },\n                {\n                    \"id\": \"b3f7ab71-4318-479a-9f63-9faa888edd8d\",\n                    \"name\": \"Eko Prasetyo\",\n                    \"email\": null,\n                    \"nis\": \"2025123456804\",\n                    \"avatar\": null\n                },\n                {\n                    \"id\": \"48822b75-8991-42a9-9bfd-647a4962eb53\",\n                    \"name\": \"Fitri Handayani\",\n                    \"email\": null,\n                    \"nis\": \"2025123456805\",\n                    \"avatar\": null\n                },\n                {\n                    \"id\": \"e52e57ff-52ed-4ac4-9527-9427f049f36b\",\n                    \"name\": \"Gunawan Wijaya\",\n                    \"email\": null,\n                    \"nis\": \"2025123456806\",\n                    \"avatar\": null\n                },\n                {\n                    \"id\": \"c30d4584-db35-44ba-bf0b-4831bbe44752\",\n                    \"name\": \"Hani Kartika\",\n                    \"email\": null,\n                    \"nis\": \"2025123456807\",\n                    \"avatar\": null\n                },\n                {\n                    \"id\": \"5cf5bf45-c77c-4be8-80cd-0f6839d90443\",\n                    \"name\": \"Indra Permana\",\n                    \"email\": null,\n                    \"nis\": \"2025123456808\",\n                    \"avatar\": null\n                }\n            ],\n            \"_count\": {\n                \"students\": 10,\n                \"assignments\": 0\n            }\n        }\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "/",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"3C\",\r\n    \"description\": \"Kelas 3C\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{CLASSES_PREFIX}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{CLASSES_PREFIX}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "failed",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"3A\",\r\n    \"description\": \"Kelas 3B\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{HOST}}:{{PORT}}/{{CLASSES_PREFIX}}",
+									"host": [
+										"{{HOST}}"
+									],
+									"port": "{{PORT}}",
+									"path": [
+										"{{CLASSES_PREFIX}}"
+									]
+								}
+							},
+							"status": "Conflict",
+							"code": 409,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "content-length",
+									"value": "48"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 19 Dec 2025 09:11:33 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=72"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": false,\n    \"error\": \"Class already exists\"\n}"
+						},
+						{
+							"name": "201 - success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"3C\",\r\n    \"description\": \"Kelas 3C\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{HOST}}:{{PORT}}/{{CLASSES_PREFIX}}",
+									"host": [
+										"{{HOST}}"
+									],
+									"port": "{{PORT}}",
+									"path": [
+										"{{CLASSES_PREFIX}}"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "content-length",
+									"value": "257"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 19 Dec 2025 09:11:57 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=72"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"Class created successfully\",\n    \"data\": {\n        \"class\": {\n            \"id\": \"392e5d50-f304-4ea2-8fdc-25b87d323252\",\n            \"name\": \"3B\",\n            \"description\": \"Kelas 3B\",\n            \"createdAt\": \"2025-12-19T09:11:57.516Z\",\n            \"updatedAt\": \"2025-12-19T09:11:57.516Z\",\n            \"_count\": {\n                \"students\": 0\n            }\n        }\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "/:id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"3A\",\r\n    \"description\": \"Kelas 3A\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{CLASSES_PREFIX}}/2068e7a1-5a09-4efe-96c3-cda6ad6d5349",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{CLASSES_PREFIX}}",
+								"2068e7a1-5a09-4efe-96c3-cda6ad6d5349"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 - success",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"3A\",\r\n    \"description\": \"Kelas 3A\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{HOST}}:{{PORT}}/{{CLASSES_PREFIX}}/2068e7a1-5a09-4efe-96c3-cda6ad6d5340",
+									"host": [
+										"{{HOST}}"
+									],
+									"port": "{{PORT}}",
+									"path": [
+										"{{CLASSES_PREFIX}}",
+										"2068e7a1-5a09-4efe-96c3-cda6ad6d5340"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "content-length",
+									"value": "257"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 19 Dec 2025 09:13:43 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=72"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"Class updated successfully\",\n    \"data\": {\n        \"class\": {\n            \"id\": \"2068e7a1-5a09-4efe-96c3-cda6ad6d5340\",\n            \"name\": \"3A\",\n            \"description\": \"Kelas 3A\",\n            \"createdAt\": \"2025-12-19T09:08:00.578Z\",\n            \"updatedAt\": \"2025-12-19T09:13:43.671Z\",\n            \"_count\": {\n                \"students\": 0\n            }\n        }\n    }\n}"
+						},
+						{
+							"name": "409 - conflict",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"3A\",\r\n    \"description\": \"Kelas 3A\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{HOST}}:{{PORT}}/{{CLASSES_PREFIX}}/2068e7a1-5a09-4efe-96c3-cda6ad6d5349",
+									"host": [
+										"{{HOST}}"
+									],
+									"port": "{{PORT}}",
+									"path": [
+										"{{CLASSES_PREFIX}}",
+										"2068e7a1-5a09-4efe-96c3-cda6ad6d5349"
+									]
+								}
+							},
+							"status": "Conflict",
+							"code": 409,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "content-length",
+									"value": "48"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 19 Dec 2025 09:15:18 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=72"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": false,\n    \"error\": \"Class already exists\"\n}"
+						}
+					]
+				},
+				{
+					"name": "/:id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{CLASSES_PREFIX}}/",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{CLASSES_PREFIX}}",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "/assignments",
+			"item": [
+				{
+					"name": "/",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{ASSIGNMENTS_PREFIX}}?page=1&limit=10",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{ASSIGNMENTS_PREFIX}}"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "(optional): Page number (default: 1)"
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"description": "(optional): Items per page (default: 10, max: 100)"
+								},
+								{
+									"key": "status",
+									"value": null,
+									"description": "(optional): Filter by status (DRAFT, ACTIVE, COMPLETED)",
+									"disabled": true
+								},
+								{
+									"key": "categoryId",
+									"value": null,
+									"description": "(optional): Filter by category ID",
+									"disabled": true
+								},
+								{
+									"key": "classId",
+									"value": null,
+									"description": "(optional): Filter by class",
+									"disabled": true
+								},
+								{
+									"key": "search",
+									"value": null,
+									"description": "(optional): Search by title",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}:{{PORT}}/{{ASSIGNMENTS_PREFIX}}?page=1&limit=10",
+									"host": [
+										"{{HOST}}"
+									],
+									"port": "{{PORT}}",
+									"path": [
+										"{{ASSIGNMENTS_PREFIX}}"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1",
+											"description": "(optional): Page number (default: 1)"
+										},
+										{
+											"key": "limit",
+											"value": "10",
+											"description": "(optional): Items per page (default: 10, max: 100)"
+										},
+										{
+											"key": "status",
+											"value": null,
+											"description": "(optional): Filter by status (DRAFT, ACTIVE, COMPLETED)",
+											"disabled": true
+										},
+										{
+											"key": "categoryId",
+											"value": null,
+											"description": "(optional): Filter by category ID",
+											"disabled": true
+										},
+										{
+											"key": "classId",
+											"value": null,
+											"description": "(optional): Filter by class",
+											"disabled": true
+										},
+										{
+											"key": "search",
+											"value": null,
+											"description": "(optional): Search by title",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "content-length",
+									"value": "2375"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 19 Dec 2025 09:57:58 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=72"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"Assignments retrieved successfully\",\n    \"data\": [\n        {\n            \"id\": \"0d90268a-1635-46f9-a550-8fa0f5065528\",\n            \"title\": \"Lukisan Tema Desa\",\n            \"description\": \"Buat lukisan dengan tema kehidupan di desa\",\n            \"category\": \"Lukisan\",\n            \"deadline\": \"2026-01-20T23:59:59.000Z\",\n            \"status\": \"ACTIVE\",\n            \"createdById\": \"6568998f-6f1a-4369-bd52-a7336c8396bc\",\n            \"createdAt\": \"2025-12-19T09:52:13.935Z\",\n            \"updatedAt\": \"2025-12-19T09:52:13.935Z\",\n            \"createdBy\": {\n                \"id\": \"6568998f-6f1a-4369-bd52-a7336c8396bc\",\n                \"name\": \"Budi Arie\",\n                \"email\": null\n            },\n            \"classes\": [\n                {\n                    \"id\": \"503ea19b-4d4a-433f-b9a8-8f937d866b70\",\n                    \"assignmentId\": \"0d90268a-1635-46f9-a550-8fa0f5065528\",\n                    \"classId\": \"392e5d50-f304-4ea2-8fdc-25b87d323252\",\n                    \"createdAt\": \"2025-12-19T09:52:13.935Z\",\n                    \"class\": {\n                        \"id\": \"392e5d50-f304-4ea2-8fdc-25b87d323252\",\n                        \"name\": \"3B\"\n                    }\n                },\n                {\n                    \"id\": \"016122b6-e050-438e-a5e1-b5c60bfb8ded\",\n                    \"assignmentId\": \"0d90268a-1635-46f9-a550-8fa0f5065528\",\n                    \"classId\": \"2068e7a1-5a09-4efe-96c3-cda6ad6d5340\",\n                    \"createdAt\": \"2025-12-19T09:52:13.935Z\",\n                    \"class\": {\n                        \"id\": \"2068e7a1-5a09-4efe-96c3-cda6ad6d5340\",\n                        \"name\": \"3A\"\n                    }\n                }\n            ],\n            \"_count\": {\n                \"submissions\": 0\n            }\n        },\n        {\n            \"id\": \"6e5cd248-43db-4625-bfda-24755212a9c2\",\n            \"title\": \"Lukisan Tema Alam\",\n            \"description\": \"Buat lukisan dengan tema pemandangan alam Indonesia\",\n            \"category\": \"Lukisan\",\n            \"deadline\": \"2026-01-20T23:59:59.000Z\",\n            \"status\": \"DRAFT\",\n            \"createdById\": \"6568998f-6f1a-4369-bd52-a7336c8396bc\",\n            \"createdAt\": \"2025-12-19T09:46:41.614Z\",\n            \"updatedAt\": \"2025-12-19T09:46:41.614Z\",\n            \"createdBy\": {\n                \"id\": \"6568998f-6f1a-4369-bd52-a7336c8396bc\",\n                \"name\": \"Budi Arie\",\n                \"email\": null\n            },\n            \"classes\": [\n                {\n                    \"id\": \"2612ec10-c9a5-45a8-9b5c-0292fa5794e4\",\n                    \"assignmentId\": \"6e5cd248-43db-4625-bfda-24755212a9c2\",\n                    \"classId\": \"b3468127-68bd-4303-a65a-b6290b51846a\",\n                    \"createdAt\": \"2025-12-19T09:46:41.614Z\",\n                    \"class\": {\n                        \"id\": \"b3468127-68bd-4303-a65a-b6290b51846a\",\n                        \"name\": \"1A\"\n                    }\n                },\n                {\n                    \"id\": \"bd8eb44f-b7f4-48d2-8f1c-2fdc56f69ee5\",\n                    \"assignmentId\": \"6e5cd248-43db-4625-bfda-24755212a9c2\",\n                    \"classId\": \"d6692329-1c71-4b96-9b8c-9c93cdcff4d5\",\n                    \"createdAt\": \"2025-12-19T09:46:41.614Z\",\n                    \"class\": {\n                        \"id\": \"d6692329-1c71-4b96-9b8c-9c93cdcff4d5\",\n                        \"name\": \"1B\"\n                    }\n                },\n                {\n                    \"id\": \"b2e95643-2d90-4cba-b20b-b9f18512b85e\",\n                    \"assignmentId\": \"6e5cd248-43db-4625-bfda-24755212a9c2\",\n                    \"classId\": \"9c050333-8288-4563-a7da-d4f0154118e6\",\n                    \"createdAt\": \"2025-12-19T09:46:41.614Z\",\n                    \"class\": {\n                        \"id\": \"9c050333-8288-4563-a7da-d4f0154118e6\",\n                        \"name\": \"1C\"\n                    }\n                }\n            ],\n            \"_count\": {\n                \"submissions\": 0\n            }\n        }\n    ],\n    \"pagination\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"totalPages\": null,\n        \"hasNext\": false,\n        \"hasPrev\": false\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "/:id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{ASSIGNMENTS_PREFIX}}/8bd7626f-8171-4dc8-8657-2ea038140a63",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{ASSIGNMENTS_PREFIX}}",
+								"8bd7626f-8171-4dc8-8657-2ea038140a63"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}:{{PORT}}/{{ASSIGNMENTS_PREFIX}}/6e5cd248-43db-4625-bfda-24755212a9c2",
+									"host": [
+										"{{HOST}}"
+									],
+									"port": "{{PORT}}",
+									"path": [
+										"{{ASSIGNMENTS_PREFIX}}",
+										"6e5cd248-43db-4625-bfda-24755212a9c2"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "content-length",
+									"value": "1314"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 19 Dec 2025 09:59:28 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=72"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"Assignment retrieved successfully\",\n    \"data\": {\n        \"assignment\": {\n            \"id\": \"6e5cd248-43db-4625-bfda-24755212a9c2\",\n            \"title\": \"Lukisan Tema Alam\",\n            \"description\": \"Buat lukisan dengan tema pemandangan alam Indonesia\",\n            \"category\": \"Lukisan\",\n            \"deadline\": \"2026-01-20T23:59:59.000Z\",\n            \"status\": \"DRAFT\",\n            \"createdById\": \"6568998f-6f1a-4369-bd52-a7336c8396bc\",\n            \"createdAt\": \"2025-12-19T09:46:41.614Z\",\n            \"updatedAt\": \"2025-12-19T09:46:41.614Z\",\n            \"createdBy\": {\n                \"id\": \"6568998f-6f1a-4369-bd52-a7336c8396bc\",\n                \"name\": \"Budi Arie\",\n                \"email\": null\n            },\n            \"classes\": [\n                {\n                    \"id\": \"2612ec10-c9a5-45a8-9b5c-0292fa5794e4\",\n                    \"assignmentId\": \"6e5cd248-43db-4625-bfda-24755212a9c2\",\n                    \"classId\": \"b3468127-68bd-4303-a65a-b6290b51846a\",\n                    \"createdAt\": \"2025-12-19T09:46:41.614Z\",\n                    \"class\": {\n                        \"id\": \"b3468127-68bd-4303-a65a-b6290b51846a\",\n                        \"name\": \"1A\"\n                    }\n                },\n                {\n                    \"id\": \"bd8eb44f-b7f4-48d2-8f1c-2fdc56f69ee5\",\n                    \"assignmentId\": \"6e5cd248-43db-4625-bfda-24755212a9c2\",\n                    \"classId\": \"d6692329-1c71-4b96-9b8c-9c93cdcff4d5\",\n                    \"createdAt\": \"2025-12-19T09:46:41.614Z\",\n                    \"class\": {\n                        \"id\": \"d6692329-1c71-4b96-9b8c-9c93cdcff4d5\",\n                        \"name\": \"1B\"\n                    }\n                },\n                {\n                    \"id\": \"b2e95643-2d90-4cba-b20b-b9f18512b85e\",\n                    \"assignmentId\": \"6e5cd248-43db-4625-bfda-24755212a9c2\",\n                    \"classId\": \"9c050333-8288-4563-a7da-d4f0154118e6\",\n                    \"createdAt\": \"2025-12-19T09:46:41.614Z\",\n                    \"class\": {\n                        \"id\": \"9c050333-8288-4563-a7da-d4f0154118e6\",\n                        \"name\": \"1C\"\n                    }\n                }\n            ],\n            \"submissions\": []\n        }\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "/",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Lukisan Tema Desa\",\r\n    \"description\": \"Buat lukisan dengan tema kehidupan di desa\",\r\n    \"categoryId\": \"uuid-category-id\",\r\n    \"status\": \"ACTIVE\",\r\n    \"deadline\": \"2026-01-20T23:59:59.000Z\",\r\n    \"classIds\": [\r\n        \"dbaf99bb-40bd-424d-97d7-4ddc33822ac7\"\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{ASSIGNMENTS_PREFIX}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{ASSIGNMENTS_PREFIX}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "201 - success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"title\": \"Lukisan Tema Alam\",\r\n    \"description\": \"Buat lukisan dengan tema pemandangan alam Indonesia\",\r\n    \"categoryId\": \"uuid-category-id\",\r\n    \"deadline\": \"2026-01-20T23:59:59.000Z\",\r\n    \"classIds\": [\r\n        \"b3468127-68bd-4303-a65a-b6290b51846a\",\r\n        \"d6692329-1c71-4b96-9b8c-9c93cdcff4d5\",\r\n        \"9c050333-8288-4563-a7da-d4f0154118e6\"\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{HOST}}:{{PORT}}/{{ASSIGNMENTS_PREFIX}}",
+									"host": [
+										"{{HOST}}"
+									],
+									"port": "{{PORT}}",
+									"path": [
+										"{{ASSIGNMENTS_PREFIX}}"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "content-length",
+									"value": "1295"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 19 Dec 2025 09:46:41 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=72"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"Assignment created successfully\",\n    \"data\": {\n        \"assignment\": {\n            \"id\": \"6e5cd248-43db-4625-bfda-24755212a9c2\",\n            \"title\": \"Lukisan Tema Alam\",\n            \"description\": \"Buat lukisan dengan tema pemandangan alam Indonesia\",\n            \"category\": \"Lukisan\",\n            \"deadline\": \"2026-01-20T23:59:59.000Z\",\n            \"status\": \"DRAFT\",\n            \"createdById\": \"6568998f-6f1a-4369-bd52-a7336c8396bc\",\n            \"createdAt\": \"2025-12-19T09:46:41.614Z\",\n            \"updatedAt\": \"2025-12-19T09:46:41.614Z\",\n            \"createdBy\": {\n                \"id\": \"6568998f-6f1a-4369-bd52-a7336c8396bc\",\n                \"name\": \"Budi Arie\",\n                \"email\": null\n            },\n            \"classes\": [\n                {\n                    \"id\": \"2612ec10-c9a5-45a8-9b5c-0292fa5794e4\",\n                    \"assignmentId\": \"6e5cd248-43db-4625-bfda-24755212a9c2\",\n                    \"classId\": \"b3468127-68bd-4303-a65a-b6290b51846a\",\n                    \"createdAt\": \"2025-12-19T09:46:41.614Z\",\n                    \"class\": {\n                        \"id\": \"b3468127-68bd-4303-a65a-b6290b51846a\",\n                        \"name\": \"1A\"\n                    }\n                },\n                {\n                    \"id\": \"bd8eb44f-b7f4-48d2-8f1c-2fdc56f69ee5\",\n                    \"assignmentId\": \"6e5cd248-43db-4625-bfda-24755212a9c2\",\n                    \"classId\": \"d6692329-1c71-4b96-9b8c-9c93cdcff4d5\",\n                    \"createdAt\": \"2025-12-19T09:46:41.614Z\",\n                    \"class\": {\n                        \"id\": \"d6692329-1c71-4b96-9b8c-9c93cdcff4d5\",\n                        \"name\": \"1B\"\n                    }\n                },\n                {\n                    \"id\": \"b2e95643-2d90-4cba-b20b-b9f18512b85e\",\n                    \"assignmentId\": \"6e5cd248-43db-4625-bfda-24755212a9c2\",\n                    \"classId\": \"9c050333-8288-4563-a7da-d4f0154118e6\",\n                    \"createdAt\": \"2025-12-19T09:46:41.614Z\",\n                    \"class\": {\n                        \"id\": \"9c050333-8288-4563-a7da-d4f0154118e6\",\n                        \"name\": \"1C\"\n                    }\n                }\n            ]\n        }\n    }\n}"
+						},
+						{
+							"name": "201 - success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"title\": \"Lukisan Tema Desa\",\r\n    \"description\": \"Buat lukisan dengan tema kehidupan di desa\",\r\n    \"categoryId\": \"uuid-category-id\",\r\n    \"status\": \"ACTIVE\",\r\n    \"deadline\": \"2026-01-20T23:59:59.000Z\",\r\n    \"classIds\": [\r\n        \"392e5d50-f304-4ea2-8fdc-25b87d323252\",\r\n        \"2068e7a1-5a09-4efe-96c3-cda6ad6d5340\"\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{HOST}}:{{PORT}}/{{ASSIGNMENTS_PREFIX}}",
+									"host": [
+										"{{HOST}}"
+									],
+									"port": "{{PORT}}",
+									"path": [
+										"{{ASSIGNMENTS_PREFIX}}"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "content-length",
+									"value": "1033"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 19 Dec 2025 09:52:13 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=72"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"Assignment created successfully\",\n    \"data\": {\n        \"assignment\": {\n            \"id\": \"0d90268a-1635-46f9-a550-8fa0f5065528\",\n            \"title\": \"Lukisan Tema Desa\",\n            \"description\": \"Buat lukisan dengan tema kehidupan di desa\",\n            \"category\": \"Lukisan\",\n            \"deadline\": \"2026-01-20T23:59:59.000Z\",\n            \"status\": \"ACTIVE\",\n            \"createdById\": \"6568998f-6f1a-4369-bd52-a7336c8396bc\",\n            \"createdAt\": \"2025-12-19T09:52:13.935Z\",\n            \"updatedAt\": \"2025-12-19T09:52:13.935Z\",\n            \"createdBy\": {\n                \"id\": \"6568998f-6f1a-4369-bd52-a7336c8396bc\",\n                \"name\": \"Budi Arie\",\n                \"email\": null\n            },\n            \"classes\": [\n                {\n                    \"id\": \"503ea19b-4d4a-433f-b9a8-8f937d866b70\",\n                    \"assignmentId\": \"0d90268a-1635-46f9-a550-8fa0f5065528\",\n                    \"classId\": \"392e5d50-f304-4ea2-8fdc-25b87d323252\",\n                    \"createdAt\": \"2025-12-19T09:52:13.935Z\",\n                    \"class\": {\n                        \"id\": \"392e5d50-f304-4ea2-8fdc-25b87d323252\",\n                        \"name\": \"3B\"\n                    }\n                },\n                {\n                    \"id\": \"016122b6-e050-438e-a5e1-b5c60bfb8ded\",\n                    \"assignmentId\": \"0d90268a-1635-46f9-a550-8fa0f5065528\",\n                    \"classId\": \"2068e7a1-5a09-4efe-96c3-cda6ad6d5340\",\n                    \"createdAt\": \"2025-12-19T09:52:13.935Z\",\n                    \"class\": {\n                        \"id\": \"2068e7a1-5a09-4efe-96c3-cda6ad6d5340\",\n                        \"name\": \"3A\"\n                    }\n                }\n            ]\n        }\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "/:id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Lukisan Tema Desa\",\r\n    \"description\": \"Buat lukisan dengan tema kehidupan di desa\",\r\n    \"categoryId\": \"uuid-category-id\",\r\n    \"status\": \"ACTIVE\",\r\n    \"deadline\": \"2026-01-20T23:59:59.000Z\",\r\n    \"classIds\": [\r\n        \"2b7bd002-a8b2-4237-b3a0-cf8f68c568c0\"\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{ASSIGNMENTS_PREFIX}}/0d90268a-1635-46f9-a550-8fa0f5065528",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{ASSIGNMENTS_PREFIX}}",
+								"0d90268a-1635-46f9-a550-8fa0f5065528"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/:id (Teacher only)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Lukisan Tema Desa\",\r\n    \"description\": \"Buat lukisan dengan tema kehidupan di desa\",\r\n    \"categoryId\": \"uuid-category-id\",\r\n    \"status\": \"ACTIVE\",\r\n    \"deadline\": \"2026-01-20T23:59:59.000Z\",\r\n    \"classIds\": [\r\n        \"2b7bd002-a8b2-4237-b3a0-cf8f68c568c0\"\r\n    ]\r\n}"
+						},
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{ASSIGNMENTS_PREFIX}}/0d90268a-1635-46f9-a550-8fa0f5065528",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{ASSIGNMENTS_PREFIX}}",
+								"0d90268a-1635-46f9-a550-8fa0f5065528"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 - success",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"title\": \"Lukisan Tema Desa\",\r\n    \"description\": \"Buat lukisan dengan tema kehidupan di desa\",\r\n    \"categoryId\": \"uuid-category-id\",\r\n    \"status\": \"ACTIVE\",\r\n    \"deadline\": \"2026-01-20T23:59:59.000Z\",\r\n    \"classIds\": [\r\n        \"2b7bd002-a8b2-4237-b3a0-cf8f68c568c0\"\r\n    ]\r\n}"
+								},
+								"url": {
+									"raw": "{{HOST}}:{{PORT}}/{{ASSIGNMENTS_PREFIX}}/0d90268a-1635-46f9-a550-8fa0f5065528",
+									"host": [
+										"{{HOST}}"
+									],
+									"port": "{{PORT}}",
+									"path": [
+										"{{ASSIGNMENTS_PREFIX}}",
+										"0d90268a-1635-46f9-a550-8fa0f5065528"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "content-length",
+									"value": "72"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 19 Dec 2025 10:01:10 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=72"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"Assignment deleted successfully\",\n    \"data\": null\n}"
+						},
+						{
+							"name": "404 - not found",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"title\": \"Lukisan Tema Desa\",\r\n    \"description\": \"Buat lukisan dengan tema kehidupan di desa\",\r\n    \"categoryId\": \"uuid-category-id\",\r\n    \"status\": \"ACTIVE\",\r\n    \"deadline\": \"2026-01-20T23:59:59.000Z\",\r\n    \"classIds\": [\r\n        \"2b7bd002-a8b2-4237-b3a0-cf8f68c568c0\"\r\n    ]\r\n}"
+								},
+								"url": {
+									"raw": "{{HOST}}:{{PORT}}/{{ASSIGNMENTS_PREFIX}}/0d90268a-1635-46f9-a550-8fa0f5065528",
+									"host": [
+										"{{HOST}}"
+									],
+									"port": "{{PORT}}",
+									"path": [
+										"{{ASSIGNMENTS_PREFIX}}",
+										"0d90268a-1635-46f9-a550-8fa0f5065528"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "content-length",
+									"value": "50"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 19 Dec 2025 10:08:43 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=72"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": false,\n    \"message\": \"Assignment not found\"\n}"
+						}
+					]
+				},
+				{
+					"name": "/bulk-status (Teacher only)",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"assignmentIds\": [\r\n        \"uuid1\",\r\n        \"uuid2\",\r\n        \"uuid3\"\r\n    ],\r\n    \"status\": \"ACTIVE\" // \"DRAFT\", \"ACTIVE\", atau \"COMPLETED\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{ASSIGNMENTS_PREFIX}}/bulk-status",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{ASSIGNMENTS_PREFIX}}",
+								"bulk-status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/bulk-delete (Teacher only)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"assignmentIds\": [\r\n        \"uuid1\",\r\n        \"uuid2\",\r\n        \"uuid3\"\r\n    ],\r\n    \"action\": \"delete\" // \"delete\" atau \"draft\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{ASSIGNMENTS_PREFIX}}/bulk-delete",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{ASSIGNMENTS_PREFIX}}",
+								"bulk-delete"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "/submissions",
+			"item": [
+				{
+					"name": "/",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{SUBMISSIONS_PREFIX}}?page=1&limit=10",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{SUBMISSIONS_PREFIX}}"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "(optional): Page number"
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"description": "(optional): Items per page"
+								},
+								{
+									"key": "assignmentId",
+									"value": null,
+									"description": "(optional): Filter by assignment",
+									"disabled": true
+								},
+								{
+									"key": "studentId",
+									"value": null,
+									"description": "(optional): Filter by student (Student can only see their own)",
+									"disabled": true
+								},
+								{
+									"key": "status",
+									"value": null,
+									"description": "(optional): Filter by status",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/:id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{SUBMISSIONS_PREFIX}}/",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{SUBMISSIONS_PREFIX}}",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/ (Student only)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "assignmentId",
+									"value": "6e5cd248-43db-4625-bfda-24755212a9c2",
+									"type": "text"
+								},
+								{
+									"key": "title",
+									"value": "gambar senja dan laut",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "karya tentang sunset di pantai",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Users/IT-1934/OneDrive/Pictures/Untitled Export/_MG_7198.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{SUBMISSIONS_PREFIX}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{SUBMISSIONS_PREFIX}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "400 - bad request",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "assignmentId",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "title",
+											"value": "gambar senja dan laut",
+											"type": "text"
+										},
+										{
+											"key": "description",
+											"value": "karya tentang sunset di pantai",
+											"type": "text"
+										},
+										{
+											"key": "image",
+											"type": "file",
+											"src": "/C:/Users/IT-1934/Downloads/sunset.jpg"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{HOST}}:{{PORT}}/{{SUBMISSIONS_PREFIX}}",
+									"host": [
+										"{{HOST}}"
+									],
+									"port": "{{PORT}}",
+									"path": [
+										"{{SUBMISSIONS_PREFIX}}"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "content-length",
+									"value": "76"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 19 Dec 2025 10:26:25 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=72"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": false,\n    \"message\": \"Image dimensions too small. Minimum: 800x600px\"\n}"
+						},
+						{
+							"name": "success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "assignmentId",
+											"value": "6e5cd248-43db-4625-bfda-24755212a9c2",
+											"type": "text"
+										},
+										{
+											"key": "title",
+											"value": "gambar senja dan laut",
+											"type": "text"
+										},
+										{
+											"key": "description",
+											"value": "karya tentang sunset di pantai",
+											"type": "text"
+										},
+										{
+											"key": "image",
+											"type": "file",
+											"src": "/C:/Users/IT-1934/Downloads/sunset.jpg"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{HOST}}:{{PORT}}/{{SUBMISSIONS_PREFIX}}",
+									"host": [
+										"{{HOST}}"
+									],
+									"port": "{{PORT}}",
+									"path": [
+										"{{SUBMISSIONS_PREFIX}}"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "content-length",
+									"value": "1018"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 19 Dec 2025 10:43:56 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=72"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"Submission created successfully\",\n    \"data\": {\n        \"submission\": {\n            \"id\": \"522b58c5-3684-4a5d-961c-aed3acecd6e1\",\n            \"assignmentId\": \"6e5cd248-43db-4625-bfda-24755212a9c2\",\n            \"studentId\": \"9c2df534-3f2c-4ca2-a955-0d3bf774e1cc\",\n            \"title\": \"gambar senja dan laut\",\n            \"description\": \"karya tentang sunset di pantai\",\n            \"imageUrl\": \"http://localhost:9000/submissions/submission-1766141036002-5oeqi59i9f7.jpg\",\n            \"imageThumbnail\": \"http://localhost:9000/submissions/thumb-submission-1766141036002-5oeqi59i9f7.jpg\",\n            \"imageMedium\": \"http://localhost:9000/submissions/medium-submission-1766141036002-5oeqi59i9f7.jpg\",\n            \"status\": \"PENDING\",\n            \"grade\": null,\n            \"feedback\": null,\n            \"revisionCount\": 0,\n            \"submittedAt\": \"2025-12-19T10:43:56.055Z\",\n            \"gradedAt\": null,\n            \"createdAt\": \"2025-12-19T10:43:56.057Z\",\n            \"updatedAt\": \"2025-12-19T10:43:56.057Z\",\n            \"assignment\": {\n                \"id\": \"6e5cd248-43db-4625-bfda-24755212a9c2\",\n                \"title\": \"Lukisan Tema Desa\",\n                \"category\": \"Lukisan\"\n            },\n            \"student\": {\n                \"id\": \"9c2df534-3f2c-4ca2-a955-0d3bf774e1cc\",\n                \"name\": \"Wahyu Dwi\",\n                \"nis\": \"2025123456789\",\n                \"avatar\": null\n            }\n        }\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "/:id (Student only)",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"Lukisan Sunset Pantai (Revisi)\",\r\n  \"description\": \"Updated description\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{SUBMISSIONS_PREFIX}}/f41f92f3-b574-4702-90f1-e0c48f0e062f",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{SUBMISSIONS_PREFIX}}",
+								"f41f92f3-b574-4702-90f1-e0c48f0e062f"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "success",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"title\": \"Lukisan Sunset Pantai (Revisi)\",\r\n  \"description\": \"Updated description\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{HOST}}:{{PORT}}/{{SUBMISSIONS_PREFIX}}/f41f92f3-b574-4702-90f1-e0c48f0e062f",
+									"host": [
+										"{{HOST}}"
+									],
+									"port": "{{PORT}}",
+									"path": [
+										"{{SUBMISSIONS_PREFIX}}",
+										"f41f92f3-b574-4702-90f1-e0c48f0e062f"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "content-length",
+									"value": "981"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 19 Dec 2025 11:07:02 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=72"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"Submission updated successfully\",\n    \"data\": {\n        \"submission\": {\n            \"id\": \"f41f92f3-b574-4702-90f1-e0c48f0e062f\",\n            \"assignmentId\": \"8bd7626f-8171-4dc8-8657-2ea038140a63\",\n            \"studentId\": \"468b9315-e496-4ac7-999c-ef3a7a0f4b17\",\n            \"title\": \"Lukisan Sunset Pantai (Revisi)\",\n            \"description\": \"Updated description\",\n            \"imageUrl\": \"http://localhost:9000/submissions/submission-1766142160667-bpiwxmtrr2a.jpg\",\n            \"imageThumbnail\": \"http://localhost:9000/submissions/thumb-submission-1766142160667-bpiwxmtrr2a.jpg\",\n            \"imageMedium\": \"http://localhost:9000/submissions/medium-submission-1766142160667-bpiwxmtrr2a.jpg\",\n            \"status\": \"PENDING\",\n            \"grade\": null,\n            \"feedback\": null,\n            \"revisionCount\": 0,\n            \"submittedAt\": \"2025-12-19T11:02:40.716Z\",\n            \"gradedAt\": null,\n            \"createdAt\": \"2025-12-19T11:02:40.719Z\",\n            \"updatedAt\": \"2025-12-19T11:07:02.345Z\",\n            \"assignment\": {\n                \"id\": \"8bd7626f-8171-4dc8-8657-2ea038140a63\",\n                \"title\": \"Lukisan Tema Desa\"\n            },\n            \"student\": {\n                \"id\": \"468b9315-e496-4ac7-999c-ef3a7a0f4b17\",\n                \"name\": \"Wahyu Dwi\",\n                \"nis\": \"2025123456789\"\n            }\n        }\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "/:id (Student only)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{SUBMISSIONS_PREFIX}}/f41f92f3-b574-4702-90f1-e0c48f0e062f",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{SUBMISSIONS_PREFIX}}",
+								"f41f92f3-b574-4702-90f1-e0c48f0e062f"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "success",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}:{{PORT}}/{{SUBMISSIONS_PREFIX}}/f41f92f3-b574-4702-90f1-e0c48f0e062f",
+									"host": [
+										"{{HOST}}"
+									],
+									"port": "{{PORT}}",
+									"path": [
+										"{{SUBMISSIONS_PREFIX}}",
+										"f41f92f3-b574-4702-90f1-e0c48f0e062f"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "content-length",
+									"value": "72"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 19 Dec 2025 11:08:17 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=72"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"Submission deleted successfully\",\n    \"data\": null\n}"
+						}
+					]
+				},
+				{
+					"name": "/:id/grade (Teacher only)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"grade\": 95,\r\n  \"feedback\": \"Karya yang sangat bagus! Penggunaan warna sangat harmonis.\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{SUBMISSIONS_PREFIX}}/80d3e6d0-c4a4-4baf-a88a-c14d4e724877/grade",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{SUBMISSIONS_PREFIX}}",
+								"80d3e6d0-c4a4-4baf-a88a-c14d4e724877",
+								"grade"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"grade\": 95,\r\n  \"feedback\": \"Karya yang sangat bagus! Penggunaan warna sangat harmonis.\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{HOST}}:{{PORT}}/{{SUBMISSIONS_PREFIX}}/80d3e6d0-c4a4-4baf-a88a-c14d4e724877/grade",
+									"host": [
+										"{{HOST}}"
+									],
+									"port": "{{PORT}}",
+									"path": [
+										"{{SUBMISSIONS_PREFIX}}",
+										"80d3e6d0-c4a4-4baf-a88a-c14d4e724877",
+										"grade"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "content-length",
+									"value": "1070"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 19 Dec 2025 11:12:35 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=72"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"Submission graded successfully\",\n    \"data\": {\n        \"submission\": {\n            \"id\": \"80d3e6d0-c4a4-4baf-a88a-c14d4e724877\",\n            \"assignmentId\": \"8bd7626f-8171-4dc8-8657-2ea038140a63\",\n            \"studentId\": \"468b9315-e496-4ac7-999c-ef3a7a0f4b17\",\n            \"title\": \"gambar senja dan laut\",\n            \"description\": \"karya tentang sunset di pantai\",\n            \"imageUrl\": \"http://localhost:9000/submissions/submission-1766142525362-adxz14biaxp.jpg\",\n            \"imageThumbnail\": \"http://localhost:9000/submissions/thumb-submission-1766142525362-adxz14biaxp.jpg\",\n            \"imageMedium\": \"http://localhost:9000/submissions/medium-submission-1766142525362-adxz14biaxp.jpg\",\n            \"status\": \"GRADED\",\n            \"grade\": 95,\n            \"feedback\": \"Karya yang sangat bagus! Penggunaan warna sangat harmonis.\",\n            \"revisionCount\": 0,\n            \"submittedAt\": \"2025-12-19T11:08:45.431Z\",\n            \"gradedAt\": \"2025-12-19T11:12:35.575Z\",\n            \"createdAt\": \"2025-12-19T11:08:45.432Z\",\n            \"updatedAt\": \"2025-12-19T11:12:35.576Z\",\n            \"assignment\": {\n                \"id\": \"8bd7626f-8171-4dc8-8657-2ea038140a63\",\n                \"title\": \"Lukisan Tema Desa\"\n            },\n            \"student\": {\n                \"id\": \"468b9315-e496-4ac7-999c-ef3a7a0f4b17\",\n                \"name\": \"Wahyu Dwi\",\n                \"email\": null,\n                \"nis\": \"2025123456789\"\n            }\n        }\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "/:id/revision (Teacher Only)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"revisionNote\": \"Warna kurang kontras, tolong perbaiki bagian langit\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{SUBMISSIONS_PREFIX}}/80d3e6d0-c4a4-4baf-a88a-c14d4e724877/revision",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{SUBMISSIONS_PREFIX}}",
+								"80d3e6d0-c4a4-4baf-a88a-c14d4e724877",
+								"revision"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"revisionNote\": \"Warna kurang kontras, tolong perbaiki bagian langit\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{HOST}}:{{PORT}}/{{SUBMISSIONS_PREFIX}}/e09f25e3-ffc3-4f24-bb22-ad3dd81a9635/revision",
+									"host": [
+										"{{HOST}}"
+									],
+									"port": "{{PORT}}",
+									"path": [
+										"{{SUBMISSIONS_PREFIX}}",
+										"e09f25e3-ffc3-4f24-bb22-ad3dd81a9635",
+										"revision"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "content-length",
+									"value": "1233"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 19 Dec 2025 11:18:17 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=72"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"Submission returned for revision\",\n    \"data\": {\n        \"submission\": {\n            \"id\": \"e09f25e3-ffc3-4f24-bb22-ad3dd81a9635\",\n            \"assignmentId\": \"8bd7626f-8171-4dc8-8657-2ea038140a63\",\n            \"studentId\": \"e871fd95-5f95-49a9-9eaf-0752e53efee6\",\n            \"title\": \"gambar gunung sunan ibu\",\n            \"description\": \"karya tentang gunung\",\n            \"imageUrl\": \"http://localhost:9000/submissions/submission-1766142924422-hei6208nsc6.jpg\",\n            \"imageThumbnail\": \"http://localhost:9000/submissions/thumb-submission-1766142924422-hei6208nsc6.jpg\",\n            \"imageMedium\": \"http://localhost:9000/submissions/medium-submission-1766142924422-hei6208nsc6.jpg\",\n            \"status\": \"REVISION\",\n            \"grade\": null,\n            \"feedback\": null,\n            \"revisionCount\": 1,\n            \"submittedAt\": \"2025-12-19T11:15:24.460Z\",\n            \"gradedAt\": null,\n            \"createdAt\": \"2025-12-19T11:15:24.462Z\",\n            \"updatedAt\": \"2025-12-19T11:18:17.755Z\",\n            \"assignment\": {\n                \"id\": \"8bd7626f-8171-4dc8-8657-2ea038140a63\",\n                \"title\": \"Lukisan Tema Desa\"\n            },\n            \"student\": {\n                \"id\": \"e871fd95-5f95-49a9-9eaf-0752e53efee6\",\n                \"name\": \"Siti Nurhaliza\",\n                \"email\": null,\n                \"nis\": \"2025123456791\"\n            },\n            \"revisions\": [\n                {\n                    \"id\": \"2d816ec8-8c73-4ebc-acfe-feabad93d774\",\n                    \"submissionId\": \"e09f25e3-ffc3-4f24-bb22-ad3dd81a9635\",\n                    \"revisionNote\": \"Warna kurang kontras, tolong perbaiki bagian langit\",\n                    \"imageUrl\": \"\",\n                    \"submittedAt\": \"2025-12-19T11:18:17.751Z\"\n                }\n            ]\n        }\n    }\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "/categories",
+			"item": [
+				{
+					"name": "/",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{CATEGORIES_PREFIX}}?page=1&limit=10",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{CATEGORIES_PREFIX}}"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "(optional): Page number (default: 1)"
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"description": "(optional): Items per page (default: 10, max: 100)"
+								},
+								{
+									"key": "search",
+									"value": null,
+									"description": "(optional): Search by name",
+									"disabled": true
+								},
+								{
+									"key": "isActive",
+									"value": "true",
+									"description": "(optional): Filter by active status (true/false)",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/:id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{CATEGORIES_PREFIX}}/:id",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{CATEGORIES_PREFIX}}",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/ (Teacher only)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Digital Art\",\r\n    \"description\": \"Karya seni digital\",\r\n    \"icon\": \"💻\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{CATEGORIES_PREFIX}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{CATEGORIES_PREFIX}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/:id (Teacher only)",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Digital Art Updated\",\r\n    \"description\": \"Updated description\",\r\n    \"icon\": \"🖥️\",\r\n    \"isActive\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{CATEGORIES_PREFIX}}/:id",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{CATEGORIES_PREFIX}}",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/:id (Teacher only)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{CATEGORIES_PREFIX}}/:id?force=false",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{CATEGORIES_PREFIX}}",
+								":id"
+							],
+							"query": [
+								{
+									"key": "force",
+									"value": "false",
+									"description": "(optional): true untuk force delete meskipun ada assignment yang menggunakan category ini (default: false)"
+								}
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "/achievements",
+			"item": [
+				{
+					"name": "/",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{ACHIEVEMENTS_PREFIX}}?page=1&limit=10",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{ACHIEVEMENTS_PREFIX}}"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "(optional): Page number (default: 1)"
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"description": "(optional): Items per page (default: 10, max: 100)"
+								},
+								{
+									"key": "search",
+									"value": null,
+									"description": "(optional): Search by name or description",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/:id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{ACHIEVEMENTS_PREFIX}}/:id",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{ACHIEVEMENTS_PREFIX}}",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/me/achievements",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{ACHIEVEMENTS_PREFIX}}/me/achievements",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{ACHIEVEMENTS_PREFIX}}",
+								"me",
+								"achievements"
+							]
+						},
+						"description": "Get user's own achievements"
+					},
+					"response": []
+				},
+				{
+					"name": "/ (Teacher only)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Seniman Pemula\",\r\n    \"description\": \"Menyelesaikan 5 tugas pertama\",\r\n    \"icon\": \"🎨\",\r\n    \"criteria\": {\r\n        \"type\": \"total_graded_submissions\",\r\n        \"value\": 5,\r\n        \"operator\": \">=\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{ACHIEVEMENTS_PREFIX}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{ACHIEVEMENTS_PREFIX}}"
+							]
+						},
+						"description": "Create achievement. Criteria is optional JSON object for achievement unlock conditions."
+					},
+					"response": []
+				},
+				{
+					"name": "/:id (Teacher only)",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Seniman Pemula Updated\",\r\n    \"description\": \"Updated description\",\r\n    \"icon\": \"🎨\",\r\n    \"criteria\": {\r\n        \"type\": \"total_graded_submissions\",\r\n        \"value\": 10,\r\n        \"operator\": \">=\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{ACHIEVEMENTS_PREFIX}}/:id",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{ACHIEVEMENTS_PREFIX}}",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						},
+						"description": "Update achievement. All fields are optional."
+					},
+					"response": []
+				},
+				{
+					"name": "/:id (Teacher only)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{ACHIEVEMENTS_PREFIX}}/:id?force=false",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{ACHIEVEMENTS_PREFIX}}",
+								":id"
+							],
+							"query": [
+								{
+									"key": "force",
+									"value": "false",
+									"description": "(optional): true untuk force delete meskipun ada users yang memiliki achievement ini (default: false)"
+								}
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						},
+						"description": "Delete achievement. Use force=true to delete even if achievement has users."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "/portfolio",
+			"item": [
+				{
+					"name": "/",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{PORTFOLIO_PREFIX}}?page=1&limit=10",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{PORTFOLIO_PREFIX}}"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "(optional): Page number (default: 1)"
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"description": "(optional): Items per page (default: 10, max: 100)"
+								},
+								{
+									"key": "categoryId",
+									"value": null,
+									"description": "(optional): Filter by category ID",
+									"disabled": true
+								},
+								{
+									"key": "studentId",
+									"value": null,
+									"description": "(optional): Filter by student ID",
+									"disabled": true
+								},
+								{
+									"key": "classId",
+									"value": null,
+									"description": "(optional): Filter by class ID",
+									"disabled": true
+								},
+								{
+									"key": "search",
+									"value": null,
+									"description": "(optional): Search by title or student name",
+									"disabled": true
+								},
+								{
+									"key": "minGrade",
+									"value": null,
+									"description": "(optional): Minimum grade filter (0-100)",
+									"disabled": true
+								},
+								{
+									"key": "sortBy",
+									"value": "submittedAt",
+									"description": "(optional): Sort by grade, submittedAt, or title (default: submittedAt)",
+									"disabled": true
+								},
+								{
+									"key": "sortOrder",
+									"value": "desc",
+									"description": "(optional): asc or desc (default: desc)",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/:id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{PORTFOLIO_PREFIX}}/:id",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{PORTFOLIO_PREFIX}}",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "/dashboard",
+			"item": [
+				{
+					"name": "/overview",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{DASHBOARD_PREFIX}}/overview",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{DASHBOARD_PREFIX}}",
+								"overview"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "/notifications",
+			"item": [
+				{
+					"name": "/",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{NOTIFICATIONS_PREFIX}}?page=1&limit=10&isRead=false",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{NOTIFICATIONS_PREFIX}}"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "(optional): Page number"
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"description": "(optional): Items per page"
+								},
+								{
+									"key": "isRead",
+									"value": "false",
+									"description": "(optional): Filter by read status (true/false)"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/:id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{NOTIFICATIONS_PREFIX}}/:id",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{NOTIFICATIONS_PREFIX}}",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/:id/read",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{NOTIFICATIONS_PREFIX}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{NOTIFICATIONS_PREFIX}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/read-all",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{NOTIFICATIONS_PREFIX}}/read-all",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{NOTIFICATIONS_PREFIX}}",
+								"read-all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/unread/count",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{NOTIFICATIONS_PREFIX}}/unread/count",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{NOTIFICATIONS_PREFIX}}",
+								"unread",
+								"count"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "/export",
+			"item": [
+				{
+					"name": "/grades/excel",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"classIds\": [],\r\n    \"assignmentIds\": [],\r\n    \"studentIds\": [],\r\n    \"statuses\": [\"GRADED\"],\r\n    \"startDate\": \"2024-01-01T00:00:00.000Z\",\r\n    \"endDate\": \"2024-12-31T23:59:59.000Z\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{EXPORT_PREFIX}}/grades/excel",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{EXPORT_PREFIX}}",
+								"grades",
+								"excel"
+							]
+						},
+						"description": "Export grades to Excel file. Teacher can export all data, Student can only export their own data."
+					},
+					"response": []
+				},
+				{
+					"name": "/grades/pdf",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"classIds\": [],\r\n    \"assignmentIds\": [],\r\n    \"studentIds\": [],\r\n    \"statuses\": [\"GRADED\"],\r\n    \"startDate\": \"2024-01-01T00:00:00.000Z\",\r\n    \"endDate\": \"2024-12-31T23:59:59.000Z\",\r\n    \"format\": \"detailed\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{EXPORT_PREFIX}}/grades/pdf",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{EXPORT_PREFIX}}",
+								"grades",
+								"pdf"
+							]
+						},
+						"description": "Export grades to PDF file. Format can be 'summary' or 'detailed' (default: 'detailed'). Teacher can export all data, Student can only export their own data."
+					},
+					"response": []
+				},
+				{
+					"name": "/report-card/:id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}:{{PORT}}/{{EXPORT_PREFIX}}/report-card/:id?format=detailed",
+							"host": [
+								"{{HOST}}"
+							],
+							"port": "{{PORT}}",
+							"path": [
+								"{{EXPORT_PREFIX}}",
+								"report-card",
+								":id"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "detailed",
+									"description": "(optional): 'summary' or 'detailed' (default: 'detailed')"
+								}
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "",
+									"description": "Student ID"
+								}
+							]
+						},
+						"description": "Export student report card as PDF. Student can only export their own report card, Teacher can export any student's report card."
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{accessToken}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "HOST",
+			"value": ""
+		},
+		{
+			"key": "PORT",
+			"value": ""
+		},
+		{
+			"key": "accessToken",
+			"value": ""
+		},
+		{
+			"key": "refreshToken",
+			"value": ""
+		},
+		{
+			"key": "AUTH_PREFIX",
+			"value": ""
+		},
+		{
+			"key": "USERS_PREFIX",
+			"value": ""
+		},
+		{
+			"key": "CLASSES_PREFIX",
+			"value": ""
+		},
+		{
+			"key": "STUDENTS_PREFIX",
+			"value": ""
+		},
+		{
+			"key": "ASSIGNMENTS_PREFIX",
+			"value": ""
+		},
+		{
+			"key": "SUBMISSIONS_PREFIX",
+			"value": ""
+		},
+		{
+			"key": "NOTIFICATIONS_PREFIX",
+			"value": ""
+		},
+		{
+			"key": "CATEGORIES_PREFIX",
+			"value": "api/v1/categories"
+		},
+		{
+			"key": "ACHIEVEMENTS_PREFIX",
+			"value": "api/v1/achievements"
+		},
+		{
+			"key": "PORTFOLIO_PREFIX",
+			"value": "api/v1/portfolio"
+		},
+		{
+			"key": "DASHBOARD_PREFIX",
+			"value": "api/v1/dashboard"
+		},
+		{
+			"key": "EXPORT_PREFIX",
+			"value": "api/v1/export"
+		}
+	]
+}
