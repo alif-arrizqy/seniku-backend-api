@@ -3,6 +3,7 @@ import { SubmissionStatus, Prisma, NotificationType } from '@prisma/client';
 import { PaginationResult } from '../utils/pagination';
 import { ErrorMessages } from '../constants/error-messages';
 import notificationService from './notification.service';
+import achievementCheckerService from './achievement-checker.service';
 
 export interface SubmissionFilters {
   assignmentId?: string;
@@ -42,7 +43,13 @@ export class SubmissionService {
             select: {
               id: true,
               title: true,
-              category: true,
+              category: {
+                select: {
+                  id: true,
+                  name: true,
+                  icon: true,
+                },
+              },
               deadline: true,
             },
           },
@@ -77,6 +84,13 @@ export class SubmissionService {
                 select: {
                   id: true,
                   name: true,
+                },
+              },
+              category: {
+                select: {
+                  id: true,
+                  name: true,
+                  icon: true,
                 },
               },
             },
@@ -147,7 +161,13 @@ export class SubmissionService {
             select: {
               id: true,
               title: true,
-              category: true,
+              category: {
+                select: {
+                  id: true,
+                  name: true,
+                  icon: true,
+                },
+              },
             },
           },
           student: {
@@ -280,6 +300,11 @@ export class SubmissionService {
         title: 'Karya Dinilai',
         message: `Karya '${submission.title}' telah dinilai dengan nilai ${gradeLetter} (${grade})`,
         link: `/submissions/${submissionId}`,
+      });
+
+      // Check and unlock achievements (async, don't wait)
+      achievementCheckerService.checkAndUnlockAchievements(submission.student.id).catch((error) => {
+        console.error('Error checking achievements:', error);
       });
 
       return submission;
