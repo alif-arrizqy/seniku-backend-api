@@ -9,7 +9,7 @@ export default async function exportRoutes(fastify: FastifyInstance) {
     '/grades/excel',
     {
       preHandler: [authenticate],
-      handler: asyncHandler(exportController.exportGradesToExcel.bind(exportController)),
+      handler: asyncHandler(exportController.exportGradesToExcel.bind(exportController), 'Export grades to Excel'),
     }
   );
 
@@ -18,7 +18,7 @@ export default async function exportRoutes(fastify: FastifyInstance) {
     '/grades/pdf',
     {
       preHandler: [authenticate],
-      handler: asyncHandler(exportController.exportGradesToPdf.bind(exportController)),
+      handler: asyncHandler(exportController.exportGradesToPdf.bind(exportController), 'Export grades to PDF'),
     }
   );
 
@@ -27,7 +27,7 @@ export default async function exportRoutes(fastify: FastifyInstance) {
     '/report-card/:id',
     {
       preHandler: [authenticate],
-      handler: asyncHandler(exportController.exportReportCard.bind(exportController)),
+      handler: asyncHandler(exportController.exportReportCard.bind(exportController), 'Export report card'),
     }
   );
 }
