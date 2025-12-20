@@ -146,7 +146,6 @@ export class AchievementCheckerService {
         return this.compare(stats.highestGrade, value, operator);
 
       case 'grade_count':
-        const minGrade = criteria.minGrade || 90;
         const gradeCount = stats.gradeCount.A || 0;
         return this.compare(gradeCount, value, operator);
 

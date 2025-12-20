@@ -1,6 +1,6 @@
 import prisma from '../config/database';
 import { NotificationType } from '@prisma/client';
-import { parsePagination, PaginationResult } from '../utils/pagination';
+import { PaginationResult } from '../utils/pagination';
 
 export interface NotificationFilters {
   userId: string;
