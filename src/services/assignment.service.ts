@@ -6,7 +6,7 @@ import notificationService from './notification.service';
 
 export interface AssignmentFilters {
   status?: AssignmentStatus;
-  category?: string;
+  categoryId?: string;
   classId?: string;
   search?: string;
   createdById?: string;
@@ -20,8 +20,8 @@ export class AssignmentService {
       where.status = filters.status;
     }
 
-    if (filters.category) {
-      where.category = filters.category;
+    if (filters.categoryId) {
+      where.categoryId = filters.categoryId;
     }
 
     if (filters.createdById) {
@@ -52,6 +52,13 @@ export class AssignmentService {
               id: true,
               name: true,
               email: true,
+            },
+          },
+          category: {
+            select: {
+              id: true,
+              name: true,
+              icon: true,
             },
           },
           classes: {
@@ -90,6 +97,13 @@ export class AssignmentService {
               id: true,
               name: true,
               email: true,
+            },
+          },
+          category: {
+            select: {
+              id: true,
+              name: true,
+              icon: true,
             },
           },
           classes: {
@@ -136,7 +150,7 @@ export class AssignmentService {
     data: {
       title: string;
       description: string;
-      category: string;
+      categoryId: string;
       deadline: Date;
       status: AssignmentStatus;
       createdById: string;
@@ -144,6 +158,15 @@ export class AssignmentService {
     }
   ) {
     try {
+      // Verify that category exists
+      const category = await prisma.category.findUnique({
+        where: { id: data.categoryId },
+      });
+
+      if (!category) {
+        throw new Error(ErrorMessages.RESOURCE.NOT_FOUND);
+      }
+
       // Verify that all classes exist
       const classes = await prisma.class.findMany({
         where: { id: { in: data.classIds } },
@@ -157,7 +180,7 @@ export class AssignmentService {
         data: {
           title: data.title,
           description: data.description,
-          category: data.category,
+          categoryId: data.categoryId,
           deadline: data.deadline,
           status: data.status,
           createdById: data.createdById,
@@ -173,6 +196,13 @@ export class AssignmentService {
               id: true,
               name: true,
               email: true,
+            },
+          },
+          category: {
+            select: {
+              id: true,
+              name: true,
+              icon: true,
             },
           },
           classes: {
@@ -241,7 +271,7 @@ export class AssignmentService {
     data: {
       title?: string;
       description?: string;
-      category?: string;
+      categoryId?: string;
       deadline?: Date;
       status?: AssignmentStatus;
       classIds?: string[];
@@ -255,6 +285,17 @@ export class AssignmentService {
 
       if (!existingAssignment) {
         throw new Error(ErrorMessages.RESOURCE.ASSIGNMENT_NOT_FOUND);
+      }
+
+      // Verify that category exists if categoryId is provided
+      if (data.categoryId) {
+        const category = await prisma.category.findUnique({
+          where: { id: data.categoryId },
+        });
+
+        if (!category) {
+          throw new Error(ErrorMessages.RESOURCE.NOT_FOUND);
+        }
       }
 
       // If classIds provided, update the classes
@@ -284,6 +325,13 @@ export class AssignmentService {
               id: true,
               name: true,
               email: true,
+            },
+          },
+          category: {
+            select: {
+              id: true,
+              name: true,
+              icon: true,
             },
           },
           classes: {

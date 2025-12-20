@@ -20,7 +20,7 @@ export class AssignmentController {
 
       const filters = {
         status: query.status,
-        category: query.category,
+        categoryId: query.categoryId,
         classId: query.classId,
         search: query.search,
         createdById: request.user?.role === 'TEACHER' ? request.user.id : undefined,
