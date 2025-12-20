@@ -102,7 +102,7 @@ export default function errorHandler(fastify: FastifyInstance) {
   });
 
   // Handle 404
-  fastify.setNotFoundHandler((request: FastifyRequest, reply: FastifyReply) => {
+  fastify.setNotFoundHandler((_request: FastifyRequest, reply: FastifyReply) => {
     return ResponseFormatter.error(reply, 'Route not found', 404);
   });
 }

@@ -60,7 +60,7 @@ export async function authenticate(request: FastifyRequest, reply: FastifyReply)
   }
 }
 
-export async function optionalAuth(request: FastifyRequest, reply: FastifyReply) {
+export async function optionalAuth(request: FastifyRequest, _reply: FastifyReply) {
   try {
     // Get token from Authorization header
     const authHeader = request.headers.authorization;
