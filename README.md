@@ -79,6 +79,50 @@ Sistem menggunakan **JWT (JSON Web Token)** untuk authentication:
 - Foreign key constraints dengan cascade delete
 - Unique constraints untuk NIS dan email
 
+### 🗄️ Supabase Setup
+
+Aplikasi ini mendukung PostgreSQL lokal maupun Supabase. Untuk menggunakan Supabase:
+
+1. **Buat project di Supabase**
+   - Kunjungi [supabase.com](https://supabase.com)
+   - Buat project baru
+   - Catat `PROJECT-REF` dan password database
+
+2. **Ambil Connection String**
+   - Buka Settings > Database di Supabase dashboard
+   - Copy connection string dari bagian "Connection string"
+   - Pilih "URI" atau "Connection pooling" sesuai kebutuhan
+
+3. **Update Environment Variables**
+   - Update `DATABASE_URL` di `.env` dengan connection string Supabase
+   - **Untuk Connection Pooler** (direkomendasikan untuk production):
+     ```env
+     DATABASE_URL="postgresql://postgres.[PROJECT-REF]:[PASSWORD]@aws-0-[REGION].pooler.supabase.com:6543/postgres?pgbouncer=true&schema=public"
+     DIRECT_URL="postgresql://postgres:[PASSWORD]@db.[PROJECT-REF].supabase.co:5432/postgres?schema=public"
+     ```
+   - **Untuk Direct Connection** (untuk development):
+     ```env
+     DATABASE_URL="postgresql://postgres:[PASSWORD]@db.[PROJECT-REF].supabase.co:5432/postgres?schema=public"
+     ```
+
+4. **Run Migrations**
+   ```bash
+   npx prisma migrate deploy
+   # atau untuk development
+   npx prisma migrate dev
+   ```
+
+5. **Generate Prisma Client**
+   ```bash
+   npx prisma generate
+   ```
+
+**Catatan Penting:**
+- Supabase Free Tier: ~60 max connections (Pro: ~200)
+- Connection pooler direkomendasikan untuk production untuk menghindari connection limits
+- Jika menggunakan connection pooler, pastikan set `DIRECT_URL` untuk migrations
+- SSL otomatis diaktifkan oleh Supabase
+
 ---
 
 **Last Updated**: 2025-12-19  
