@@ -5,11 +5,14 @@ import env from './env';
 import logger from '../utils/logger';
 
 // Connection pool configuration for Prisma 7
+// Optimized for Supabase (Free tier: ~60 max connections, Pro: ~200)
+// Using conservative pool settings to avoid hitting connection limits
 const poolConfig = {
-  max: 20, // Maximum number of clients in the pool
-  min: 5, // Minimum number of clients in the pool
+  max: 10, // Maximum number of clients in the pool (reduced for Supabase)
+  min: 2, // Minimum number of clients in the pool
   idleTimeoutMillis: 30000, // Close idle clients after 30 seconds
-  connectionTimeoutMillis: 2000, // Return an error after 2 seconds if connection could not be established
+  connectionTimeoutMillis: 5000, // Increased timeout for cloud connections (5 seconds)
+  // Supabase requires SSL, ensure connection string includes SSL mode
 };
 
 // Connection pool

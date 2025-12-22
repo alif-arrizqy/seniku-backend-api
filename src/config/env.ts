@@ -7,6 +7,9 @@ dotenv.config();
 const envSchema = z.object({
   // Database
   DATABASE_URL: z.string().min(1),
+  // Optional: Direct connection URL for migrations (when using connection pooler)
+  // If not provided, DATABASE_URL will be used for migrations
+  DIRECT_URL: z.string().optional(),
 
   // Server
   PORT: z.string().default('3000').transform(Number).pipe(z.number().int().positive()),
