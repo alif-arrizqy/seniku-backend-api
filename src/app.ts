@@ -17,15 +17,15 @@ export async function buildApp(): Promise<FastifyInstance> {
     await app.register(corsPlugin);
 
     // Register routes with prefix
-    await app.register(routes, { prefix: '/api/v1' });
+    await app.register(routes, { prefix: '/seniku/api/v1' });
 
     // Welcome endpoint
-    app.get('/', async () => {
+    app.get('/seniku', async () => {
       return { message: 'Welcome to Seniku API 🎨' };
     });
 
     // Health check endpoint
-    app.get('/health', async () => {
+    app.get('/seniku/health', async () => {
       return { 
         success: true,
         status: 'ok', 

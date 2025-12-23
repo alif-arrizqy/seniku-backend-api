@@ -2,7 +2,7 @@
 
 ## Base URL
 ```
-http://localhost:8989/api/v1
+http://localhost:8989/seniku/api/v1
 ```
 
 ## Authentication
