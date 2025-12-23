@@ -33,8 +33,9 @@ Backend API untuk aplikasi Seniku (E-Portfolio Seni Digital).
 
 4. **Setup database**
    ```bash
-   npx prisma migrate dev
-   npx prisma generate
+   npm run prisma:generate
+   
+   npm run prisma:push
    ```
 
 5. **Seed database (optional)**
