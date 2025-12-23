@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "d032269b-a29b-4d86-9295-eca615125887",
+		"_postman_id": "11bf5634-8f04-4046-bd23-ffc306c13fd2",
 		"name": "SeniKu App",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "11529019"
@@ -24,11 +24,10 @@
 							}
 						},
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{AUTH_PREFIX}}/register",
+							"raw": "{{HOST}}/{{AUTH_PREFIX}}/register",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{AUTH_PREFIX}}",
 								"register"
@@ -51,11 +50,10 @@
 									}
 								},
 								"url": {
-									"raw": "{{HOST}}:{{PORT}}/{{AUTH_PREFIX}}/register",
+									"raw": "{{HOST}}/{{AUTH_PREFIX}}/register",
 									"host": [
 										"{{HOST}}"
 									],
-									"port": "{{PORT}}",
 									"path": [
 										"{{AUTH_PREFIX}}",
 										"register"
@@ -145,11 +143,10 @@
 							}
 						},
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{AUTH_PREFIX}}/login",
+							"raw": "{{HOST}}/{{AUTH_PREFIX}}/login",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{AUTH_PREFIX}}",
 								"login"
@@ -172,11 +169,10 @@
 									}
 								},
 								"url": {
-									"raw": "{{HOST}}:{{PORT}}/{{AUTH_PREFIX}}/login",
+									"raw": "{{HOST}}/{{AUTH_PREFIX}}/login",
 									"host": [
 										"{{HOST}}"
 									],
-									"port": "{{PORT}}",
 									"path": [
 										"{{AUTH_PREFIX}}",
 										"login"
@@ -256,11 +252,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{AUTH_PREFIX}}/me",
+							"raw": "{{HOST}}/{{AUTH_PREFIX}}/me",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{AUTH_PREFIX}}",
 								"me"
@@ -274,11 +269,10 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{HOST}}:{{PORT}}/{{AUTH_PREFIX}}/me",
+									"raw": "{{HOST}}/{{AUTH_PREFIX}}/me",
 									"host": [
 										"{{HOST}}"
 									],
-									"port": "{{PORT}}",
 									"path": [
 										"{{AUTH_PREFIX}}",
 										"me"
@@ -319,11 +313,10 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{HOST}}:{{PORT}}/{{AUTH_PREFIX}}/me",
+									"raw": "{{HOST}}/{{AUTH_PREFIX}}/me",
 									"host": [
 										"{{HOST}}"
 									],
-									"port": "{{PORT}}",
 									"path": [
 										"{{AUTH_PREFIX}}",
 										"me"
@@ -366,11 +359,10 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{AUTH_PREFIX}}/logout",
+							"raw": "{{HOST}}/{{AUTH_PREFIX}}/logout",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{AUTH_PREFIX}}",
 								"logout"
@@ -384,11 +376,10 @@
 								"method": "POST",
 								"header": [],
 								"url": {
-									"raw": "{{HOST}}:{{PORT}}/{{AUTH_PREFIX}}/logout",
+									"raw": "{{HOST}}/{{AUTH_PREFIX}}/logout",
 									"host": [
 										"{{HOST}}"
 									],
-									"port": "{{PORT}}",
 									"path": [
 										"{{AUTH_PREFIX}}",
 										"logout"
@@ -440,11 +431,10 @@
 							}
 						},
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{AUTH_PREFIX}}/refresh",
+							"raw": "{{HOST}}/{{AUTH_PREFIX}}/refresh",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{AUTH_PREFIX}}",
 								"refresh"
@@ -467,11 +457,10 @@
 									}
 								},
 								"url": {
-									"raw": "{{HOST}}:{{PORT}}/{{AUTH_PREFIX}}/refresh",
+									"raw": "{{HOST}}/{{AUTH_PREFIX}}/refresh",
 									"host": [
 										"{{HOST}}"
 									],
-									"port": "{{PORT}}",
 									"path": [
 										"{{AUTH_PREFIX}}",
 										"refresh"
@@ -519,11 +508,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{USERS_PREFIX}}?page=1&limit=10&search=Wanda Oke",
+							"raw": "{{HOST}}/{{USERS_PREFIX}}?page=1&limit=10&search=Wanda Oke",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{USERS_PREFIX}}"
 							],
@@ -565,11 +553,10 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{HOST}}:{{PORT}}/{{USERS_PREFIX}}?page=1&limit=5&classId=96ece2d7-a19a-4fd0-b251-ba9c53c646f2",
+									"raw": "{{HOST}}/{{USERS_PREFIX}}?page=1&limit=5&classId=96ece2d7-a19a-4fd0-b251-ba9c53c646f2",
 									"host": [
 										"{{HOST}}"
 									],
-									"port": "{{PORT}}",
 									"path": [
 										"{{USERS_PREFIX}}"
 									],
@@ -638,11 +625,10 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{HOST}}:{{PORT}}/{{USERS_PREFIX}}?page=1&limit=10&role=TEACHER",
+									"raw": "{{HOST}}/{{USERS_PREFIX}}?page=1&limit=10&role=TEACHER",
 									"host": [
 										"{{HOST}}"
 									],
-									"port": "{{PORT}}",
 									"path": [
 										"{{USERS_PREFIX}}"
 									],
@@ -711,11 +697,10 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{HOST}}:{{PORT}}/{{USERS_PREFIX}}?page=1&limit=10&search=Wanda Oke",
+									"raw": "{{HOST}}/{{USERS_PREFIX}}?page=1&limit=10&search=Wanda Oke",
 									"host": [
 										"{{HOST}}"
 									],
-									"port": "{{PORT}}",
 									"path": [
 										"{{USERS_PREFIX}}"
 									],
@@ -786,11 +771,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{USERS_PREFIX}}/80be51f1-62df-4b0e-9b28-aaaaa80682ae",
+							"raw": "{{HOST}}/{{USERS_PREFIX}}/80be51f1-62df-4b0e-9b28-aaaaa80682ae",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{USERS_PREFIX}}",
 								"80be51f1-62df-4b0e-9b28-aaaaa80682ae"
@@ -804,11 +788,10 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{HOST}}:{{PORT}}/{{USERS_PREFIX}}/80be51f1-62df-4b0e-9b28-aaaaa80682ae",
+									"raw": "{{HOST}}/{{USERS_PREFIX}}/80be51f1-62df-4b0e-9b28-aaaaa80682ae",
 									"host": [
 										"{{HOST}}"
 									],
-									"port": "{{PORT}}",
 									"path": [
 										"{{USERS_PREFIX}}",
 										"80be51f1-62df-4b0e-9b28-aaaaa80682ae"
@@ -849,11 +832,10 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{HOST}}:{{PORT}}/{{USERS_PREFIX}}/9c2df534-3f2c-4ca2-a955-0d3bf774e1cz",
+									"raw": "{{HOST}}/{{USERS_PREFIX}}/9c2df534-3f2c-4ca2-a955-0d3bf774e1cz",
 									"host": [
 										"{{HOST}}"
 									],
-									"port": "{{PORT}}",
 									"path": [
 										"{{USERS_PREFIX}}",
 										"9c2df534-3f2c-4ca2-a955-0d3bf774e1cz"
@@ -905,11 +887,10 @@
 							}
 						},
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{USERS_PREFIX}}/80be51f1-62df-4b0e-9b28-aaaaa80682ae",
+							"raw": "{{HOST}}/{{USERS_PREFIX}}/80be51f1-62df-4b0e-9b28-aaaaa80682ae",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{USERS_PREFIX}}",
 								"80be51f1-62df-4b0e-9b28-aaaaa80682ae"
@@ -932,11 +913,10 @@
 									}
 								},
 								"url": {
-									"raw": "{{HOST}}:{{PORT}}/{{USERS_PREFIX}}/80be51f1-62df-4b0e-9b28-aaaaa80682ae",
+									"raw": "{{HOST}}/{{USERS_PREFIX}}/80be51f1-62df-4b0e-9b28-aaaaa80682ae",
 									"host": [
 										"{{HOST}}"
 									],
-									"port": "{{PORT}}",
 									"path": [
 										"{{USERS_PREFIX}}",
 										"80be51f1-62df-4b0e-9b28-aaaaa80682ae"
@@ -990,11 +970,10 @@
 							]
 						},
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{USERS_PREFIX}}/import",
+							"raw": "{{HOST}}/{{USERS_PREFIX}}/import",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{USERS_PREFIX}}",
 								"import"
@@ -1009,11 +988,10 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{USERS_PREFIX}}/9e0a78fa-07d5-417e-81c7-9892956b15db",
+							"raw": "{{HOST}}/{{USERS_PREFIX}}/9e0a78fa-07d5-417e-81c7-9892956b15db",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{USERS_PREFIX}}",
 								"9e0a78fa-07d5-417e-81c7-9892956b15db"
@@ -1027,11 +1005,10 @@
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "{{HOST}}:{{PORT}}/{{USERS_PREFIX}}/9e0a78fa-07d5-417e-81c7-9892956b15db",
+									"raw": "{{HOST}}/{{USERS_PREFIX}}/9e0a78fa-07d5-417e-81c7-9892956b15db",
 									"host": [
 										"{{HOST}}"
 									],
-									"port": "{{PORT}}",
 									"path": [
 										"{{USERS_PREFIX}}",
 										"9e0a78fa-07d5-417e-81c7-9892956b15db"
@@ -1072,11 +1049,10 @@
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "{{HOST}}:{{PORT}}/{{USERS_PREFIX}}/9e0a78fa-07d5-417e-81c7-9892956b15db",
+									"raw": "{{HOST}}/{{USERS_PREFIX}}/9e0a78fa-07d5-417e-81c7-9892956b15db",
 									"host": [
 										"{{HOST}}"
 									],
-									"port": "{{PORT}}",
 									"path": [
 										"{{USERS_PREFIX}}",
 										"9e0a78fa-07d5-417e-81c7-9892956b15db"
@@ -1124,11 +1100,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{CLASSES_PREFIX}}?page=1&limit=10&search",
+							"raw": "{{HOST}}/{{CLASSES_PREFIX}}?page=1&limit=10&search",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{CLASSES_PREFIX}}"
 							],
@@ -1158,11 +1133,10 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{HOST}}:{{PORT}}/{{CLASSES_PREFIX}}?page=1&limit=10&search",
+									"raw": "{{HOST}}/{{CLASSES_PREFIX}}?page=1&limit=10&search",
 									"host": [
 										"{{HOST}}"
 									],
-									"port": "{{PORT}}",
 									"path": [
 										"{{CLASSES_PREFIX}}"
 									],
@@ -1221,11 +1195,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{CLASSES_PREFIX}}/d6692329-1c71-4b96-9b8c-9c93cdcff4d5",
+							"raw": "{{HOST}}/{{CLASSES_PREFIX}}/d6692329-1c71-4b96-9b8c-9c93cdcff4d5",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{CLASSES_PREFIX}}",
 								"d6692329-1c71-4b96-9b8c-9c93cdcff4d5"
@@ -1239,11 +1212,10 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{HOST}}:{{PORT}}/{{CLASSES_PREFIX}}/d6692329-1c71-4b96-9b8c-9c93cdcff4d5",
+									"raw": "{{HOST}}/{{CLASSES_PREFIX}}/d6692329-1c71-4b96-9b8c-9c93cdcff4d5",
 									"host": [
 										"{{HOST}}"
 									],
-									"port": "{{PORT}}",
 									"path": [
 										"{{CLASSES_PREFIX}}",
 										"d6692329-1c71-4b96-9b8c-9c93cdcff4d5"
@@ -1295,11 +1267,10 @@
 							}
 						},
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{CLASSES_PREFIX}}",
+							"raw": "{{HOST}}/{{CLASSES_PREFIX}}",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{CLASSES_PREFIX}}"
 							]
@@ -1321,11 +1292,10 @@
 									}
 								},
 								"url": {
-									"raw": "{{HOST}}:{{PORT}}/{{CLASSES_PREFIX}}",
+									"raw": "{{HOST}}/{{CLASSES_PREFIX}}",
 									"host": [
 										"{{HOST}}"
 									],
-									"port": "{{PORT}}",
 									"path": [
 										"{{CLASSES_PREFIX}}"
 									]
@@ -1374,11 +1344,10 @@
 									}
 								},
 								"url": {
-									"raw": "{{HOST}}:{{PORT}}/{{CLASSES_PREFIX}}",
+									"raw": "{{HOST}}/{{CLASSES_PREFIX}}",
 									"host": [
 										"{{HOST}}"
 									],
-									"port": "{{PORT}}",
 									"path": [
 										"{{CLASSES_PREFIX}}"
 									]
@@ -1429,11 +1398,10 @@
 							}
 						},
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{CLASSES_PREFIX}}/2068e7a1-5a09-4efe-96c3-cda6ad6d5349",
+							"raw": "{{HOST}}/{{CLASSES_PREFIX}}/2068e7a1-5a09-4efe-96c3-cda6ad6d5349",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{CLASSES_PREFIX}}",
 								"2068e7a1-5a09-4efe-96c3-cda6ad6d5349"
@@ -1456,11 +1424,10 @@
 									}
 								},
 								"url": {
-									"raw": "{{HOST}}:{{PORT}}/{{CLASSES_PREFIX}}/2068e7a1-5a09-4efe-96c3-cda6ad6d5340",
+									"raw": "{{HOST}}/{{CLASSES_PREFIX}}/2068e7a1-5a09-4efe-96c3-cda6ad6d5340",
 									"host": [
 										"{{HOST}}"
 									],
-									"port": "{{PORT}}",
 									"path": [
 										"{{CLASSES_PREFIX}}",
 										"2068e7a1-5a09-4efe-96c3-cda6ad6d5340"
@@ -1510,11 +1477,10 @@
 									}
 								},
 								"url": {
-									"raw": "{{HOST}}:{{PORT}}/{{CLASSES_PREFIX}}/2068e7a1-5a09-4efe-96c3-cda6ad6d5349",
+									"raw": "{{HOST}}/{{CLASSES_PREFIX}}/2068e7a1-5a09-4efe-96c3-cda6ad6d5349",
 									"host": [
 										"{{HOST}}"
 									],
-									"port": "{{PORT}}",
 									"path": [
 										"{{CLASSES_PREFIX}}",
 										"2068e7a1-5a09-4efe-96c3-cda6ad6d5349"
@@ -1557,11 +1523,10 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{CLASSES_PREFIX}}/",
+							"raw": "{{HOST}}/{{CLASSES_PREFIX}}/",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{CLASSES_PREFIX}}",
 								""
@@ -1581,11 +1546,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{ASSIGNMENTS_PREFIX}}?page=1&limit=10",
+							"raw": "{{HOST}}/{{ASSIGNMENTS_PREFIX}}?page=1&limit=10",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{ASSIGNMENTS_PREFIX}}"
 							],
@@ -1634,11 +1598,10 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{HOST}}:{{PORT}}/{{ASSIGNMENTS_PREFIX}}?page=1&limit=10",
+									"raw": "{{HOST}}/{{ASSIGNMENTS_PREFIX}}?page=1&limit=10",
 									"host": [
 										"{{HOST}}"
 									],
-									"port": "{{PORT}}",
 									"path": [
 										"{{ASSIGNMENTS_PREFIX}}"
 									],
@@ -1716,11 +1679,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{ASSIGNMENTS_PREFIX}}/8bd7626f-8171-4dc8-8657-2ea038140a63",
+							"raw": "{{HOST}}/{{ASSIGNMENTS_PREFIX}}/8bd7626f-8171-4dc8-8657-2ea038140a63",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{ASSIGNMENTS_PREFIX}}",
 								"8bd7626f-8171-4dc8-8657-2ea038140a63"
@@ -1734,11 +1696,10 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{HOST}}:{{PORT}}/{{ASSIGNMENTS_PREFIX}}/6e5cd248-43db-4625-bfda-24755212a9c2",
+									"raw": "{{HOST}}/{{ASSIGNMENTS_PREFIX}}/6e5cd248-43db-4625-bfda-24755212a9c2",
 									"host": [
 										"{{HOST}}"
 									],
-									"port": "{{PORT}}",
 									"path": [
 										"{{ASSIGNMENTS_PREFIX}}",
 										"6e5cd248-43db-4625-bfda-24755212a9c2"
@@ -1790,11 +1751,10 @@
 							}
 						},
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{ASSIGNMENTS_PREFIX}}",
+							"raw": "{{HOST}}/{{ASSIGNMENTS_PREFIX}}",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{ASSIGNMENTS_PREFIX}}"
 							]
@@ -1816,11 +1776,10 @@
 									}
 								},
 								"url": {
-									"raw": "{{HOST}}:{{PORT}}/{{ASSIGNMENTS_PREFIX}}",
+									"raw": "{{HOST}}/{{ASSIGNMENTS_PREFIX}}",
 									"host": [
 										"{{HOST}}"
 									],
-									"port": "{{PORT}}",
 									"path": [
 										"{{ASSIGNMENTS_PREFIX}}"
 									]
@@ -1869,11 +1828,10 @@
 									}
 								},
 								"url": {
-									"raw": "{{HOST}}:{{PORT}}/{{ASSIGNMENTS_PREFIX}}",
+									"raw": "{{HOST}}/{{ASSIGNMENTS_PREFIX}}",
 									"host": [
 										"{{HOST}}"
 									],
-									"port": "{{PORT}}",
 									"path": [
 										"{{ASSIGNMENTS_PREFIX}}"
 									]
@@ -1924,11 +1882,10 @@
 							}
 						},
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{ASSIGNMENTS_PREFIX}}/0d90268a-1635-46f9-a550-8fa0f5065528",
+							"raw": "{{HOST}}/{{ASSIGNMENTS_PREFIX}}/0d90268a-1635-46f9-a550-8fa0f5065528",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{ASSIGNMENTS_PREFIX}}",
 								"0d90268a-1635-46f9-a550-8fa0f5065528"
@@ -1947,11 +1904,10 @@
 							"raw": "{\r\n    \"title\": \"Lukisan Tema Desa\",\r\n    \"description\": \"Buat lukisan dengan tema kehidupan di desa\",\r\n    \"categoryId\": \"uuid-category-id\",\r\n    \"status\": \"ACTIVE\",\r\n    \"deadline\": \"2026-01-20T23:59:59.000Z\",\r\n    \"classIds\": [\r\n        \"2b7bd002-a8b2-4237-b3a0-cf8f68c568c0\"\r\n    ]\r\n}"
 						},
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{ASSIGNMENTS_PREFIX}}/0d90268a-1635-46f9-a550-8fa0f5065528",
+							"raw": "{{HOST}}/{{ASSIGNMENTS_PREFIX}}/0d90268a-1635-46f9-a550-8fa0f5065528",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{ASSIGNMENTS_PREFIX}}",
 								"0d90268a-1635-46f9-a550-8fa0f5065528"
@@ -1969,11 +1925,10 @@
 									"raw": "{\r\n    \"title\": \"Lukisan Tema Desa\",\r\n    \"description\": \"Buat lukisan dengan tema kehidupan di desa\",\r\n    \"categoryId\": \"uuid-category-id\",\r\n    \"status\": \"ACTIVE\",\r\n    \"deadline\": \"2026-01-20T23:59:59.000Z\",\r\n    \"classIds\": [\r\n        \"2b7bd002-a8b2-4237-b3a0-cf8f68c568c0\"\r\n    ]\r\n}"
 								},
 								"url": {
-									"raw": "{{HOST}}:{{PORT}}/{{ASSIGNMENTS_PREFIX}}/0d90268a-1635-46f9-a550-8fa0f5065528",
+									"raw": "{{HOST}}/{{ASSIGNMENTS_PREFIX}}/0d90268a-1635-46f9-a550-8fa0f5065528",
 									"host": [
 										"{{HOST}}"
 									],
-									"port": "{{PORT}}",
 									"path": [
 										"{{ASSIGNMENTS_PREFIX}}",
 										"0d90268a-1635-46f9-a550-8fa0f5065528"
@@ -2018,11 +1973,10 @@
 									"raw": "{\r\n    \"title\": \"Lukisan Tema Desa\",\r\n    \"description\": \"Buat lukisan dengan tema kehidupan di desa\",\r\n    \"categoryId\": \"uuid-category-id\",\r\n    \"status\": \"ACTIVE\",\r\n    \"deadline\": \"2026-01-20T23:59:59.000Z\",\r\n    \"classIds\": [\r\n        \"2b7bd002-a8b2-4237-b3a0-cf8f68c568c0\"\r\n    ]\r\n}"
 								},
 								"url": {
-									"raw": "{{HOST}}:{{PORT}}/{{ASSIGNMENTS_PREFIX}}/0d90268a-1635-46f9-a550-8fa0f5065528",
+									"raw": "{{HOST}}/{{ASSIGNMENTS_PREFIX}}/0d90268a-1635-46f9-a550-8fa0f5065528",
 									"host": [
 										"{{HOST}}"
 									],
-									"port": "{{PORT}}",
 									"path": [
 										"{{ASSIGNMENTS_PREFIX}}",
 										"0d90268a-1635-46f9-a550-8fa0f5065528"
@@ -2074,11 +2028,10 @@
 							}
 						},
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{ASSIGNMENTS_PREFIX}}/bulk-status",
+							"raw": "{{HOST}}/{{ASSIGNMENTS_PREFIX}}/bulk-status",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{ASSIGNMENTS_PREFIX}}",
 								"bulk-status"
@@ -2102,11 +2055,10 @@
 							}
 						},
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{ASSIGNMENTS_PREFIX}}/bulk-delete",
+							"raw": "{{HOST}}/{{ASSIGNMENTS_PREFIX}}/bulk-delete",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{ASSIGNMENTS_PREFIX}}",
 								"bulk-delete"
@@ -2126,11 +2078,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{SUBMISSIONS_PREFIX}}?page=1&limit=10",
+							"raw": "{{HOST}}/{{SUBMISSIONS_PREFIX}}?page=1&limit=10",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{SUBMISSIONS_PREFIX}}"
 							],
@@ -2174,11 +2125,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{SUBMISSIONS_PREFIX}}/",
+							"raw": "{{HOST}}/{{SUBMISSIONS_PREFIX}}/",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{SUBMISSIONS_PREFIX}}",
 								""
@@ -2218,11 +2168,10 @@
 							]
 						},
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{SUBMISSIONS_PREFIX}}",
+							"raw": "{{HOST}}/{{SUBMISSIONS_PREFIX}}",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{SUBMISSIONS_PREFIX}}"
 							]
@@ -2260,11 +2209,10 @@
 									]
 								},
 								"url": {
-									"raw": "{{HOST}}:{{PORT}}/{{SUBMISSIONS_PREFIX}}",
+									"raw": "{{HOST}}/{{SUBMISSIONS_PREFIX}}",
 									"host": [
 										"{{HOST}}"
 									],
-									"port": "{{PORT}}",
 									"path": [
 										"{{SUBMISSIONS_PREFIX}}"
 									]
@@ -2329,11 +2277,10 @@
 									]
 								},
 								"url": {
-									"raw": "{{HOST}}:{{PORT}}/{{SUBMISSIONS_PREFIX}}",
+									"raw": "{{HOST}}/{{SUBMISSIONS_PREFIX}}",
 									"host": [
 										"{{HOST}}"
 									],
-									"port": "{{PORT}}",
 									"path": [
 										"{{SUBMISSIONS_PREFIX}}"
 									]
@@ -2384,11 +2331,10 @@
 							}
 						},
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{SUBMISSIONS_PREFIX}}/f41f92f3-b574-4702-90f1-e0c48f0e062f",
+							"raw": "{{HOST}}/{{SUBMISSIONS_PREFIX}}/f41f92f3-b574-4702-90f1-e0c48f0e062f",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{SUBMISSIONS_PREFIX}}",
 								"f41f92f3-b574-4702-90f1-e0c48f0e062f"
@@ -2411,11 +2357,10 @@
 									}
 								},
 								"url": {
-									"raw": "{{HOST}}:{{PORT}}/{{SUBMISSIONS_PREFIX}}/f41f92f3-b574-4702-90f1-e0c48f0e062f",
+									"raw": "{{HOST}}/{{SUBMISSIONS_PREFIX}}/f41f92f3-b574-4702-90f1-e0c48f0e062f",
 									"host": [
 										"{{HOST}}"
 									],
-									"port": "{{PORT}}",
 									"path": [
 										"{{SUBMISSIONS_PREFIX}}",
 										"f41f92f3-b574-4702-90f1-e0c48f0e062f"
@@ -2458,11 +2403,10 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{SUBMISSIONS_PREFIX}}/f41f92f3-b574-4702-90f1-e0c48f0e062f",
+							"raw": "{{HOST}}/{{SUBMISSIONS_PREFIX}}/f41f92f3-b574-4702-90f1-e0c48f0e062f",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{SUBMISSIONS_PREFIX}}",
 								"f41f92f3-b574-4702-90f1-e0c48f0e062f"
@@ -2476,11 +2420,10 @@
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "{{HOST}}:{{PORT}}/{{SUBMISSIONS_PREFIX}}/f41f92f3-b574-4702-90f1-e0c48f0e062f",
+									"raw": "{{HOST}}/{{SUBMISSIONS_PREFIX}}/f41f92f3-b574-4702-90f1-e0c48f0e062f",
 									"host": [
 										"{{HOST}}"
 									],
-									"port": "{{PORT}}",
 									"path": [
 										"{{SUBMISSIONS_PREFIX}}",
 										"f41f92f3-b574-4702-90f1-e0c48f0e062f"
@@ -2532,11 +2475,10 @@
 							}
 						},
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{SUBMISSIONS_PREFIX}}/80d3e6d0-c4a4-4baf-a88a-c14d4e724877/grade",
+							"raw": "{{HOST}}/{{SUBMISSIONS_PREFIX}}/80d3e6d0-c4a4-4baf-a88a-c14d4e724877/grade",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{SUBMISSIONS_PREFIX}}",
 								"80d3e6d0-c4a4-4baf-a88a-c14d4e724877",
@@ -2560,11 +2502,10 @@
 									}
 								},
 								"url": {
-									"raw": "{{HOST}}:{{PORT}}/{{SUBMISSIONS_PREFIX}}/80d3e6d0-c4a4-4baf-a88a-c14d4e724877/grade",
+									"raw": "{{HOST}}/{{SUBMISSIONS_PREFIX}}/80d3e6d0-c4a4-4baf-a88a-c14d4e724877/grade",
 									"host": [
 										"{{HOST}}"
 									],
-									"port": "{{PORT}}",
 									"path": [
 										"{{SUBMISSIONS_PREFIX}}",
 										"80d3e6d0-c4a4-4baf-a88a-c14d4e724877",
@@ -2617,11 +2558,10 @@
 							}
 						},
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{SUBMISSIONS_PREFIX}}/80d3e6d0-c4a4-4baf-a88a-c14d4e724877/revision",
+							"raw": "{{HOST}}/{{SUBMISSIONS_PREFIX}}/80d3e6d0-c4a4-4baf-a88a-c14d4e724877/revision",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{SUBMISSIONS_PREFIX}}",
 								"80d3e6d0-c4a4-4baf-a88a-c14d4e724877",
@@ -2645,11 +2585,10 @@
 									}
 								},
 								"url": {
-									"raw": "{{HOST}}:{{PORT}}/{{SUBMISSIONS_PREFIX}}/e09f25e3-ffc3-4f24-bb22-ad3dd81a9635/revision",
+									"raw": "{{HOST}}/{{SUBMISSIONS_PREFIX}}/e09f25e3-ffc3-4f24-bb22-ad3dd81a9635/revision",
 									"host": [
 										"{{HOST}}"
 									],
-									"port": "{{PORT}}",
 									"path": [
 										"{{SUBMISSIONS_PREFIX}}",
 										"e09f25e3-ffc3-4f24-bb22-ad3dd81a9635",
@@ -2698,11 +2637,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{CATEGORIES_PREFIX}}?page=1&limit=10",
+							"raw": "{{HOST}}/{{CATEGORIES_PREFIX}}?page=1&limit=10",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{CATEGORIES_PREFIX}}"
 							],
@@ -2740,11 +2678,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{CATEGORIES_PREFIX}}/:id",
+							"raw": "{{HOST}}/{{CATEGORIES_PREFIX}}/:id",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{CATEGORIES_PREFIX}}",
 								":id"
@@ -2774,11 +2711,10 @@
 							}
 						},
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{CATEGORIES_PREFIX}}",
+							"raw": "{{HOST}}/{{CATEGORIES_PREFIX}}",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{CATEGORIES_PREFIX}}"
 							]
@@ -2801,11 +2737,10 @@
 							}
 						},
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{CATEGORIES_PREFIX}}/:id",
+							"raw": "{{HOST}}/{{CATEGORIES_PREFIX}}/:id",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{CATEGORIES_PREFIX}}",
 								":id"
@@ -2826,11 +2761,10 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{CATEGORIES_PREFIX}}/:id?force=false",
+							"raw": "{{HOST}}/{{CATEGORIES_PREFIX}}/:id?force=false",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{CATEGORIES_PREFIX}}",
 								":id"
@@ -2863,11 +2797,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{ACHIEVEMENTS_PREFIX}}?page=1&limit=10",
+							"raw": "{{HOST}}/{{ACHIEVEMENTS_PREFIX}}?page=1&limit=10",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{ACHIEVEMENTS_PREFIX}}"
 							],
@@ -2899,11 +2832,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{ACHIEVEMENTS_PREFIX}}/:id",
+							"raw": "{{HOST}}/{{ACHIEVEMENTS_PREFIX}}/:id",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{ACHIEVEMENTS_PREFIX}}",
 								":id"
@@ -2924,11 +2856,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{ACHIEVEMENTS_PREFIX}}/me/achievements",
+							"raw": "{{HOST}}/{{ACHIEVEMENTS_PREFIX}}/me/achievements",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{ACHIEVEMENTS_PREFIX}}",
 								"me",
@@ -2954,11 +2885,10 @@
 							}
 						},
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{ACHIEVEMENTS_PREFIX}}",
+							"raw": "{{HOST}}/{{ACHIEVEMENTS_PREFIX}}",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{ACHIEVEMENTS_PREFIX}}"
 							]
@@ -2982,11 +2912,10 @@
 							}
 						},
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{ACHIEVEMENTS_PREFIX}}/:id",
+							"raw": "{{HOST}}/{{ACHIEVEMENTS_PREFIX}}/:id",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{ACHIEVEMENTS_PREFIX}}",
 								":id"
@@ -3008,11 +2937,10 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{ACHIEVEMENTS_PREFIX}}/:id?force=false",
+							"raw": "{{HOST}}/{{ACHIEVEMENTS_PREFIX}}/:id?force=false",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{ACHIEVEMENTS_PREFIX}}",
 								":id"
@@ -3046,11 +2974,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{PORTFOLIO_PREFIX}}?page=1&limit=10",
+							"raw": "{{HOST}}/{{PORTFOLIO_PREFIX}}?page=1&limit=10",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{PORTFOLIO_PREFIX}}"
 							],
@@ -3118,11 +3045,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{PORTFOLIO_PREFIX}}/:id",
+							"raw": "{{HOST}}/{{PORTFOLIO_PREFIX}}/:id",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{PORTFOLIO_PREFIX}}",
 								":id"
@@ -3148,11 +3074,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{DASHBOARD_PREFIX}}/overview",
+							"raw": "{{HOST}}/{{DASHBOARD_PREFIX}}/overview",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{DASHBOARD_PREFIX}}",
 								"overview"
@@ -3172,11 +3097,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{NOTIFICATIONS_PREFIX}}?page=1&limit=10&isRead=false",
+							"raw": "{{HOST}}/{{NOTIFICATIONS_PREFIX}}?page=1&limit=10&isRead=false",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{NOTIFICATIONS_PREFIX}}"
 							],
@@ -3207,11 +3131,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{NOTIFICATIONS_PREFIX}}/:id",
+							"raw": "{{HOST}}/{{NOTIFICATIONS_PREFIX}}/:id",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{NOTIFICATIONS_PREFIX}}",
 								":id"
@@ -3232,11 +3155,10 @@
 						"method": "PUT",
 						"header": [],
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{NOTIFICATIONS_PREFIX}}",
+							"raw": "{{HOST}}/{{NOTIFICATIONS_PREFIX}}",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{NOTIFICATIONS_PREFIX}}"
 							]
@@ -3250,11 +3172,10 @@
 						"method": "PUT",
 						"header": [],
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{NOTIFICATIONS_PREFIX}}/read-all",
+							"raw": "{{HOST}}/{{NOTIFICATIONS_PREFIX}}/read-all",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{NOTIFICATIONS_PREFIX}}",
 								"read-all"
@@ -3269,11 +3190,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{NOTIFICATIONS_PREFIX}}/unread/count",
+							"raw": "{{HOST}}/{{NOTIFICATIONS_PREFIX}}/unread/count",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{NOTIFICATIONS_PREFIX}}",
 								"unread",
@@ -3308,11 +3228,10 @@
 							}
 						},
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{EXPORT_PREFIX}}/grades/excel",
+							"raw": "{{HOST}}/{{EXPORT_PREFIX}}/grades/excel",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{EXPORT_PREFIX}}",
 								"grades",
@@ -3343,11 +3262,10 @@
 							}
 						},
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{EXPORT_PREFIX}}/grades/pdf",
+							"raw": "{{HOST}}/{{EXPORT_PREFIX}}/grades/pdf",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{EXPORT_PREFIX}}",
 								"grades",
@@ -3364,11 +3282,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{HOST}}:{{PORT}}/{{EXPORT_PREFIX}}/report-card/:id?format=detailed",
+							"raw": "{{HOST}}/{{EXPORT_PREFIX}}/report-card/:id?format=detailed",
 							"host": [
 								"{{HOST}}"
 							],
-							"port": "{{PORT}}",
 							"path": [
 								"{{EXPORT_PREFIX}}",
 								"report-card",
@@ -3394,6 +3311,48 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "/seniku",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{HOST}}/seniku",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"seniku"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/seniku/health",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"identifier\": \"2025123456789\",\r\n    \"password\": \"123456\"\r\n}"
+				},
+				"url": {
+					"raw": "{{HOST}}/seniku/health",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"seniku",
+						"health"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"auth": {
@@ -3433,11 +3392,11 @@
 	"variable": [
 		{
 			"key": "HOST",
-			"value": ""
+			"value": "https://api.momen-bahagia.site"
 		},
 		{
 			"key": "PORT",
-			"value": ""
+			"value": "8989"
 		},
 		{
 			"key": "accessToken",
@@ -3449,51 +3408,51 @@
 		},
 		{
 			"key": "AUTH_PREFIX",
-			"value": ""
+			"value": "seniku/api/v1/auth"
 		},
 		{
 			"key": "USERS_PREFIX",
-			"value": ""
+			"value": "seniku/api/v1/users"
 		},
 		{
 			"key": "CLASSES_PREFIX",
-			"value": ""
+			"value": "seniku/api/v1/classes"
 		},
 		{
 			"key": "STUDENTS_PREFIX",
-			"value": ""
+			"value": "seniku/api/v1/students"
 		},
 		{
 			"key": "ASSIGNMENTS_PREFIX",
-			"value": ""
+			"value": "seniku/api/v1/assignments"
 		},
 		{
 			"key": "SUBMISSIONS_PREFIX",
-			"value": ""
+			"value": "seniku/api/v1/submissions"
 		},
 		{
 			"key": "NOTIFICATIONS_PREFIX",
-			"value": ""
+			"value": "seniku/api/v1/notifications"
 		},
 		{
 			"key": "CATEGORIES_PREFIX",
-			"value": "api/v1/categories"
+			"value": "seniku/api/v1/categories"
 		},
 		{
 			"key": "ACHIEVEMENTS_PREFIX",
-			"value": "api/v1/achievements"
+			"value": "seniku/api/v1/achievements"
 		},
 		{
 			"key": "PORTFOLIO_PREFIX",
-			"value": "api/v1/portfolio"
+			"value": "seniku/api/v1/portfolio"
 		},
 		{
 			"key": "DASHBOARD_PREFIX",
-			"value": "api/v1/dashboard"
+			"value": "seniku/api/v1/dashboard"
 		},
 		{
 			"key": "EXPORT_PREFIX",
-			"value": "api/v1/export"
+			"value": "seniku/api/v1/export"
 		}
 	]
 }

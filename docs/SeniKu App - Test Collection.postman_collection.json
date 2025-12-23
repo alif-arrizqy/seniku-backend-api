@@ -594,11 +594,10 @@
 									"    value: 'Bearer ' + pm.collectionVariables.get('teacherAccessToken')",
 									"});",
 									"",
-									"// Update URL with saved submission ID",
+									"// Verify submissionId is set",
 									"const submissionId = pm.collectionVariables.get('submissionId');",
-									"if (submissionId) {",
-									"    const url = pm.request.url.toString();",
-									"    pm.request.url = url.replace('/:id/', `/${submissionId}/`);",
+									"if (!submissionId) {",
+									"    console.warn('Warning: submissionId is not set. Make sure to run \"03 - Student: Upload Submission\" first.');",
 									"}"
 								],
 								"type": "text/javascript"
@@ -668,11 +667,10 @@
 									"    value: 'Bearer ' + pm.collectionVariables.get('teacherAccessToken')",
 									"});",
 									"",
-									"// Update URL with saved submission ID",
+									"// Verify submissionId is set",
 									"const submissionId = pm.collectionVariables.get('submissionId');",
-									"if (submissionId) {",
-									"    const url = pm.request.url.toString();",
-									"    pm.request.url = url.replace('/:id/', `/${submissionId}/`);",
+									"if (!submissionId) {",
+									"    console.warn('Warning: submissionId is not set. Make sure to run previous tests first.');",
 									"}"
 								],
 								"type": "text/javascript"
@@ -737,11 +735,10 @@
 									"    value: 'Bearer ' + pm.collectionVariables.get('studentAccessToken')",
 									"});",
 									"",
-									"// Update URL with saved submission ID",
+									"// Verify submissionId is set",
 									"const submissionId = pm.collectionVariables.get('submissionId');",
-									"if (submissionId) {",
-									"    const url = pm.request.url.toString();",
-									"    pm.request.url = url.replace('/:id/', `/${submissionId}/`);",
+									"if (!submissionId) {",
+									"    console.warn('Warning: submissionId is not set. Make sure to run previous tests first.');",
 									"}"
 								],
 								"type": "text/javascript"
@@ -810,11 +807,10 @@
 									"    value: 'Bearer ' + pm.collectionVariables.get('teacherAccessToken')",
 									"});",
 									"",
-									"// Update URL with saved submission ID",
+									"// Verify submissionId is set",
 									"const submissionId = pm.collectionVariables.get('submissionId');",
-									"if (submissionId) {",
-									"    const url = pm.request.url.toString();",
-									"    pm.request.url = url.replace('/:id/', `/${submissionId}/`);",
+									"if (!submissionId) {",
+									"    console.warn('Warning: submissionId is not set. Make sure to run previous tests first.');",
 									"}"
 								],
 								"type": "text/javascript"
@@ -1326,6 +1322,86 @@
 		{
 			"key": "NOTIFICATIONS_PREFIX",
 			"value": "api/v1/notifications",
+			"type": "string"
+		},
+		{
+			"key": "submissionId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "categoryId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "classId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "assignmentId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "teacherId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "studentId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "teacherEmail",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "teacherNip",
+			"value": "0987654321",
+			"type": "string"
+		},
+		{
+			"key": "studentNis",
+			"value": "2025123456789",
+			"type": "string"
+		},
+		{
+			"key": "studentName",
+			"value": "Student Test",
+			"type": "string"
+		},
+		{
+			"key": "teacherAccessToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "studentAccessToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "teacherRefreshToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "studentRefreshToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "achievementId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "submissionGrade",
+			"value": "",
 			"type": "string"
 		}
 	]
