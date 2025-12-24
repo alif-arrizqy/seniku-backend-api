@@ -1,5 +1,11 @@
 # API Endpoints - Seniku Backend API
 
+## 📚 Dokumentasi Terkait
+
+Sebelum menggunakan API ini, disarankan untuk membaca dokumentasi berikut:
+- **[API Flow & Status Documentation](./04-API-FLOW-AND-STATUS.md)** - Penjelasan lengkap tentang status values, request body fields, flow penggunaan API, dan validation rules
+- **[Database Schema](./02-DATABASE-SCHEMA.md)** - Struktur database dan relasi antar tabel
+
 ## Base URL
 ```
 http://localhost:8989/seniku/api/v1
@@ -28,16 +34,20 @@ Sistem menggunakan **JWT (JSON Web Token) Authentication** dengan Access Token d
 ### 1.1 Register
 **POST** `/auth/register`
 
+**Headers:**
+- `Content-Type: application/json`
+
 **Body:**
 ```json
 {
-  "email": "student@mail.com",  // Optional untuk STUDENT, required untuk TEACHER
-  "nis": "12345",               // Required untuk STUDENT, unique
+  "email": "teacher@test.com",  // Optional untuk STUDENT, required untuk TEACHER
   "password": "password123",
+  "nip": "0987654321",            // Required untuk TEACHER, unique
+  "nis": "12345",                 // Required untuk STUDENT, unique
   "name": "Rina Dewi",
-  "role": "STUDENT",
+  "role": "STUDENT",              // "STUDENT" atau "TEACHER"
   "phone": "081234567890",
-  "classId": "uuid"             // Required untuk STUDENT
+  "classId": "uuid"               // Required untuk STUDENT
 }
 ```
 
@@ -109,11 +119,14 @@ Sistem menggunakan **JWT (JSON Web Token) Authentication** dengan Access Token d
 ### 1.2 Login
 **POST** `/auth/login`
 
+**Headers:**
+- `Content-Type: application/json`
+
 **Body:**
 ```json
 {
-  "identifier": "12345",  // NIP untuk TEACHER atau NIS untuk STUDENT
-  "password": "password123"
+  "identifier": "2025123456789",  // NIP untuk TEACHER atau NIS untuk STUDENT
+  "password": "123456"
 }
 ```
 
@@ -173,7 +186,7 @@ Sistem menggunakan **JWT (JSON Web Token) Authentication** dengan Access Token d
 ```json
 {
   "success": false,
-  "message": "Invalid credentials"
+  "error": "Invalid credentials"
 }
 ```
 
@@ -181,7 +194,7 @@ Sistem menggunakan **JWT (JSON Web Token) Authentication** dengan Access Token d
 ```json
 {
   "success": false,
-  "message": "User not found"
+  "error": "User not found"
 }
 ```
 
@@ -189,6 +202,9 @@ Sistem menggunakan **JWT (JSON Web Token) Authentication** dengan Access Token d
 
 ### 1.3 Refresh Token
 **POST** `/auth/refresh`
+
+**Headers:**
+- `Content-Type: application/json`
 
 **Body:**
 ```json
@@ -212,7 +228,7 @@ Sistem menggunakan **JWT (JSON Web Token) Authentication** dengan Access Token d
 ```json
 {
   "success": false,
-  "message": "Invalid refresh token"
+  "error": "Invalid refresh token"
 }
 ```
 
@@ -220,7 +236,7 @@ Sistem menggunakan **JWT (JSON Web Token) Authentication** dengan Access Token d
 ```json
 {   
   "success": false,
-  "message": "Refresh token expired"
+  "error": "Refresh token expired"
 }
 ```
 
@@ -236,7 +252,8 @@ Sistem menggunakan **JWT (JSON Web Token) Authentication** dengan Access Token d
 ```json
 {
   "success": true,
-  "message": "Logout successful"
+  "message": "Logout successful",
+  "data": null
 }
 ```
 
@@ -254,18 +271,24 @@ Sistem menggunakan **JWT (JSON Web Token) Authentication** dengan Access Token d
 ```json
 {
   "success": true,
+  "message": "User retrieved successfully",
   "data": {
     "user": {
       "id": "uuid",
-      "email": "student@mail.com",
-      "nis": "12345",
-      "name": "Rina Dewi",
-      "role": "STUDENT",
-      "className": "XII IPA 1",
-      "class": {
-        "id": "uuid",
-        "name": "XII IPA 1"
-      }
+      "email": "teacher@test.com",
+      "nip": "0987654321",
+      "nis": null,
+      "name": "PamBudi",
+      "role": "TEACHER",
+      "avatar": null,
+      "phone": "081234567890",
+      "address": null,
+      "bio": null,
+      "birthdate": null,
+      "className": null,
+      "classId": null,
+      "createdAt": "2025-12-19T06:43:34.967Z",
+      "updatedAt": "2025-12-19T06:43:34.967Z"
     }
   }
 }
@@ -275,7 +298,7 @@ Sistem menggunakan **JWT (JSON Web Token) Authentication** dengan Access Token d
 ```json
 {
   "success": false,
-  "message": "Unauthorized. Please login first."
+  "error": "Unauthorized. Please login first."
 }
 ```
 
@@ -283,7 +306,7 @@ Sistem menggunakan **JWT (JSON Web Token) Authentication** dengan Access Token d
 ```json
 {
   "success": false,
-  "message": "Access token expired"
+  "error": "Access token expired"
 }
 ```
 
@@ -302,35 +325,41 @@ Sistem menggunakan **JWT (JSON Web Token) Authentication** dengan Access Token d
 - `limit` (optional): Items per page (default: 10, max: 100)
 - `role` (optional): Filter by role (STUDENT, TEACHER)
 - `search` (optional): Search by name, NIS, NIP, or email
-- `classId` (optional): Filter by class
+- `classId` (optional): Filter by class ID
+
+**Example Request:**
+```
+GET /users?page=1&limit=10&search=Wanda Oke
+```
 
 **Response Success (200):**
 ```json
 {
   "success": true,
-  "data": {
-    "users": [
-      {
-        "id": "uuid",
-        "email": "student@mail.com",
-        "nis": "12345",
-        "name": "Rina Dewi",
-        "role": "STUDENT",
-        "phone": "081234567890",
-        "className": "XII IPA 1",
-        "class": {
-          "id": "uuid",
-          "name": "XII IPA 1"
-        },
-        "createdAt": "2024-01-01T00:00:00.000Z"
-      }
-    ],
-    "pagination": {
-      "page": 1,
-      "limit": 10,
-      "total": 32,
-      "totalPages": 4
+  "message": "Users retrieved successfully",
+  "data": [
+    {
+      "id": "uuid",
+      "email": null,
+      "nip": null,
+      "nis": "2025123456839",
+      "name": "Wahyu Dwi",
+      "role": "STUDENT",
+      "avatar": null,
+      "phone": "081234567890",
+      "className": "2C",
+      "classId": "uuid",
+      "isActive": true,
+      "createdAt": "2021-01-01T00:00:00.000Z"
     }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 32,
+    "totalPages": 4,
+    "hasNext": false,
+    "hasPrev": false
   }
 }
 ```
@@ -342,6 +371,8 @@ Sistem menggunakan **JWT (JSON Web Token) Authentication** dengan Access Token d
 
 **Headers:**
 - `Authorization: Bearer <accessToken>`
+
+**Note:**
 - Teacher: bisa akses semua user
 - Student: hanya bisa akses profil sendiri
 
@@ -349,25 +380,23 @@ Sistem menggunakan **JWT (JSON Web Token) Authentication** dengan Access Token d
 ```json
 {
   "success": true,
+  "message": "User retrieved successfully",
   "data": {
     "user": {
       "id": "uuid",
-      "email": "student@mail.com",
-      "nis": "12345",
-      "name": "Rina Dewi",
+      "email": "newemail@mail.com",
+      "nip": null,
+      "nis": "2025123456848",
+      "name": "Rina Dewi Updated",
       "role": "STUDENT",
-      "phone": "081234567890",
-      "address": "Jakarta, Indonesia",
-      "bio": "Seorang pelajar yang gemar berkarya seni",
-      "birthdate": "2008-05-15T00:00:00.000Z",
-      "avatar": "https://example.com/avatar.jpg",
-      "className": "XII IPA 1",
-      "class": {
-        "id": "uuid",
-        "name": "XII IPA 1"
-      },
-      "createdAt": "2024-01-01T00:00:00.000Z",
-      "updatedAt": "2024-01-01T00:00:00.000Z"
+      "avatar": null,
+      "phone": "081234567891",
+      "address": "Bandung, Indonesia",
+      "bio": "Updated bio",
+      "birthdate": "2008-05-08",
+      "className": "2C",
+      "classId": "uuid",
+      "isActive": true
     }
   }
 }
@@ -380,19 +409,22 @@ Sistem menggunakan **JWT (JSON Web Token) Authentication** dengan Access Token d
 
 **Headers:**
 - `Authorization: Bearer <accessToken>`
+- `Content-Type: application/json`
+
+**Note:**
 - Student: hanya bisa update profil sendiri
 - Teacher: bisa update semua user
 
 **Body:**
 ```json
 {
-  "name": "Rina Dewi Updated",
+  "name": "Fauzan Nako",
   "phone": "081234567891",
   "address": "Bandung, Indonesia",
   "bio": "Updated bio",
-  "birthdate": "2008-05-15",
-  "email": "newemail@mail.com",  // Optional
-  "classId": "uuid"  // Optional, hanya bisa diubah oleh teacher
+  "birthdate": "2008-05-08",
+  "email": "newemail@mail.com"  // Optional
+  // "classId": "uuid"  // Optional, hanya bisa diubah oleh teacher
 }
 ```
 
@@ -408,12 +440,20 @@ Sistem menggunakan **JWT (JSON Web Token) Authentication** dengan Access Token d
   "data": {
     "user": {
       "id": "uuid",
-      "name": "Rina Dewi Updated",
       "email": "newemail@mail.com",
+      "nip": null,
+      "nis": "2025123456848",
+      "name": "Rina Dewi Updated",
+      "role": "STUDENT",
+      "avatar": null,
       "phone": "081234567891",
       "address": "Bandung, Indonesia",
       "bio": "Updated bio",
-      "updatedAt": "2024-01-02T00:00:00.000Z"
+      "birthdate": "2008-05-15T00:00:00.000Z",
+      "className": "2C",
+      "classId": "uuid",
+      "isActive": true,
+      "updatedAt": "2025-12-19T08:32:29.785Z"
     }
   }
 }
@@ -431,7 +471,8 @@ Sistem menggunakan **JWT (JSON Web Token) Authentication** dengan Access Token d
 ```json
 {
   "success": true,
-  "message": "User deleted successfully"
+  "message": "User deleted successfully",
+  "data": null
 }
 ```
 
@@ -442,12 +483,10 @@ Sistem menggunakan **JWT (JSON Web Token) Authentication** dengan Access Token d
 
 **Headers:**
 - `Authorization: Bearer <accessToken>`
-- Content-Type: `multipart/form-data`
+- `Content-Type: multipart/form-data`
 
-**Body:**
-```
-file: <excel_file.xlsx>
-```
+**Body (form-data):**
+- `file` (required): Excel file (.xlsx) dengan kolom: NIS, Nama, Email (optional), Phone (optional), Class, Password (optional)
 
 **File Requirements:**
 - File type: `.xlsx` (Excel 2007+)
@@ -549,6 +588,11 @@ Category digunakan untuk mengkategorikan assignment berdasarkan jenis karya seni
 - `search` (optional): Search by name
 - `isActive` (optional): Filter by active status (true/false)
 
+**Example Request:**
+```
+GET /categories?page=1&limit=10&isActive=true
+```
+
 **Response Success (200):**
 ```json
 {
@@ -626,6 +670,7 @@ Category digunakan untuk mengkategorikan assignment berdasarkan jenis karya seni
 
 **Headers:**
 - `Authorization: Bearer <accessToken>`
+- `Content-Type: application/json`
 
 **Body:**
 ```json
@@ -688,6 +733,7 @@ Category digunakan untuk mengkategorikan assignment berdasarkan jenis karya seni
 
 **Headers:**
 - `Authorization: Bearer <accessToken>`
+- `Content-Type: application/json`
 
 **Body:**
 ```json
@@ -753,6 +799,11 @@ Category digunakan untuk mengkategorikan assignment berdasarkan jenis karya seni
   - Jika `force=false` dan ada assignment yang menggunakan category, akan return error
   - Jika `force=true`, category akan dihapus dan assignment yang menggunakan category ini akan tetap ada (categoryId tetap tersimpan, tapi category tidak ada)
 
+**Example Request:**
+```
+DELETE /categories/:id?force=false
+```
+
 **Response Success (200):**
 ```json
 {
@@ -765,7 +816,7 @@ Category digunakan untuk mengkategorikan assignment berdasarkan jenis karya seni
 ```json
 {
   "success": false,
-  "message": "Cannot delete category: Has assignments. Use force=true to force delete."
+  "error": "Cannot delete category: Has assignments. Use force=true to force delete."
 }
 ```
 
@@ -801,8 +852,13 @@ Portfolio menampilkan semua karya siswa yang sudah dinilai (status GRADED). Port
 - `classId` (optional): Filter by class ID
 - `search` (optional): Search by title or student name
 - `minGrade` (optional): Minimum grade filter (0-100)
-- `sortBy` (optional): Sort by `grade` (default), `submittedAt`, `title` (default: `submittedAt`)
+- `sortBy` (optional): Sort by `grade`, `submittedAt`, or `title` (default: `submittedAt`)
 - `sortOrder` (optional): `asc` or `desc` (default: `desc`)
+
+**Example Request:**
+```
+GET /portfolio?page=1&limit=10&sortBy=submittedAt&sortOrder=desc
+```
 
 **Response Success (200):**
 ```json
@@ -891,7 +947,7 @@ Portfolio menampilkan semua karya siswa yang sudah dinilai (status GRADED). Port
 ```json
 {
   "success": false,
-  "message": "Portfolio item not found"
+  "error": "Portfolio item not found"
 }
 ```
 
@@ -912,26 +968,32 @@ Portfolio menampilkan semua karya siswa yang sudah dinilai (status GRADED). Port
 - `limit` (optional): Items per page (default: 10, max: 100)
 - `search` (optional): Search by name
 
+**Example Request:**
+```
+GET /classes?page=1&limit=10&search
+```
+
 **Response Success (200):**
 ```json
 {
   "success": true,
-  "data": {
-    "classes": [
-      {
-        "id": "uuid",
-        "name": "XII IPA 1",
-        "description": "Kelas 12 IPA 1",
-        "studentCount": 32,
-        "createdAt": "2024-01-01T00:00:00.000Z"
+  "message": "Classes retrieved successfully",
+  "data": [
+    {
+      "id": "uuid",
+      "name": "1A",
+      "description": null,
+      "_count": {
+        "students": 10
       }
-    ],
-    "pagination": {
-      "page": 1,
-      "limit": 10,
-      "total": 5,
-      "totalPages": 1
     }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "totalPages": null,
+    "hasNext": false,
+    "hasPrev": false
   }
 }
 ```
@@ -948,20 +1010,28 @@ Portfolio menampilkan semua karya siswa yang sudah dinilai (status GRADED). Port
 ```json
 {
   "success": true,
+  "message": "Class retrieved successfully",
   "data": {
-    "id": "uuid",
-    "name": "XII IPA 1",
-    "description": "Kelas 12 IPA 1",
-    "students": [
-      {
-        "id": "uuid",
-        "name": "Rina Dewi",
-        "nis": "12345",
-        "email": "student@mail.com"
+    "class": {
+      "id": "uuid",
+      "name": "1B",
+      "description": null,
+      "createdAt": "2025-12-19T06:39:59.905Z",
+      "updatedAt": "2025-12-19T06:39:59.905Z",
+      "students": [
+        {
+          "id": "uuid",
+          "name": "Wahyu Dwi",
+          "email": null,
+          "nis": "2025123456799",
+          "avatar": null
+        }
+      ],
+      "_count": {
+        "students": 10,
+        "assignments": 0
       }
-    ],
-    "studentCount": 32,
-    "createdAt": "2024-01-01T00:00:00.000Z"
+    }
   }
 }
 ```
@@ -973,12 +1043,13 @@ Portfolio menampilkan semua karya siswa yang sudah dinilai (status GRADED). Port
 
 **Headers:**
 - `Authorization: Bearer <accessToken>`
+- `Content-Type: application/json`
 
 **Body:**
 ```json
 {
-  "name": "XII IPA 2",
-  "description": "Kelas 12 IPA 2"
+  "name": "3C",
+  "description": "Kelas 3C"
 }
 ```
 
@@ -988,11 +1059,25 @@ Portfolio menampilkan semua karya siswa yang sudah dinilai (status GRADED). Port
   "success": true,
   "message": "Class created successfully",
   "data": {
-    "id": "uuid",
-    "name": "XII IPA 2",
-    "description": "Kelas 12 IPA 2",
-    "createdAt": "2024-01-01T00:00:00.000Z"
+    "class": {
+      "id": "uuid",
+      "name": "3B",
+      "description": "Kelas 3B",
+      "createdAt": "2025-12-19T09:11:57.516Z",
+      "updatedAt": "2025-12-19T09:11:57.516Z",
+      "_count": {
+        "students": 0
+      }
+    }
   }
+}
+```
+
+**Response Error - Class Already Exists (409):**
+```json
+{
+  "success": false,
+  "error": "Class already exists"
 }
 ```
 
@@ -1003,12 +1088,13 @@ Portfolio menampilkan semua karya siswa yang sudah dinilai (status GRADED). Port
 
 **Headers:**
 - `Authorization: Bearer <accessToken>`
+- `Content-Type: application/json`
 
 **Body:**
 ```json
 {
-  "name": "XII IPA 2 Updated",
-  "description": "Updated description"
+  "name": "3A",
+  "description": "Kelas 3A"
 }
 ```
 
@@ -1018,11 +1104,25 @@ Portfolio menampilkan semua karya siswa yang sudah dinilai (status GRADED). Port
   "success": true,
   "message": "Class updated successfully",
   "data": {
-    "id": "uuid",
-    "name": "XII IPA 2 Updated",
-    "description": "Updated description",
-    "updatedAt": "2024-01-02T00:00:00.000Z"
+    "class": {
+      "id": "uuid",
+      "name": "3A",
+      "description": "Kelas 3A",
+      "createdAt": "2025-12-19T09:08:00.578Z",
+      "updatedAt": "2025-12-19T09:13:43.671Z",
+      "_count": {
+        "students": 0
+      }
+    }
   }
+}
+```
+
+**Response Error - Class Already Exists (409):**
+```json
+{
+  "success": false,
+  "error": "Class already exists"
 }
 ```
 
@@ -1038,7 +1138,8 @@ Portfolio menampilkan semua karya siswa yang sudah dinilai (status GRADED). Port
 ```json
 {
   "success": true,
-  "message": "Class deleted successfully"
+  "message": "Class deleted successfully",
+  "data": null
 }
 ```
 
@@ -1053,6 +1154,11 @@ Dashboard menyediakan ringkasan data dan statistik untuk Teacher dan Student. En
 
 **Headers:**
 - `Authorization: Bearer <accessToken>`
+
+**Example Request:**
+```
+GET /dashboard/overview
+```
 
 **Note:** Response akan berbeda berdasarkan role user (TEACHER atau STUDENT).
 
@@ -1202,50 +1308,59 @@ Dashboard menyediakan ringkasan data dan statistik untuk Teacher dan Student. En
 - `page` (optional): Page number (default: 1)
 - `limit` (optional): Items per page (default: 10, max: 100)
 - `status` (optional): Filter by status (DRAFT, ACTIVE, COMPLETED)
-- `category` (optional): Filter by category
-- `classId` (optional): Filter by class
+- `categoryId` (optional): Filter by category ID
+- `classId` (optional): Filter by class ID
 - `search` (optional): Search by title
+
+**Example Request:**
+```
+GET /assignments?page=1&limit=10
+```
 
 **Response Success (200):**
 ```json
 {
   "success": true,
-  "data": {
-    "assignments": [
-      {
+  "message": "Assignments retrieved successfully",
+  "data": [
+    {
+      "id": "uuid",
+      "title": "Lukisan Tema Desa",
+      "description": "Buat lukisan dengan tema kehidupan di desa",
+      "category": "Lukisan",
+      "deadline": "2026-01-20T23:59:59.000Z",
+      "status": "ACTIVE",
+      "createdById": "uuid",
+      "createdAt": "2025-12-19T09:52:13.935Z",
+      "updatedAt": "2025-12-19T09:52:13.935Z",
+      "createdBy": {
         "id": "uuid",
-        "title": "Lukisan Tema Alam",
-        "description": "Buat lukisan dengan tema pemandangan alam Indonesia",
-        "category": "Lukisan",
-        "deadline": "2024-01-20T23:59:59.000Z",
-        "status": "ACTIVE",
-        "createdBy": {
+        "name": "Budi Arie",
+        "email": null
+      },
+      "classes": [
+        {
           "id": "uuid",
-          "name": "Pak Budi"
-        },
-        "classes": [
-          {
+          "assignmentId": "uuid",
+          "classId": "uuid",
+          "createdAt": "2025-12-19T09:52:13.935Z",
+          "class": {
             "id": "uuid",
-            "name": "XII IPA 1"
+            "name": "3B"
           }
-        ],
-        "submissionCount": 24,
-        "totalStudents": 32,
-        "mySubmission": {  // Only for student
-          "id": "uuid",
-          "status": "PENDING",
-          "grade": null,
-          "submittedAt": "2024-01-15T00:00:00.000Z"
-        },
-        "createdAt": "2024-01-01T00:00:00.000Z"
+        }
+      ],
+      "_count": {
+        "submissions": 0
       }
-    ],
-    "pagination": {
-      "page": 1,
-      "limit": 10,
-      "total": 5,
-      "totalPages": 1
     }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "totalPages": null,
+    "hasNext": false,
+    "hasPrev": false
   }
 }
 ```
@@ -1262,44 +1377,37 @@ Dashboard menyediakan ringkasan data dan statistik untuk Teacher dan Student. En
 ```json
 {
   "success": true,
+  "message": "Assignment retrieved successfully",
   "data": {
-    "id": "uuid",
-    "title": "Lukisan Tema Alam",
-    "description": "Buat lukisan dengan tema pemandangan alam Indonesia",
-    "deadline": "2024-01-20T23:59:59.000Z",
-    "status": "ACTIVE",
-    "createdBy": {
+    "assignment": {
       "id": "uuid",
-      "name": "Pak Budi"
-    },
-    "classes": [
-      {
+      "title": "Lukisan Tema Alam",
+      "description": "Buat lukisan dengan tema pemandangan alam Indonesia",
+      "category": "Lukisan",
+      "deadline": "2026-01-20T23:59:59.000Z",
+      "status": "DRAFT",
+      "createdById": "uuid",
+      "createdAt": "2025-12-19T09:46:41.614Z",
+      "updatedAt": "2025-12-19T09:46:41.614Z",
+      "createdBy": {
         "id": "uuid",
-        "name": "XII IPA 1"
-      }
-    ],
-    "submissions": [  // Only for teacher
-      {
-        "id": "uuid",
-        "student": {
+        "name": "Budi Arie",
+        "email": null
+      },
+      "classes": [
+        {
           "id": "uuid",
-          "name": "Rina Dewi",
-          "nis": "12345",
-          "className": "XII IPA 1"
-        },
-        "status": "PENDING",
-        "submittedAt": "2024-01-15T00:00:00.000Z"
-      }
-    ],
-    "submissionCount": 24,
-    "totalStudents": 32,
-    "mySubmission": {  // Only for student
-      "id": "uuid",
-      "status": "PENDING",
-      "grade": null,
-      "submittedAt": "2024-01-15T00:00:00.000Z"
-    },
-    "createdAt": "2024-01-01T00:00:00.000Z"
+          "assignmentId": "uuid",
+          "classId": "uuid",
+          "createdAt": "2025-12-19T09:46:41.614Z",
+          "class": {
+            "id": "uuid",
+            "name": "1A"
+          }
+        }
+      ],
+      "submissions": []
+    }
   }
 }
 ```
@@ -1311,15 +1419,19 @@ Dashboard menyediakan ringkasan data dan statistik untuk Teacher dan Student. En
 
 **Headers:**
 - `Authorization: Bearer <accessToken>`
+- `Content-Type: application/json`
 
 **Body:**
 ```json
 {
-  "title": "Lukisan Tema Alam",
-  "description": "Buat lukisan dengan tema pemandangan alam Indonesia",
-  "categoryId": "uuid",
-  "deadline": "2024-01-20T23:59:59.000Z",
-  "classIds": ["uuid1", "uuid2"]
+  "title": "Lukisan Tema Desa",
+  "description": "Buat lukisan dengan tema kehidupan di desa",
+  "categoryId": "uuid-category-id",
+  "status": "ACTIVE",
+  "deadline": "2026-01-20T23:59:59.000Z",
+  "classIds": [
+    "dbaf99bb-40bd-424d-97d7-4ddc33822ac7"
+  ]
 }
 ```
 
@@ -1336,17 +1448,34 @@ Dashboard menyediakan ringkasan data dan statistik untuk Teacher dan Student. En
   "success": true,
   "message": "Assignment created successfully",
   "data": {
-    "id": "uuid",
-    "title": "Lukisan Tema Alam",
-    "description": "Buat lukisan dengan tema pemandangan alam Indonesia",
-    "category": {
+    "assignment": {
       "id": "uuid",
-      "name": "Lukisan",
-      "icon": "🎨"
-    },
-    "deadline": "2024-01-20T23:59:59.000Z",
-    "status": "DRAFT",
-    "createdAt": "2024-01-01T00:00:00.000Z"
+      "title": "Lukisan Tema Alam",
+      "description": "Buat lukisan dengan tema pemandangan alam Indonesia",
+      "category": "Lukisan",
+      "deadline": "2026-01-20T23:59:59.000Z",
+      "status": "DRAFT",
+      "createdById": "uuid",
+      "createdAt": "2025-12-19T09:46:41.614Z",
+      "updatedAt": "2025-12-19T09:46:41.614Z",
+      "createdBy": {
+        "id": "uuid",
+        "name": "Budi Arie",
+        "email": null
+      },
+      "classes": [
+        {
+          "id": "uuid",
+          "assignmentId": "uuid",
+          "classId": "uuid",
+          "createdAt": "2025-12-19T09:46:41.614Z",
+          "class": {
+            "id": "uuid",
+            "name": "1A"
+          }
+        }
+      ]
+    }
   }
 }
 ```
@@ -1358,15 +1487,19 @@ Dashboard menyediakan ringkasan data dan statistik untuk Teacher dan Student. En
 
 **Headers:**
 - `Authorization: Bearer <accessToken>`
+- `Content-Type: application/json`
 
 **Body:**
 ```json
 {
-  "title": "Lukisan Tema Alam Updated",
-  "description": "Updated description",
-  "categoryId": "uuid",
-  "deadline": "2024-01-25T23:59:59.000Z",
-  "classIds": ["uuid1"]
+  "title": "Lukisan Tema Desa",
+  "description": "Buat lukisan dengan tema kehidupan di desa",
+  "categoryId": "uuid-category-id",
+  "status": "ACTIVE",
+  "deadline": "2026-01-20T23:59:59.000Z",
+  "classIds": [
+    "2b7bd002-a8b2-4237-b3a0-cf8f68c568c0"
+  ]
 }
 ```
 
@@ -1376,11 +1509,13 @@ Dashboard menyediakan ringkasan data dan statistik untuk Teacher dan Student. En
   "success": true,
   "message": "Assignment updated successfully",
   "data": {
-    "id": "uuid",
-    "title": "Lukisan Tema Alam Updated",
-    "description": "Updated description",
-    "deadline": "2024-01-25T23:59:59.000Z",
-    "updatedAt": "2024-01-02T00:00:00.000Z"
+    "assignment": {
+      "id": "uuid",
+      "title": "Lukisan Tema Desa",
+      "description": "Buat lukisan dengan tema kehidupan di desa",
+      "deadline": "2026-01-20T23:59:59.000Z",
+      "updatedAt": "2025-12-19T10:00:00.000Z"
+    }
   }
 }
 ```
@@ -1402,7 +1537,16 @@ Dashboard menyediakan ringkasan data dan statistik untuk Teacher dan Student. En
 ```json
 {
   "success": true,
-  "message": "Assignment deleted successfully"
+  "message": "Assignment deleted successfully",
+  "data": null
+}
+```
+
+**Response Error (404):**
+```json
+{
+  "success": false,
+  "message": "Assignment not found"
 }
 ```
 
@@ -1410,7 +1554,7 @@ Dashboard menyediakan ringkasan data dan statistik untuk Teacher dan Student. En
 ```json
 {
   "success": false,
-  "message": "Cannot delete assignment: Has submissions"
+  "error": "Cannot delete assignment: Has submissions"
 }
 ```
 
@@ -1421,11 +1565,16 @@ Dashboard menyediakan ringkasan data dan statistik untuk Teacher dan Student. En
 
 **Headers:**
 - `Authorization: Bearer <accessToken>`
+- `Content-Type: application/json`
 
 **Body:**
 ```json
 {
-  "assignmentIds": ["uuid1", "uuid2", "uuid3"],
+  "assignmentIds": [
+    "uuid1",
+    "uuid2",
+    "uuid3"
+  ],
   "status": "ACTIVE"  // "DRAFT", "ACTIVE", atau "COMPLETED"
 }
 ```
@@ -1450,11 +1599,16 @@ Dashboard menyediakan ringkasan data dan statistik untuk Teacher dan Student. En
 
 **Headers:**
 - `Authorization: Bearer <accessToken>`
+- `Content-Type: application/json`
 
 **Body:**
 ```json
 {
-  "assignmentIds": ["uuid1", "uuid2", "uuid3"],
+  "assignmentIds": [
+    "uuid1",
+    "uuid2",
+    "uuid3"
+  ],
   "action": "delete"  // "delete" atau "draft"
 }
 ```
@@ -1489,11 +1643,16 @@ Dashboard menyediakan ringkasan data dan statistik untuk Teacher dan Student. En
 - `Authorization: Bearer <accessToken>`
 
 **Query Parameters:**
-- `page` (optional): Page number
-- `limit` (optional): Items per page
-- `assignmentId` (optional): Filter by assignment
-- `studentId` (optional): Filter by student (Student can only see their own)
+- `page` (optional): Page number (default: 1)
+- `limit` (optional): Items per page (default: 10)
+- `assignmentId` (optional): Filter by assignment ID
+- `studentId` (optional): Filter by student ID (Student can only see their own)
 - `status` (optional): Filter by status
+
+**Example Request:**
+```
+GET /submissions?page=1&limit=10
+```
 
 **Response Success (200):**
 ```json
@@ -1588,13 +1747,19 @@ Dashboard menyediakan ringkasan data dan statistik untuk Teacher dan Student. En
 
 **Headers:**
 - `Authorization: Bearer <accessToken>`
-- Content-Type: `multipart/form-data`
+- `Content-Type: multipart/form-data`
 
-**Body:**
+**Body (form-data):**
+- `assignmentId` (required): Assignment ID
+- `title` (required): Title of the submission
+- `description` (required): Description of the artwork
+- `image` (required): Image file (JPEG, PNG, or WebP)
+
+**Example:**
 ```
-assignmentId: uuid
-title: Lukisan Sunset Pantai
-description: Karya tentang sunset di pantai
+assignmentId: 6e5cd248-43db-4625-bfda-24755212a9c2
+title: gambar senja dan laut
+description: karya tentang sunset di pantai
 image: <file>
 ```
 
@@ -1610,18 +1775,35 @@ image: <file>
   "success": true,
   "message": "Submission created successfully",
   "data": {
-    "id": "uuid",
-    "assignmentId": "uuid",
-    "studentId": "uuid",
-    "title": "Lukisan Sunset Pantai",
-    "description": "Karya tentang sunset di pantai",
-    "imageUrl": "https://example.com/artwork/uuid-full.jpg",
-    "imageThumbnail": "https://example.com/artwork/uuid-thumb.jpg",
-    "imageMedium": "https://example.com/artwork/uuid-medium.jpg",
-    "status": "PENDING",
-    "revisionCount": 0,
-    "submittedAt": "2024-01-15T00:00:00.000Z",
-    "createdAt": "2024-01-15T00:00:00.000Z"
+    "submission": {
+      "id": "uuid",
+      "assignmentId": "uuid",
+      "studentId": "uuid",
+      "title": "gambar senja dan laut",
+      "description": "karya tentang sunset di pantai",
+      "imageUrl": "http://localhost:9000/submissions/submission-1766141036002-5oeqi59i9f7.jpg",
+      "imageThumbnail": "http://localhost:9000/submissions/thumb-submission-1766141036002-5oeqi59i9f7.jpg",
+      "imageMedium": "http://localhost:9000/submissions/medium-submission-1766141036002-5oeqi59i9f7.jpg",
+      "status": "PENDING",
+      "grade": null,
+      "feedback": null,
+      "revisionCount": 0,
+      "submittedAt": "2025-12-19T10:43:56.055Z",
+      "gradedAt": null,
+      "createdAt": "2025-12-19T10:43:56.057Z",
+      "updatedAt": "2025-12-19T10:43:56.057Z",
+      "assignment": {
+        "id": "uuid",
+        "title": "Lukisan Tema Desa",
+        "category": "Lukisan"
+      },
+      "student": {
+        "id": "uuid",
+        "name": "Wahyu Dwi",
+        "nis": "2025123456789",
+        "avatar": null
+      }
+    }
   }
 }
 ```
@@ -1630,7 +1812,7 @@ image: <file>
 ```json
 {
   "success": false,
-  "message": "Assignment deadline has passed"
+  "error": "Assignment deadline has passed"
 }
 ```
 
@@ -1652,14 +1834,7 @@ image: <file>
 
 **Headers:**
 - `Authorization: Bearer <accessToken>`
-- Content-Type: `multipart/form-data` (jika upload gambar baru) atau `application/json` (jika hanya update text)
-
-**Body (multipart/form-data - dengan gambar baru):**
-```
-title: Lukisan Sunset Pantai (Revisi)
-description: Updated description
-image: <file>
-```
+- `Content-Type: multipart/form-data` (jika upload gambar baru) atau `application/json` (jika hanya update text)
 
 **Body (application/json - tanpa gambar):**
 ```json
@@ -1668,6 +1843,11 @@ image: <file>
   "description": "Updated description"
 }
 ```
+
+**Body (multipart/form-data - dengan gambar baru):**
+- `title` (optional): Title of the submission
+- `description` (optional): Description of the artwork
+- `image` (optional): New image file (JPEG, PNG, or WebP)
 
 **Note:** 
 - Bisa update jika status = `PENDING` (edit sebelum dinilai)
@@ -1691,15 +1871,30 @@ image: <file>
   "data": {
     "submission": {
       "id": "uuid",
+      "assignmentId": "uuid",
+      "studentId": "uuid",
       "title": "Lukisan Sunset Pantai (Revisi)",
       "description": "Updated description",
-      "imageUrl": "https://example.com/artwork/uuid-full.jpg",
-      "imageThumbnail": "https://example.com/artwork/uuid-thumb.jpg",
-      "imageMedium": "https://example.com/artwork/uuid-medium.jpg",
+      "imageUrl": "http://localhost:9000/submissions/submission-1766142160667-bpiwxmtrr2a.jpg",
+      "imageThumbnail": "http://localhost:9000/submissions/thumb-submission-1766142160667-bpiwxmtrr2a.jpg",
+      "imageMedium": "http://localhost:9000/submissions/medium-submission-1766142160667-bpiwxmtrr2a.jpg",
       "status": "PENDING",
-      "revisionCount": 1,
-      "submittedAt": "2024-01-18T00:00:00.000Z",
-      "updatedAt": "2024-01-18T00:00:00.000Z"
+      "grade": null,
+      "feedback": null,
+      "revisionCount": 0,
+      "submittedAt": "2025-12-19T11:02:40.716Z",
+      "gradedAt": null,
+      "createdAt": "2025-12-19T11:02:40.719Z",
+      "updatedAt": "2025-12-19T11:07:02.345Z",
+      "assignment": {
+        "id": "uuid",
+        "title": "Lukisan Tema Desa"
+      },
+      "student": {
+        "id": "uuid",
+        "name": "Wahyu Dwi",
+        "nis": "2025123456789"
+      }
     }
   }
 }
@@ -1711,7 +1906,7 @@ image: <file>
 ```json
 {
   "success": false,
-  "message": "Cannot update submission: Already graded"
+  "error": "Cannot update submission: Already graded"
 }
 ```
 
@@ -1736,13 +1931,14 @@ image: <file>
 
 **Note:** 
 - Hanya bisa cancel jika status = `PENDING`
-- Setelah cancel, status menjadi `NOT_SUBMITTED`
+- Setelah cancel, submission akan dihapus
 
 **Response Success (200):**
 ```json
 {
   "success": true,
-  "message": "Submission cancelled successfully"
+  "message": "Submission deleted successfully",
+  "data": null
 }
 ```
 
@@ -1750,7 +1946,7 @@ image: <file>
 ```json
 {
   "success": false,
-  "message": "Cannot cancel submission: Already graded or in revision"
+  "error": "Cannot cancel submission: Already graded or in revision"
 }
 ```
 
@@ -1761,6 +1957,7 @@ image: <file>
 
 **Headers:**
 - `Authorization: Bearer <accessToken>`
+- `Content-Type: application/json`
 
 **Body:**
 ```json
@@ -1780,12 +1977,34 @@ image: <file>
   "success": true,
   "message": "Submission graded successfully",
   "data": {
-    "id": "uuid",
-    "status": "GRADED",
-    "grade": 95,
-    "feedback": "Karya yang sangat bagus! Penggunaan warna sangat harmonis.",
-    "gradedAt": "2024-01-16T00:00:00.000Z",
-    "updatedAt": "2024-01-16T00:00:00.000Z"
+    "submission": {
+      "id": "uuid",
+      "assignmentId": "uuid",
+      "studentId": "uuid",
+      "title": "gambar senja dan laut",
+      "description": "karya tentang sunset di pantai",
+      "imageUrl": "http://localhost:9000/submissions/submission-1766142525362-adxz14biaxp.jpg",
+      "imageThumbnail": "http://localhost:9000/submissions/thumb-submission-1766142525362-adxz14biaxp.jpg",
+      "imageMedium": "http://localhost:9000/submissions/medium-submission-1766142525362-adxz14biaxp.jpg",
+      "status": "GRADED",
+      "grade": 95,
+      "feedback": "Karya yang sangat bagus! Penggunaan warna sangat harmonis.",
+      "revisionCount": 0,
+      "submittedAt": "2025-12-19T11:08:45.431Z",
+      "gradedAt": "2025-12-19T11:12:35.575Z",
+      "createdAt": "2025-12-19T11:08:45.432Z",
+      "updatedAt": "2025-12-19T11:12:35.576Z",
+      "assignment": {
+        "id": "uuid",
+        "title": "Lukisan Tema Desa"
+      },
+      "student": {
+        "id": "uuid",
+        "name": "Wahyu Dwi",
+        "email": null,
+        "nis": "2025123456789"
+      }
+    }
   }
 }
 ```
@@ -1797,6 +2016,7 @@ image: <file>
 
 **Headers:**
 - `Authorization: Bearer <accessToken>`
+- `Content-Type: application/json`
 
 **Body:**
 ```json
@@ -1811,10 +2031,43 @@ image: <file>
   "success": true,
   "message": "Submission returned for revision",
   "data": {
-    "id": "uuid",
-    "status": "REVISION",
-    "revisionCount": 1,
-    "updatedAt": "2024-01-16T00:00:00.000Z"
+    "submission": {
+      "id": "uuid",
+      "assignmentId": "uuid",
+      "studentId": "uuid",
+      "title": "gambar gunung sunan ibu",
+      "description": "karya tentang gunung",
+      "imageUrl": "http://localhost:9000/submissions/submission-1766142924422-hei6208nsc6.jpg",
+      "imageThumbnail": "http://localhost:9000/submissions/thumb-submission-1766142924422-hei6208nsc6.jpg",
+      "imageMedium": "http://localhost:9000/submissions/medium-submission-1766142924422-hei6208nsc6.jpg",
+      "status": "REVISION",
+      "grade": null,
+      "feedback": null,
+      "revisionCount": 1,
+      "submittedAt": "2025-12-19T11:15:24.460Z",
+      "gradedAt": null,
+      "createdAt": "2025-12-19T11:15:24.462Z",
+      "updatedAt": "2025-12-19T11:18:17.755Z",
+      "assignment": {
+        "id": "uuid",
+        "title": "Lukisan Tema Desa"
+      },
+      "student": {
+        "id": "uuid",
+        "name": "Siti Nurhaliza",
+        "email": null,
+        "nis": "2025123456791"
+      },
+      "revisions": [
+        {
+          "id": "uuid",
+          "submissionId": "uuid",
+          "revisionNote": "Warna kurang kontras, tolong perbaiki bagian langit",
+          "imageUrl": "",
+          "submittedAt": "2025-12-19T11:18:17.751Z"
+        }
+      ]
+    }
   }
 }
 ```
@@ -1830,19 +2083,21 @@ Export endpoints digunakan untuk mengekspor data nilai dan laporan dalam format 
 
 **Headers:**
 - `Authorization: Bearer <accessToken>`
-- Content-Type: `application/json`
+- `Content-Type: application/json`
 
 **Body:**
 ```json
 {
-  "classIds": ["uuid1", "uuid2"],  // Optional, filter by classes
-  "assignmentIds": ["uuid1", "uuid2"],  // Optional, filter by assignments
-  "studentIds": ["uuid1", "uuid2"],  // Optional, filter by students
-  "statuses": ["GRADED", "PENDING"],  // Optional, filter by submission status
+  "classIds": [],  // Optional, filter by classes
+  "assignmentIds": [],  // Optional, filter by assignments
+  "studentIds": [],  // Optional, filter by students
+  "statuses": ["GRADED"],  // Optional, filter by submission status
   "startDate": "2024-01-01T00:00:00.000Z",  // Optional, filter by date range
-  "endDate": "2024-01-31T23:59:59.000Z"  // Optional, filter by date range
+  "endDate": "2024-12-31T23:59:59.000Z"  // Optional, filter by date range
 }
 ```
+
+**Note:** Teacher can export all data, Student can only export their own data.
 
 **Response Success (200):**
 ```
@@ -1862,7 +2117,7 @@ Content-Disposition: attachment; filename="seniku-grades-export-2024-01-16.xlsx"
 ```json
 {
   "success": false,
-  "message": "No data found for the specified filters"
+  "error": "No data found for the specified filters"
 }
 ```
 
@@ -1877,20 +2132,22 @@ Content-Disposition: attachment; filename="seniku-grades-export-2024-01-16.xlsx"
 
 **Headers:**
 - `Authorization: Bearer <accessToken>`
-- Content-Type: `application/json`
+- `Content-Type: application/json`
 
 **Body:**
 ```json
 {
-  "classIds": ["uuid1", "uuid2"],  // Optional, filter by classes
-  "assignmentIds": ["uuid1", "uuid2"],  // Optional, filter by assignments
-  "studentIds": ["uuid1", "uuid2"],  // Optional, filter by students
+  "classIds": [],  // Optional, filter by classes
+  "assignmentIds": [],  // Optional, filter by assignments
+  "studentIds": [],  // Optional, filter by students
   "statuses": ["GRADED"],  // Optional, filter by submission status
   "startDate": "2024-01-01T00:00:00.000Z",  // Optional
-  "endDate": "2024-01-31T23:59:59.000Z",  // Optional
+  "endDate": "2024-12-31T23:59:59.000Z",  // Optional
   "format": "detailed"  // Optional: "summary" or "detailed" (default: "detailed")
 }
 ```
+
+**Note:** Format can be 'summary' or 'detailed' (default: 'detailed'). Teacher can export all data, Student can only export their own data.
 
 **Response Success (200):**
 ```
@@ -1915,7 +2172,7 @@ Content-Disposition: attachment; filename="seniku-grades-report-2024-01-16.pdf"
 ```json
 {
   "success": false,
-  "message": "No data found for the specified filters"
+  "error": "No data found for the specified filters"
 }
 ```
 
@@ -1935,6 +2192,13 @@ Content-Disposition: attachment; filename="seniku-grades-report-2024-01-16.pdf"
 
 **Query Parameters:**
 - `format` (optional): `summary` or `detailed` (default: `detailed`)
+
+**Example Request:**
+```
+GET /export/report-card/:studentId?format=detailed
+```
+
+**Note:** Student can only export their own report card, Teacher can export any student's report card.
 
 **Response Success (200):**
 ```
@@ -1956,7 +2220,7 @@ Content-Disposition: attachment; filename="report-card-rina-dewi-2024-01-16.pdf"
 ```json
 {
   "success": false,
-  "message": "Forbidden: You can only export your own report card"
+  "error": "Forbidden: You can only export your own report card"
 }
 ```
 
@@ -2140,7 +2404,7 @@ When: Submission status changed to GRADED
 ```json
 {
   "success": false,
-  "message": "Not found"
+  "error": "Not found"
 }
 ```
 
@@ -2197,6 +2461,7 @@ When: Submission status changed to GRADED
 
 **Headers:**
 - `Authorization: Bearer <accessToken>`
+- `Content-Type: application/json`
 
 **Body:**
 ```json
@@ -2211,6 +2476,8 @@ When: Submission status changed to GRADED
   }
 }
 ```
+
+**Note:** Criteria is optional JSON object for achievement unlock conditions.
 
 **Validation:**
 - `name`: required, min 1 character, max 100 characters, must be unique
@@ -2257,6 +2524,7 @@ When: Submission status changed to GRADED
 
 **Headers:**
 - `Authorization: Bearer <accessToken>`
+- `Content-Type: application/json`
 
 **Body:**
 ```json
@@ -2271,6 +2539,8 @@ When: Submission status changed to GRADED
   }
 }
 ```
+
+**Note:** All fields are optional.
 
 **Validation:**
 - All fields are optional
@@ -2303,13 +2573,20 @@ When: Submission status changed to GRADED
 ---
 
 ### 10.6 Delete Achievement (Teacher/Admin only)
-**DELETE** `/achievements/:id?force=true`
+**DELETE** `/achievements/:id`
 
 **Headers:**
 - `Authorization: Bearer <accessToken>`
 
 **Query Parameters:**
 - `force` (optional): Force delete even if achievement has users (default: false)
+
+**Example Request:**
+```
+DELETE /achievements/:id?force=false
+```
+
+**Note:** Use force=true to delete even if achievement has users.
 
 **Response Success (200):**
 ```json
@@ -2323,7 +2600,7 @@ When: Submission status changed to GRADED
 ```json
 {
   "success": false,
-  "message": "Cannot delete achievement: Has users. Use force=true to force delete."
+  "error": "Cannot delete achievement: Has users. Use force=true to force delete."
 }
 ```
 
@@ -2397,9 +2674,14 @@ When: Submission status changed to GRADED
 - `Authorization: Bearer <accessToken>`
 
 **Query Parameters:**
-- `page` (optional): Page number
-- `limit` (optional): Items per page
-- `isRead` (optional): Filter by read status
+- `page` (optional): Page number (default: 1)
+- `limit` (optional): Items per page (default: 10)
+- `isRead` (optional): Filter by read status (true/false)
+
+**Example Request:**
+```
+GET /notifications?page=1&limit=10&isRead=false
+```
 
 **Response Success (200):**
 ```json
@@ -2477,7 +2759,7 @@ When: Submission status changed to GRADED
 ```json
 {
   "success": false,
-  "message": "Notification not found"
+  "error": "Notification not found"
 }
 ```
 
@@ -2493,7 +2775,8 @@ When: Submission status changed to GRADED
 ```json
 {
   "success": true,
-  "message": "Notification marked as read"
+  "message": "Notification marked as read",
+  "data": null
 }
 ```
 
@@ -2509,7 +2792,8 @@ When: Submission status changed to GRADED
 ```json
 {
   "success": true,
-  "message": "All notifications marked as read"
+  "message": "All notifications marked as read",
+  "data": null
 }
 ```
 
