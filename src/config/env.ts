@@ -26,7 +26,7 @@ const envSchema = z.object({
   UPLOAD_DIR: z.string().default('./uploads'),
 
   // Image Processing
-  IMAGE_MIN_WIDTH: z.string().default('800').transform(Number).pipe(z.number().int().positive()),
+  IMAGE_MIN_WIDTH: z.string().default('200').transform(Number).pipe(z.number().int().positive()),
   IMAGE_MIN_HEIGHT: z.string().default('600').transform(Number).pipe(z.number().int().positive()),
   IMAGE_MAX_WIDTH: z.string().default('8000').transform(Number).pipe(z.number().int().positive()),
   IMAGE_MAX_HEIGHT: z.string().default('8000').transform(Number).pipe(z.number().int().positive()),
@@ -34,26 +34,18 @@ const envSchema = z.object({
   IMAGE_MEDIUM_SIZE: z.string().default('800').transform(Number).pipe(z.number().int().positive()),
   IMAGE_QUALITY: z.string().default('90').transform(Number).pipe(z.number().int().min(1).max(100)),
 
-  // MinIO
-  MINIO_ENDPOINT: z.string().default('localhost'),
-  MINIO_PORT: z.string().default('9000').transform(Number).pipe(z.number().int().positive()),
-  MINIO_ACCESS_KEY: z.string().min(1),
-  MINIO_SECRET_KEY: z.string().min(1),
-  MINIO_USE_SSL: z.string().default('false').transform((val) => val === 'true'),
-  MINIO_BUCKET_AVATARS: z.string().default('avatars'),
-  MINIO_BUCKET_SUBMISSIONS: z.string().default('submissions'),
-  MINIO_BUCKET_TEMP: z.string().default('temp'),
-  MINIO_PUBLIC_URL: z.string().url().default('http://localhost:9000'),
+  // Supabase Storage
+  SUPABASE_URL: z.string().url(),
+  SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
+  SUPABASE_STORAGE_BUCKET_AVATARS: z.string().default('avatars'),
+  SUPABASE_STORAGE_BUCKET_SUBMISSIONS: z.string().default('submissions'),
+  SUPABASE_STORAGE_BUCKET_TEMP: z.string().default('temp'),
 
   // CORS
   CORS_ORIGIN: z.string().url().default('http://localhost:5173'),
 
   // Logging
   LOG_LEVEL: z.enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal']).default('info'),
-
-  // Rate Limiting
-  RATE_LIMIT_MAX: z.string().default('100').transform(Number).pipe(z.number().int().positive()),
-  RATE_LIMIT_TIME_WINDOW: z.string().default('60000').transform(Number).pipe(z.number().int().positive()),
 });
 
 export type Env = z.infer<typeof envSchema>;

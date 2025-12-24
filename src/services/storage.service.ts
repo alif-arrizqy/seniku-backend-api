@@ -1,15 +1,26 @@
-import minioClient from '../config/minio';
+import supabaseClient from '../config/supabase';
 import env from '../config/env';
 import logger from '../utils/logger';
 import { Readable } from 'stream';
 
 export class StorageService {
-  private async ensureBucket(bucketName: string): Promise<void> {
-    const exists = await minioClient.bucketExists(bucketName);
-    if (!exists) {
-      await minioClient.makeBucket(bucketName, 'us-east-1');
-      logger.info({ bucket: bucketName }, 'Bucket created');
+  /**
+   * Convert Readable stream to Buffer
+   */
+  private async streamToBuffer(stream: Readable): Promise<Buffer> {
+    const chunks: Buffer[] = [];
+    for await (const chunk of stream) {
+      chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
     }
+    return Buffer.concat(chunks);
+  }
+
+  /**
+   * Get public URL for a file in Supabase Storage
+   */
+  private getPublicUrl(bucket: string, objectName: string): string {
+    const { data } = supabaseClient.storage.from(bucket).getPublicUrl(objectName);
+    return data.publicUrl;
   }
 
   async uploadFile(
@@ -20,60 +31,98 @@ export class StorageService {
     size?: number
   ): Promise<string> {
     try {
-      await this.ensureBucket(bucket);
-
+      // Convert Readable stream to Buffer if needed
+      let fileBuffer: Buffer;
       if (Buffer.isBuffer(file)) {
-        await minioClient.putObject(bucket, objectName, file, size || file.length, {
-          'Content-Type': contentType,
-        });
+        fileBuffer = file;
       } else {
-        await minioClient.putObject(bucket, objectName, file, size, {
-          'Content-Type': contentType,
-        });
+        fileBuffer = await this.streamToBuffer(file);
       }
 
-      const url = `${env.MINIO_PUBLIC_URL}/${bucket}/${objectName}`;
+      // Upload to Supabase Storage
+      const { data, error } = await supabaseClient.storage.from(bucket).upload(objectName, fileBuffer, {
+        contentType,
+        upsert: true, // Overwrite if exists
+      });
+
+      if (error) {
+        logger.error({ error, bucket, objectName }, 'Failed to upload file to Supabase Storage');
+        throw new Error(`Failed to upload file: ${error.message}`);
+      }
+
+      // Get public URL
+      const url = this.getPublicUrl(bucket, objectName);
       logger.info({ bucket, objectName, url }, 'File uploaded successfully');
       return url;
-    } catch (error) {
+    } catch (error: any) {
       logger.error({ error, bucket, objectName }, 'Failed to upload file');
-      throw new Error('Failed to upload file');
+      throw new Error(error.message || 'Failed to upload file');
     }
   }
 
   async deleteFile(bucket: string, objectName: string): Promise<void> {
     try {
-      await minioClient.removeObject(bucket, objectName);
+      const { error } = await supabaseClient.storage.from(bucket).remove([objectName]);
+
+      if (error) {
+        logger.error({ error, bucket, objectName }, 'Failed to delete file from Supabase Storage');
+        throw new Error(`Failed to delete file: ${error.message}`);
+      }
+
       logger.info({ bucket, objectName }, 'File deleted successfully');
-    } catch (error) {
+    } catch (error: any) {
       logger.error({ error, bucket, objectName }, 'Failed to delete file');
-      throw new Error('Failed to delete file');
+      throw new Error(error.message || 'Failed to delete file');
     }
   }
 
   async getFileUrl(bucket: string, objectName: string): Promise<string> {
-    return `${env.MINIO_PUBLIC_URL}/${bucket}/${objectName}`;
+    return this.getPublicUrl(bucket, objectName);
   }
 
   async getPresignedUrl(bucket: string, objectName: string, expiry = 3600): Promise<string> {
     try {
-      const url = await minioClient.presignedGetObject(bucket, objectName, expiry);
-      return url;
-    } catch (error) {
+      const { data, error } = await supabaseClient.storage
+        .from(bucket)
+        .createSignedUrl(objectName, expiry);
+
+      if (error) {
+        logger.error({ error, bucket, objectName }, 'Failed to generate presigned URL');
+        throw new Error(`Failed to generate presigned URL: ${error.message}`);
+      }
+
+      return data.signedUrl;
+    } catch (error: any) {
       logger.error({ error, bucket, objectName }, 'Failed to generate presigned URL');
-      throw new Error('Failed to generate presigned URL');
+      throw new Error(error.message || 'Failed to generate presigned URL');
     }
   }
 
   async fileExists(bucket: string, objectName: string): Promise<boolean> {
     try {
-      await minioClient.statObject(bucket, objectName);
-      return true;
+      // Get the directory path and file name
+      const pathParts = objectName.split('/');
+      const fileName = pathParts.pop() || objectName;
+      const directoryPath = pathParts.join('/') || '';
+
+      // List files in the directory
+      const { data, error } = await supabaseClient.storage.from(bucket).list(directoryPath, {
+        limit: 1000,
+        search: fileName,
+      });
+
+      if (error) {
+        logger.debug({ error, bucket, objectName }, 'Error checking file existence');
+        return false;
+      }
+
+      // Check if file exists in the list
+      return data?.some((file) => file.name === fileName) || false;
     } catch (error) {
+      logger.debug({ error, bucket, objectName }, 'Error checking file existence');
       return false;
     }
   }
 }
 
 export default new StorageService();
-

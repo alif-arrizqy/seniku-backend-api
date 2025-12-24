@@ -10,9 +10,8 @@ Backend API untuk aplikasi Seniku (E-Portfolio Seni Digital).
 - **ORM**: Prisma
 - **Authentication**: JWT (JSON Web Token)
 - **Logging**: Pino
-- **File Storage**: MinIO (S3-compatible)
+- **File Storage**: Supabase Storage
 - **Image Processing**: Sharp
-
 
 ## 📦 Installation
 
@@ -29,13 +28,13 @@ Backend API untuk aplikasi Seniku (E-Portfolio Seni Digital).
 
 3. **Setup environment variables**
    - Copy `env.example.txt` ke `.env`
-   - Isi semua variabel yang diperlukan (database, JWT secret, MinIO, dll)
+   - Isi semua variabel yang diperlukan (database, JWT secret, Supabase Storage, dll)
 
 4. **Setup database**
    ```bash
    npm run prisma:generate
    
-   npm run prisma:push
+   npm run prisma:migrate
    ```
 
 5. **Seed database (optional)**
@@ -73,6 +72,17 @@ Aplikasi ini mendukung PostgreSQL lokal maupun Supabase. Untuk menggunakan Supab
      ```env
      DATABASE_URL="postgresql://postgres:[PASSWORD]@db.[PROJECT-REF].supabase.co:5432/postgres?schema=public"
      ```
+   - **Untuk Supabase Storage**
+      ```env
+      # Supabase Storage Configuration
+      SUPABASE_URL=https://[PROJECT-REF].supabase.co
+      # Get this from Supabase Dashboard > Settings > API > Service Role Key (secret)
+      SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here
+      SUPABASE_STORAGE_BUCKET_AVATARS=avatars
+      SUPABASE_STORAGE_BUCKET_SUBMISSIONS=submissions
+      SUPABASE_STORAGE_BUCKET_TEMP=temp
+      # Note: Buckets must be created manually in Supabase Dashboard > Storage
+      ```
 
 4. **Run Migrations**
    ```bash
@@ -85,6 +95,34 @@ Aplikasi ini mendukung PostgreSQL lokal maupun Supabase. Untuk menggunakan Supab
    ```bash
    npx prisma generate
    ```
+
+### 📦 Supabase Storage Setup
+
+Aplikasi menggunakan Supabase Storage untuk menyimpan file (avatars, submissions, dll):
+
+1. **Setup Storage Buckets**
+   - Buka Supabase Dashboard > Storage
+   - Buat 3 buckets:
+     - `avatars` - Untuk user avatars (set to public)
+     - `submissions` - Untuk submission artwork (set to public)
+     - `temp` - Untuk temporary uploads (set to private)
+
+2. **Get Service Role Key**
+   - Buka Settings > API di Supabase dashboard
+   - Copy **Service Role Key** (secret key, jangan share ke frontend!)
+
+3. **Update Environment Variables**
+   ```env
+   SUPABASE_URL=https://[PROJECT-REF].supabase.co
+   SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here
+   SUPABASE_STORAGE_BUCKET_AVATARS=avatars
+   SUPABASE_STORAGE_BUCKET_SUBMISSIONS=submissions
+   SUPABASE_STORAGE_BUCKET_TEMP=temp
+   ```
+
+4. **Set Bucket Policies** (via Dashboard)
+   - Untuk `avatars` dan `submissions`: Set to **Public** (Allow public read access)
+   - Untuk `temp`: Keep **Private** (Only authenticated users)
 
 ---
 

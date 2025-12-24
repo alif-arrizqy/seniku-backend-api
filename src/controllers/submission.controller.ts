@@ -105,10 +105,10 @@ export class SubmissionController {
         return ResponseFormatter.error(reply, 'Assignment ID and title are required', 400);
       }
 
-      // Upload images to MinIO
+      // Upload images to Supabase Storage
       const fileName = generateFileName(data.filename, 'submission');
       const imageUrl = await storageService.uploadFile(
-        env.MINIO_BUCKET_SUBMISSIONS,
+        env.SUPABASE_STORAGE_BUCKET_SUBMISSIONS,
         fileName,
         processed.full,
         'image/jpeg',
@@ -121,7 +121,7 @@ export class SubmissionController {
       if (processed.thumbnail) {
         const thumbName = `thumb-${fileName}`;
         imageThumbnail = await storageService.uploadFile(
-          env.MINIO_BUCKET_SUBMISSIONS,
+          env.SUPABASE_STORAGE_BUCKET_SUBMISSIONS,
           thumbName,
           processed.thumbnail,
           'image/jpeg',
@@ -132,7 +132,7 @@ export class SubmissionController {
       if (processed.medium) {
         const mediumName = `medium-${fileName}`;
         imageMedium = await storageService.uploadFile(
-          env.MINIO_BUCKET_SUBMISSIONS,
+          env.SUPABASE_STORAGE_BUCKET_SUBMISSIONS,
           mediumName,
           processed.medium,
           'image/jpeg',
@@ -207,10 +207,10 @@ export class SubmissionController {
         const title = body.title?.value;
         const description = body.description?.value;
 
-        // Upload images to MinIO
+        // Upload images to Supabase Storage
         const fileName = generateFileName(data.filename, 'submission');
         const imageUrl = await storageService.uploadFile(
-          env.MINIO_BUCKET_SUBMISSIONS,
+          env.SUPABASE_STORAGE_BUCKET_SUBMISSIONS,
           fileName,
           processed.full,
           'image/jpeg',
@@ -223,7 +223,7 @@ export class SubmissionController {
         if (processed.thumbnail) {
           const thumbName = `thumb-${fileName}`;
           imageThumbnail = await storageService.uploadFile(
-            env.MINIO_BUCKET_SUBMISSIONS,
+            env.SUPABASE_STORAGE_BUCKET_SUBMISSIONS,
             thumbName,
             processed.thumbnail,
             'image/jpeg',
@@ -234,7 +234,7 @@ export class SubmissionController {
         if (processed.medium) {
           const mediumName = `medium-${fileName}`;
           imageMedium = await storageService.uploadFile(
-            env.MINIO_BUCKET_SUBMISSIONS,
+            env.SUPABASE_STORAGE_BUCKET_SUBMISSIONS,
             mediumName,
             processed.medium,
             'image/jpeg',
