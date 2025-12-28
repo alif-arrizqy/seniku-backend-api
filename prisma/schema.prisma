@@ -178,14 +178,16 @@ model Submission {
 model SubmissionRevision {
   id           String   @id @default(uuid())
   submissionId String   @map("submission_id")
-  revisionNote String   @map("revision_note")
+  revisionNote String?  @map("revision_note") // Optional (null untuk versi awal)
   imageUrl     String   @map("image_url")
+  version      Int      // Versi ke berapa (1, 2, 3, ...)
   submittedAt  DateTime @default(now()) @map("submitted_at")
 
   // Relations
   submission   Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
 
   @@index([submissionId])
+  @@index([version])
   @@map("submission_revisions")
 }
 
