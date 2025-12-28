@@ -41,8 +41,8 @@ const envSchema = z.object({
   SUPABASE_STORAGE_BUCKET_SUBMISSIONS: z.string().default('submissions'),
   SUPABASE_STORAGE_BUCKET_TEMP: z.string().default('temp'),
 
-  // CORS
-  CORS_ORIGIN: z.string().url().default('http://localhost:5173'),
+  // CORS - Comma-separated list of allowed origins
+  CORS_ORIGIN: z.string().optional(),
 
   // Logging
   LOG_LEVEL: z.enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal']).default('info'),

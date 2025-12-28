@@ -13,8 +13,18 @@ export async function buildApp(): Promise<FastifyInstance> {
       logger: false, // We use our custom logger
     });
 
-    // Register plugins (CORS first)
+    // Register CORS plugin globally (must be first)
     await app.register(corsPlugin);
+
+    // Add hook to ensure CORS headers are always present
+    app.addHook('onSend', async (request, reply) => {
+      // Ensure CORS headers are set if not already present
+      const origin = request.headers.origin;
+      if (origin && !reply.getHeader('Access-Control-Allow-Origin')) {
+        reply.header('Access-Control-Allow-Origin', origin);
+        reply.header('Access-Control-Allow-Credentials', 'true');
+      }
+    });
 
     // Register routes with prefix
     await app.register(routes, { prefix: '/seniku/api/v1' });
