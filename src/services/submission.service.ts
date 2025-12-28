@@ -62,6 +62,9 @@ export class SubmissionService {
               avatar: true,
             },
           },
+          revisions: {
+            orderBy: { version: 'asc' },
+          },
         },
         skip: pagination.skip,
         take: pagination.take,
@@ -70,7 +73,30 @@ export class SubmissionService {
       prisma.submission.count({ where }),
     ]);
 
-    return { submissions, total };
+    // Transform submissions to include imageHistory
+    const submissionsWithHistory = submissions.map((submission) => {
+      const imageHistory = [
+        // Include all revisions
+        ...submission.revisions.map((rev) => ({
+          image: rev.imageUrl,
+          submittedAt: rev.submittedAt.toISOString(),
+          version: rev.version,
+        })),
+        // Include current image as latest version
+        {
+          image: submission.imageUrl,
+          submittedAt: (submission.submittedAt || submission.createdAt).toISOString(),
+          version: submission.revisionCount + 1,
+        },
+      ].sort((a, b) => a.version - b.version);
+
+      return {
+        ...submission,
+        imageHistory,
+      };
+    });
+
+    return { submissions: submissionsWithHistory, total };
   }
 
   async findSubmissionById(submissionId: string) {
@@ -106,7 +132,7 @@ export class SubmissionService {
             },
           },
           revisions: {
-            orderBy: { submittedAt: 'desc' },
+            orderBy: { version: 'asc' },
           },
         },
       });
@@ -115,7 +141,26 @@ export class SubmissionService {
         throw new Error(ErrorMessages.RESOURCE.SUBMISSION_NOT_FOUND);
       }
 
-      return submission;
+      // Transform to include imageHistory
+      const imageHistory = [
+        // Include all revisions
+        ...submission.revisions.map((rev) => ({
+          image: rev.imageUrl,
+          submittedAt: rev.submittedAt.toISOString(),
+          version: rev.version,
+        })),
+        // Include current image as latest version
+        {
+          image: submission.imageUrl,
+          submittedAt: (submission.submittedAt || submission.createdAt).toISOString(),
+          version: submission.revisionCount + 1,
+        },
+      ].sort((a, b) => a.version - b.version);
+
+      return {
+        ...submission,
+        imageHistory,
+      };
     } catch (error: any) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2025') {
@@ -181,7 +226,30 @@ export class SubmissionService {
         },
       });
 
-      return submission;
+      // Save first version to history
+      await prisma.submissionRevision.create({
+        data: {
+          submissionId: submission.id,
+          revisionNote: null, // No revision note for initial submission
+          imageUrl: data.imageUrl,
+          version: 1,
+          submittedAt: submission.submittedAt || new Date(),
+        },
+      });
+
+      // Transform to include imageHistory
+      const imageHistory = [
+        {
+          image: submission.imageUrl,
+          submittedAt: (submission.submittedAt || submission.createdAt).toISOString(),
+          version: 1,
+        },
+      ];
+
+      return {
+        ...submission,
+        imageHistory,
+      };
     } catch (error: any) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2003') {
@@ -217,6 +285,21 @@ export class SubmissionService {
         throw new Error('Cannot update submission: Already graded');
       }
 
+      // If image is being updated, save current image to history before updating
+      if (data.imageUrl && data.imageUrl !== existingSubmission.imageUrl) {
+        const nextVersion = existingSubmission.revisionCount + 2; // +2 because version 1 is initial submission
+        
+        await prisma.submissionRevision.create({
+          data: {
+            submissionId: submissionId,
+            revisionNote: null, // No revision note for student's own update
+            imageUrl: existingSubmission.imageUrl, // Save old image
+            version: nextVersion,
+            submittedAt: new Date(),
+          },
+        });
+      }
+
       // If status is REVISION, change it back to PENDING after update
       const updatePayload: any = { ...data };
       if (existingSubmission.status === SubmissionStatus.REVISION) {
@@ -241,10 +324,32 @@ export class SubmissionService {
               nis: true,
             },
           },
+          revisions: {
+            orderBy: { version: 'asc' },
+          },
         },
       });
 
-      return submission;
+      // Transform to include imageHistory
+      const imageHistory = [
+        // Include all revisions
+        ...submission.revisions.map((rev) => ({
+          image: rev.imageUrl,
+          submittedAt: rev.submittedAt.toISOString(),
+          version: rev.version,
+        })),
+        // Include current image as latest version
+        {
+          image: submission.imageUrl,
+          submittedAt: (submission.submittedAt || submission.createdAt).toISOString(),
+          version: submission.revisionCount + 1,
+        },
+      ].sort((a, b) => a.version - b.version);
+
+      return {
+        ...submission,
+        imageHistory,
+      };
     } catch (error: any) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2025') {
@@ -289,6 +394,9 @@ export class SubmissionService {
               nis: true,
             },
           },
+          revisions: {
+            orderBy: { version: 'asc' },
+          },
         },
       });
 
@@ -307,7 +415,26 @@ export class SubmissionService {
         console.error('Error checking achievements:', error);
       });
 
-      return submission;
+      // Transform to include imageHistory
+      const imageHistory = [
+        // Include all revisions
+        ...submission.revisions.map((rev) => ({
+          image: rev.imageUrl,
+          submittedAt: rev.submittedAt.toISOString(),
+          version: rev.version,
+        })),
+        // Include current image as latest version
+        {
+          image: submission.imageUrl,
+          submittedAt: (submission.submittedAt || submission.createdAt).toISOString(),
+          version: submission.revisionCount + 1,
+        },
+      ].sort((a, b) => a.version - b.version);
+
+      return {
+        ...submission,
+        imageHistory,
+      };
     } catch (error: any) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2025') {
@@ -329,12 +456,17 @@ export class SubmissionService {
         throw new Error(ErrorMessages.RESOURCE.SUBMISSION_NOT_FOUND);
       }
 
-      // Create revision record
+      // Save current image to history before returning for revision
+      // This ensures we have a record of the image that was returned
+      const nextVersion = existingSubmission.revisionCount + 2; // +2 because version 1 is initial submission
+      
       await prisma.submissionRevision.create({
         data: {
           submissionId,
-          revisionNote,
-          imageUrl,
+          revisionNote, // Save revision note from teacher
+          imageUrl: existingSubmission.imageUrl, // Save current image before revision
+          version: nextVersion,
+          submittedAt: new Date(),
         },
       });
 
@@ -363,7 +495,7 @@ export class SubmissionService {
             },
           },
           revisions: {
-            orderBy: { submittedAt: 'desc' },
+            orderBy: { version: 'asc' },
           },
         },
       });
@@ -377,7 +509,26 @@ export class SubmissionService {
         link: `/submissions/${submissionId}`,
       });
 
-      return submission;
+      // Transform to include imageHistory
+      const imageHistory = [
+        // Include all revisions
+        ...submission.revisions.map((rev) => ({
+          image: rev.imageUrl,
+          submittedAt: rev.submittedAt.toISOString(),
+          version: rev.version,
+        })),
+        // Include current image as latest version
+        {
+          image: submission.imageUrl,
+          submittedAt: (submission.submittedAt || submission.createdAt).toISOString(),
+          version: submission.revisionCount + 1,
+        },
+      ].sort((a, b) => a.version - b.version);
+
+      return {
+        ...submission,
+        imageHistory,
+      };
     } catch (error: any) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2025') {
