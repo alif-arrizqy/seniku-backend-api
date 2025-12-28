@@ -430,7 +430,7 @@ async function main() {
         const imageThumbnail = `https://picsum.photos/300/300?random=${randomSeed}`;
         const imageMedium = `https://picsum.photos/800/600?random=${randomSeed}`;
 
-        await prisma.submission.create({
+        const submission = await prisma.submission.create({
           data: {
             assignmentId: assignment.id,
             studentId: student.id,
@@ -447,6 +447,33 @@ async function main() {
             revisionCount: status === SubmissionStatus.REVISION ? 1 : 0,
           },
         });
+
+        // Create initial version in SubmissionRevision (version 1)
+        // This matches the behavior in createSubmission() service
+        // Note: Prisma client needs to be regenerated after schema changes
+        await prisma.submissionRevision.create({
+          data: {
+            submissionId: submission.id,
+            // revisionNote is optional (nullable), omit it for initial submission
+            imageUrl: imageUrl,
+            version: 1,
+            submittedAt: submittedAt || submission.createdAt,
+          } as any, // Type assertion needed until Prisma client is regenerated
+        });
+
+        // If status is REVISION, create a revision record with the revision note
+        if (status === SubmissionStatus.REVISION && feedback) {
+          await prisma.submissionRevision.create({
+            data: {
+              submissionId: submission.id,
+              revisionNote: feedback, // Use feedback as revision note
+              imageUrl: imageUrl, // Same image, but this is the version that was returned for revision
+              version: 2, // Version 2 is the revision
+              submittedAt: new Date(submittedAt!.getTime() + 1000), // Slightly after submission
+            } as any, // Type assertion needed until Prisma client is regenerated
+          });
+        }
+
         submissionCount++;
       }
     }
