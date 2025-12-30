@@ -13,7 +13,8 @@ export const registerSchema = z
     address: z.string().optional(),
     bio: z.string().optional(),
     birthdate: z.string().datetime().or(z.date()).optional(),
-    classId: z.string().uuid().optional(),
+    classId: z.string().uuid().optional(), // For STUDENT (required)
+    classIds: z.array(z.string().uuid()).optional(), // For TEACHER (optional)
   })
   .refine(
     (data) => {
@@ -30,6 +31,19 @@ export const registerSchema = z
     {
       message: 'Student must have NIS. Teacher must have NIP.',
       path: ['nip'],
+    }
+  )
+  .refine(
+    (data) => {
+      // Student must have classId
+      if (data.role === UserRole.STUDENT) {
+        return !!data.classId;
+      }
+      return true;
+    },
+    {
+      message: 'Student must have classId',
+      path: ['classId'],
     }
   )
   .refine(
@@ -56,6 +70,32 @@ export const registerSchema = z
     {
       message: 'NIP is only allowed for teachers',
       path: ['nip'],
+    }
+  )
+  .refine(
+    (data) => {
+      // classId only for students
+      if (data.classId && data.role !== UserRole.STUDENT) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: 'classId is only allowed for students',
+      path: ['classId'],
+    }
+  )
+  .refine(
+    (data) => {
+      // classIds only for teachers
+      if (data.classIds && data.role !== UserRole.TEACHER) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: 'classIds is only allowed for teachers',
+      path: ['classIds'],
     }
   );
 

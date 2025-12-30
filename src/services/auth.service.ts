@@ -14,7 +14,8 @@ export interface RegisterData {
   address?: string;
   bio?: string;
   birthdate?: Date;
-  classId?: string;
+  classId?: string; // For STUDENT (required)
+  classIds?: string[]; // For TEACHER (optional)
 }
 
 export interface LoginData {
@@ -83,6 +84,30 @@ export class AuthService {
       }
     }
 
+    // Validate classId for STUDENT
+    if (data.role === UserRole.STUDENT && !data.classId) {
+      throw new Error('Student must have classId');
+    }
+
+    if (data.classId) {
+      const classExists = await prisma.class.findUnique({
+        where: { id: data.classId },
+      });
+      if (!classExists) {
+        throw new Error('Class not found');
+      }
+    }
+
+    // Validate classIds for TEACHER (if provided)
+    if (data.classIds && data.classIds.length > 0) {
+      const classes = await prisma.class.findMany({
+        where: { id: { in: data.classIds } },
+      });
+      if (classes.length !== data.classIds.length) {
+        throw new Error('One or more classes not found');
+      }
+    }
+
     // Hash password
     const hashedPassword = await this.hashPassword(data.password);
 
@@ -112,6 +137,17 @@ export class AuthService {
         createdAt: true,
       },
     });
+
+    // Create TeacherClass relations if teacher has classIds
+    if (data.role === UserRole.TEACHER && data.classIds && data.classIds.length > 0) {
+      await prisma.teacherClass.createMany({
+        data: data.classIds.map((classId) => ({
+          teacherId: user.id,
+          classId,
+        })),
+        skipDuplicates: true,
+      });
+    }
 
     logger.info({ userId: user.id, role: user.role }, 'User registered');
     return user;
