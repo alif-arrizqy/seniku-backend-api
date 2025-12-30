@@ -1636,6 +1636,31 @@ GET /assignments?page=1&limit=10
 
 ## 8. Submission Endpoints
 
+**Revision History & Image History:**
+
+Setiap submission menyimpan history semua versi gambar yang pernah diupload melalui field `imageHistory` dan `revisions`:
+
+- **`imageHistory`**: Array yang berisi semua versi gambar (termasuk versi saat ini), diurutkan dari versi 1 (terlama) hingga versi terbaru. Setiap entry berisi:
+  - `image`: URL gambar
+  - `submittedAt`: Timestamp kapan gambar tersebut diupload
+  - `version`: Nomor versi (1, 2, 3, ...)
+
+- **`revisions`**: Array detail revision history dari `SubmissionRevision` table, berisi:
+  - `id`: Revision ID
+  - `submissionId`: Submission ID
+  - `revisionNote`: Catatan revisi dari teacher (bisa null jika diupdate oleh student sendiri)
+  - `imageUrl`: URL gambar versi tersebut
+  - `version`: Nomor versi
+  - `submittedAt`: Timestamp
+
+**Flow Revision History:**
+1. **Initial Submission**: Versi 1 otomatis dibuat saat submission pertama kali dibuat
+2. **Update by Student**: Jika student update gambar, gambar lama disimpan ke history dengan version number yang di-increment
+3. **Return for Revision**: Ketika teacher return for revision, gambar saat ini disimpan ke history dengan `revisionNote` dari teacher
+4. **Re-submit after Revision**: Student upload gambar baru, gambar lama disimpan ke history
+
+---
+
 ### 8.1 Get Submissions
 **GET** `/submissions`
 
@@ -1682,6 +1707,13 @@ GET /submissions?page=1&limit=10
         "grade": null,
         "feedback": null,
         "revisionCount": 0,
+        "imageHistory": [
+          {
+            "image": "https://example.com/artwork/uuid-full.jpg",
+            "submittedAt": "2024-01-15T00:00:00.000Z",
+            "version": 1
+          }
+        ],
         "submittedAt": "2024-01-15T00:00:00.000Z",
         "createdAt": "2024-01-15T00:00:00.000Z"
       }
@@ -1695,6 +1727,8 @@ GET /submissions?page=1&limit=10
   }
 }
 ```
+
+**Note:** `imageHistory` berisi semua versi gambar yang pernah diupload untuk submission tersebut, diurutkan dari versi 1 (terlama) hingga versi terbaru (current image).
 
 ---
 
@@ -1731,6 +1765,13 @@ GET /submissions?page=1&limit=10
     "feedback": "Karya yang sangat bagus! Penggunaan warna sangat harmonis.",
     "revisionCount": 0,
     "revisions": [],
+    "imageHistory": [
+      {
+        "image": "https://example.com/artwork/uuid-full.jpg",
+        "submittedAt": "2024-01-15T00:00:00.000Z",
+        "version": 1
+      }
+    ],
     "submittedAt": "2024-01-15T00:00:00.000Z",
     "gradedAt": "2024-01-16T00:00:00.000Z",
     "createdAt": "2024-01-15T00:00:00.000Z"
@@ -1738,7 +1779,79 @@ GET /submissions?page=1&limit=10
 }
 ```
 
-**Note:** `imageUrl` harus memiliki resolusi tinggi (min 1200x800px) untuk mendukung fitur zoom hingga 300% di frontend.
+**Response Success (200) - With Revisions:**
+```json
+{
+  "success": true,
+  "data": {
+    "id": "uuid",
+    "assignment": {
+      "id": "uuid",
+      "title": "Lukisan Tema Alam",
+      "deadline": "2024-01-20T23:59:59.000Z"
+    },
+    "student": {
+      "id": "uuid",
+      "name": "Rina Dewi",
+      "nis": "12345",
+      "className": "XII IPA 1"
+    },
+    "title": "Lukisan Sunset Pantai (Revisi)",
+    "description": "Karya tentang sunset di pantai",
+    "imageUrl": "https://example.com/artwork/uuid-v3-full.jpg",
+    "imageThumbnail": "https://example.com/artwork/uuid-v3-thumb.jpg",
+    "imageMedium": "https://example.com/artwork/uuid-v3-medium.jpg",
+    "status": "PENDING",
+    "grade": null,
+    "feedback": null,
+    "revisionCount": 2,
+    "revisions": [
+      {
+        "id": "uuid",
+        "submissionId": "uuid",
+        "revisionNote": "Warna kurang kontras, tolong perbaiki bagian langit",
+        "imageUrl": "https://example.com/artwork/uuid-v1-full.jpg",
+        "version": 1,
+        "submittedAt": "2024-01-15T00:00:00.000Z"
+      },
+      {
+        "id": "uuid",
+        "submissionId": "uuid",
+        "revisionNote": null,
+        "imageUrl": "https://example.com/artwork/uuid-v2-full.jpg",
+        "version": 2,
+        "submittedAt": "2024-01-16T00:00:00.000Z"
+      }
+    ],
+    "imageHistory": [
+      {
+        "image": "https://example.com/artwork/uuid-v1-full.jpg",
+        "submittedAt": "2024-01-15T00:00:00.000Z",
+        "version": 1
+      },
+      {
+        "image": "https://example.com/artwork/uuid-v2-full.jpg",
+        "submittedAt": "2024-01-16T00:00:00.000Z",
+        "version": 2
+      },
+      {
+        "image": "https://example.com/artwork/uuid-v3-full.jpg",
+        "submittedAt": "2024-01-17T00:00:00.000Z",
+        "version": 3
+      }
+    ],
+    "submittedAt": "2024-01-17T00:00:00.000Z",
+    "gradedAt": null,
+    "createdAt": "2024-01-15T00:00:00.000Z"
+  }
+}
+```
+
+**Note:** 
+- `imageUrl` harus memiliki resolusi tinggi (min 1200x800px) untuk mendukung fitur zoom hingga 300% di frontend.
+- `imageHistory` berisi semua versi gambar yang pernah diupload, termasuk versi saat ini sebagai versi terakhir.
+- `revisions` berisi detail revision history dengan `revisionNote` (bisa null untuk versi yang diupdate oleh student sendiri).
+- Versi di `imageHistory` diurutkan dari versi 1 (terlama) hingga versi terbaru (current image).
 
 ---
 
@@ -1788,6 +1901,13 @@ image: <file>
       "grade": null,
       "feedback": null,
       "revisionCount": 0,
+      "imageHistory": [
+        {
+          "image": "http://localhost:9000/submissions/submission-1766141036002-5oeqi59i9f7.jpg",
+          "submittedAt": "2025-12-19T10:43:56.055Z",
+          "version": 1
+        }
+      ],
       "submittedAt": "2025-12-19T10:43:56.055Z",
       "gradedAt": null,
       "createdAt": "2025-12-19T10:43:56.057Z",
@@ -1807,6 +1927,8 @@ image: <file>
   }
 }
 ```
+
+**Note:** Setelah submission dibuat, versi pertama (version 1) otomatis disimpan ke `imageHistory`.
 
 **Response Error (400):**
 ```json
@@ -1855,7 +1977,8 @@ image: <file>
 - Jika status = `REVISION` dan diupdate, status akan otomatis berubah menjadi `PENDING` dan `submittedAt` akan diupdate
 - Jika upload gambar baru, semua field (title, description, image) optional
 - Jika tidak upload gambar, hanya bisa update title dan description
-- Gambar baru akan menggantikan gambar lama
+- **Gambar lama akan disimpan ke `imageHistory` sebelum diganti dengan gambar baru**
+- Versi baru akan otomatis dibuat di `imageHistory` dengan version number yang di-increment
 
 **File Validation (jika upload gambar):**
 - File type: `image/jpeg`, `image/png`, `image/webp`
@@ -1881,8 +2004,20 @@ image: <file>
       "status": "PENDING",
       "grade": null,
       "feedback": null,
-      "revisionCount": 0,
-      "submittedAt": "2025-12-19T11:02:40.716Z",
+      "revisionCount": 1,
+      "imageHistory": [
+        {
+          "image": "http://localhost:9000/submissions/submission-1766141036002-5oeqi59i9f7.jpg",
+          "submittedAt": "2025-12-19T10:43:56.055Z",
+          "version": 1
+        },
+        {
+          "image": "http://localhost:9000/submissions/submission-1766142160667-bpiwxmtrr2a.jpg",
+          "submittedAt": "2025-12-19T11:07:02.345Z",
+          "version": 2
+        }
+      ],
+      "submittedAt": "2025-12-19T11:07:02.345Z",
       "gradedAt": null,
       "createdAt": "2025-12-19T11:02:40.719Z",
       "updatedAt": "2025-12-19T11:07:02.345Z",
@@ -1900,7 +2035,10 @@ image: <file>
 }
 ```
 
-**Note:** Jika submission sebelumnya berstatus `REVISION`, setelah diupdate status akan menjadi `PENDING` dan `submittedAt` akan diupdate ke waktu saat ini.
+**Note:** 
+- Jika submission sebelumnya berstatus `REVISION`, setelah diupdate status akan menjadi `PENDING` dan `submittedAt` akan diupdate ke waktu saat ini.
+- Jika gambar diupdate, gambar lama akan disimpan ke `imageHistory` dengan version number yang di-increment.
+- `imageHistory` selalu berisi semua versi gambar, dengan versi terbaru (current image) sebagai entry terakhir.
 
 **Response Error (400):**
 ```json
@@ -1990,6 +2128,13 @@ image: <file>
       "grade": 95,
       "feedback": "Karya yang sangat bagus! Penggunaan warna sangat harmonis.",
       "revisionCount": 0,
+      "imageHistory": [
+        {
+          "image": "http://localhost:9000/submissions/submission-1766142525362-adxz14biaxp.jpg",
+          "submittedAt": "2025-12-19T11:08:45.431Z",
+          "version": 1
+        }
+      ],
       "submittedAt": "2025-12-19T11:08:45.431Z",
       "gradedAt": "2025-12-19T11:12:35.575Z",
       "createdAt": "2025-12-19T11:08:45.432Z",
@@ -2044,6 +2189,28 @@ image: <file>
       "grade": null,
       "feedback": null,
       "revisionCount": 1,
+      "revisions": [
+        {
+          "id": "uuid",
+          "submissionId": "uuid",
+          "revisionNote": "Warna kurang kontras, tolong perbaiki bagian langit",
+          "imageUrl": "http://localhost:9000/submissions/submission-1766142924422-hei6208nsc6.jpg",
+          "version": 2,
+          "submittedAt": "2025-12-19T11:18:17.751Z"
+        }
+      ],
+      "imageHistory": [
+        {
+          "image": "http://localhost:9000/submissions/submission-1766141036002-5oeqi59i9f7.jpg",
+          "submittedAt": "2025-12-19T11:15:24.460Z",
+          "version": 1
+        },
+        {
+          "image": "http://localhost:9000/submissions/submission-1766142924422-hei6208nsc6.jpg",
+          "submittedAt": "2025-12-19T11:18:17.751Z",
+          "version": 2
+        }
+      ],
       "submittedAt": "2025-12-19T11:15:24.460Z",
       "gradedAt": null,
       "createdAt": "2025-12-19T11:15:24.462Z",
@@ -2057,20 +2224,16 @@ image: <file>
         "name": "Siti Nurhaliza",
         "email": null,
         "nis": "2025123456791"
-      },
-      "revisions": [
-        {
-          "id": "uuid",
-          "submissionId": "uuid",
-          "revisionNote": "Warna kurang kontras, tolong perbaiki bagian langit",
-          "imageUrl": "",
-          "submittedAt": "2025-12-19T11:18:17.751Z"
-        }
-      ]
+      }
     }
   }
 }
 ```
+
+**Note:** 
+- Ketika submission di-return for revision, gambar saat ini akan disimpan ke `imageHistory` dengan version number yang di-increment.
+- `revisionNote` berisi feedback dari teacher yang meminta revisi.
+- `revisions` array berisi semua revision history dengan detail lengkap termasuk `revisionNote` dan `version`.
 
 ---
 
