@@ -1,6 +1,22 @@
 import prisma from '../src/config/database';
 import { UserRole, AssignmentStatus, SubmissionStatus, NotificationType } from '@prisma/client';
 import bcrypt from 'bcrypt';
+import { faker } from '@faker-js/faker';
+
+// Indonesian names pool for more realistic data
+const indonesianFirstNames = [
+  'Ahmad', 'Budi', 'Citra', 'Dewi', 'Eko', 'Fitri', 'Gunawan', 'Hani', 'Indra', 'Joko',
+  'Kartika', 'Lina', 'Maya', 'Nur', 'Oki', 'Putri', 'Rina', 'Saka', 'Tono', 'Umi',
+  'Wahyu', 'Yani', 'Zaki', 'Ayu', 'Bambang', 'Cinta', 'Dian', 'Eka', 'Fajar', 'Gita',
+  'Hadi', 'Ika', 'Jaya', 'Kiki', 'Lia', 'Mira', 'Nina', 'Omar', 'Puji', 'Rudi',
+  'Sinta', 'Tari', 'Udin', 'Vina', 'Wawan', 'Yoga', 'Zara', 'Ade', 'Bayu', 'Cici'
+];
+
+const indonesianLastNames = [
+  'Santoso', 'Wijaya', 'Dewi', 'Prasetyo', 'Handayani', 'Kurniawan', 'Susanto', 'Putra',
+  'Lestari', 'Saputra', 'Rahayu', 'Kusuma', 'Nugroho', 'Sari', 'Wibowo', 'Sari',
+  'Purnama', 'Azizah', 'Maulana', 'Megawati', 'Permata', 'Adeline', 'Kartika', 'Nur'
+];
 
 async function main() {
   console.log('🌱 Starting database seed...');
@@ -8,114 +24,130 @@ async function main() {
   // Hash password
   const hashedPassword = await bcrypt.hash('123456', 10);
 
-  // Create Classes
   console.log('📚 Creating classes...');
-  const classes = await Promise.all([
-    prisma.class.upsert({
-      where: { name: '1A' },
-      update: {},
-      create: { name: '1A', description: null },
-    }),
-    prisma.class.upsert({
-      where: { name: '1B' },
-      update: {},
-      create: { name: '1B', description: null },
-    }),
-    prisma.class.upsert({
-      where: { name: '1C' },
-      update: {},
-      create: { name: '1C', description: null },
-    }),
-    prisma.class.upsert({
-      where: { name: '2A' },
-      update: {},
-      create: { name: '2A', description: null },
-    }),
-    prisma.class.upsert({
-      where: { name: '2B' },
-      update: {},
-      create: { name: '2B', description: null },
-    }),
-    prisma.class.upsert({
-      where: { name: '2C' },
-      update: {},
-      create: { name: '2C', description: null },
-    }),
-  ]);
+  const classNames = ['1A', '1B', '2A', '2B', '3A', '3B'];
+  const classes = await Promise.all(
+    classNames.map((name) =>
+      prisma.class.upsert({
+        where: { name },
+        update: {},
+        create: { name, description: `Kelas ${name}` },
+      })
+    )
+  );
 
   console.log(`✅ Created ${classes.length} classes`);
 
-  // Create Teachers
+  // Create Teachers (3 teachers)
   console.log('👨‍🏫 Creating teachers...');
   const teachers = await Promise.all([
     prisma.user.upsert({
-      where: { nip: '918291812121' },
+      where: { nip: '98277819' },
       update: {},
       create: {
-        nip: '918291812121',
+        nip: '98277819',
         nis: null,
-        email: null,
-        password: hashedPassword,
-        name: 'Budi Arie',
-        role: UserRole.TEACHER,
-        phone: '081234567890',
-        address: 'Jl. Sudirman No. 1',
-        birthdate: new Date('1990-01-01'),
-        avatar: null,
-        className: null,
-        classId: null,
-        isActive: true,
-        createdAt: new Date('2021-01-01'),
-        updatedAt: new Date('2021-01-01'),
-      },
-    }),
-    prisma.user.upsert({
-      where: { nip: '918219212' },
-      update: {},
-      create: {
-        nip: '918219212',
-        nis: null,
-        email: null,
+        email: '98277819@seniku.sch.id',
         password: hashedPassword,
         name: 'Wanda Oke',
         role: UserRole.TEACHER,
-        phone: '081234567890',
-        address: 'Jl. Sudirman No. 1',
-        birthdate: new Date('1990-01-01'),
+        phone: '081234567801',
+        address: faker.location.streetAddress(),
+        birthdate: new Date('1985-01-15'),
         avatar: null,
         className: null,
         classId: null,
         isActive: true,
-        createdAt: new Date('2021-01-01'),
-        updatedAt: new Date('2021-01-01'),
+      },
+    }),
+    prisma.user.upsert({
+      where: { nip: '11827198' },
+      update: {},
+      create: {
+        nip: '11827198',
+        nis: null,
+        email: '11827198@seniku.sch.id',
+        password: hashedPassword,
+        name: 'Abdul Gofar',
+        role: UserRole.TEACHER,
+        phone: '081234567802',
+        address: faker.location.streetAddress(),
+        birthdate: new Date('1986-02-20'),
+        avatar: null,
+        className: null,
+        classId: null,
+        isActive: true,
+      },
+    }),
+    prisma.user.upsert({
+      where: { nip: '12891681' },
+      update: {},
+      create: {
+        nip: '12891681',
+        nis: null,
+        email: '12891681@seniku.sch.id',
+        password: hashedPassword,
+        name: 'Rico Lubis',
+        role: UserRole.TEACHER,
+        phone: '081234567803',
+        address: faker.location.streetAddress(),
+        birthdate: new Date('1987-03-25'),
+        avatar: null,
+        className: null,
+        classId: null,
+        isActive: true,
       },
     }),
   ]);
 
   console.log(`✅ Created ${teachers.length} teachers`);
 
-  // Create Students (10 per class)
-  console.log('👨‍🎓 Creating students...');
-  const studentNames = [
-    'Wahyu Dwi',
-    'Ahmad Fauzi',
-    'Siti Nurhaliza',
-    'Budi Santoso',
-    'Dewi Lestari',
-    'Eko Prasetyo',
-    'Fitri Handayani',
-    'Gunawan Wijaya',
-    'Hani Kartika',
-    'Indra Permana',
+  // Create Teacher-Class relationships
+  // guru1 -> 1A, 1B
+  // guru2 -> 2A, 2B
+  // guru3 -> 3A, 3B
+  console.log('🔗 Creating teacher-class relationships...');
+  const teacherClassRelations = [
+    { teacherId: teachers[0].id, classId: classes[0].id }, // guru1 -> 1A
+    { teacherId: teachers[0].id, classId: classes[1].id }, // guru1 -> 1B
+    { teacherId: teachers[1].id, classId: classes[2].id }, // guru2 -> 2A
+    { teacherId: teachers[1].id, classId: classes[3].id }, // guru2 -> 2B
+    { teacherId: teachers[2].id, classId: classes[4].id }, // guru3 -> 3A
+    { teacherId: teachers[2].id, classId: classes[5].id }, // guru3 -> 3B
   ];
 
-  const students: any[] = [];
-  let nisCounter = 2025123456789;
+  for (const relation of teacherClassRelations) {
+    await prisma.teacherClass.upsert({
+      where: {
+        teacherId_classId: {
+          teacherId: relation.teacherId,
+          classId: relation.classId,
+        },
+      },
+      update: {},
+      create: relation,
+    });
+  }
+
+  console.log(`✅ Created ${teacherClassRelations.length} teacher-class relationships`);
+
+  // Create Students (25 per class = 150 total)
+  console.log('👨‍🎓 Creating students...');
+  const students: Array<{
+    id: string;
+    name: string;
+    nis: string;
+    classId: string;
+  }> = [];
+  let nisCounter = 2025001; // Starting NIS
 
   for (const classData of classes) {
-    for (let i = 0; i < 10; i++) {
-      const studentName = studentNames[i];
-      const nis = nisCounter.toString();
+    for (let i = 0; i < 25; i++) {
+      // Generate Indonesian name
+      const firstName = indonesianFirstNames[Math.floor(Math.random() * indonesianFirstNames.length)];
+      const lastName = indonesianLastNames[Math.floor(Math.random() * indonesianLastNames.length)];
+      const studentName = `${firstName} ${lastName}`;
+      const nis = nisCounter.toString().padStart(10, '0'); // 10-digit NIS
       nisCounter++;
 
       const student = await prisma.user.upsert({
@@ -124,57 +156,63 @@ async function main() {
         create: {
           nip: null,
           nis,
-          email: null,
+          email: `${nis}@seniku.sch.id`, // Use NIS to ensure unique email
           password: hashedPassword,
           name: studentName,
           role: UserRole.STUDENT,
-          phone: '081234567890',
-          address: 'Jl. Sudirman No. 1',
-          birthdate: new Date('2000-01-01'),
+          phone: `08${faker.string.numeric(10)}`,
+          address: faker.location.streetAddress(),
+          birthdate: faker.date.birthdate({ min: 15, max: 18, mode: 'age' }),
           avatar: null,
           className: classData.name,
           classId: classData.id,
           isActive: true,
-          createdAt: new Date('2021-01-01'),
-          updatedAt: new Date('2021-01-01'),
         },
       });
 
-      students.push(student);
+      students.push({
+        id: student.id,
+        name: student.name,
+        nis: student.nis!,
+        classId: classData.id,
+      });
     }
   }
 
   console.log(`✅ Created ${students.length} students`);
 
   // Category
+  console.log('📁 Creating categories...');
   const categoryData = [
     {
-      'name': 'Lukisan',
-      'description': '',
-      'icon': '🎨',
-      'isActive': true,
+      name: 'Lukisan',
+      description: 'Karya seni lukis',
+      icon: '🎨',
+      isActive: true,
     },
     {
-      'name': 'Digital Art',
-      'description': '',
-      'icon': '🖼️',
-      'isActive': true,
+      name: 'Digital Art',
+      description: 'Karya seni digital',
+      icon: '🖼️',
+      isActive: true,
     },
     {
-      'name': 'Seni Rupa',
-      'description': '',
-      'icon': '📍',
-      'isActive': true,
+      name: 'Seni Rupa',
+      description: 'Karya seni rupa',
+      icon: '📍',
+      isActive: true,
     },
   ];
 
-  const categories = await Promise.all(categoryData.map(async (category) => {
-    return await prisma.category.upsert({
-      where: { name: category.name },
-      update: {},
-      create: category,
-    });
-  }));
+  const categories = await Promise.all(
+    categoryData.map(async (category) => {
+      return await prisma.category.upsert({
+        where: { name: category.name },
+        update: {},
+        create: category,
+      });
+    })
+  );
 
   console.log(`✅ Created ${categories.length} categories`);
 
@@ -282,7 +320,7 @@ async function main() {
     createdById: string;
     classIds: string[];
   };
-  
+
   const assignmentData: AssignmentData[] = [
     {
       title: 'Lukisan Pemandangan Alam',
@@ -290,7 +328,7 @@ async function main() {
       categoryId: categories[0].id, // Lukisan
       deadline: new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
       status: AssignmentStatus.ACTIVE,
-      createdById: teachers[0].id,
+      createdById: teachers[0].id, // guru1
       classIds: [classes[0].id, classes[1].id], // 1A, 1B
     },
     {
@@ -299,8 +337,8 @@ async function main() {
       categoryId: categories[1].id, // Digital Art
       deadline: new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000), // 14 days from now
       status: AssignmentStatus.ACTIVE,
-      createdById: teachers[0].id,
-      classIds: [classes[2].id, classes[3].id], // 1C, 2A
+      createdById: teachers[1].id, // guru2
+      classIds: [classes[2].id, classes[3].id], // 2A, 2B
     },
     {
       title: 'Karya Seni Rupa 3D',
@@ -308,8 +346,8 @@ async function main() {
       categoryId: categories[2].id, // Seni Rupa
       deadline: new Date(now.getTime() + 10 * 24 * 60 * 60 * 1000), // 10 days from now
       status: AssignmentStatus.ACTIVE,
-      createdById: teachers[1].id,
-      classIds: [classes[0].id, classes[3].id], // 1A, 2A
+      createdById: teachers[2].id, // guru3
+      classIds: [classes[4].id, classes[5].id], // 3A, 3B
     },
     {
       title: 'Lukisan Abstrak Modern',
@@ -317,7 +355,7 @@ async function main() {
       categoryId: categories[0].id, // Lukisan
       deadline: new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000), // 2 days ago (completed)
       status: AssignmentStatus.COMPLETED,
-      createdById: teachers[0].id,
+      createdById: teachers[0].id, // guru1
       classIds: [classes[1].id], // 1B
     },
     {
@@ -326,8 +364,8 @@ async function main() {
       categoryId: categories[1].id, // Digital Art
       deadline: new Date(now.getTime() + 5 * 24 * 60 * 60 * 1000), // 5 days from now
       status: AssignmentStatus.DRAFT,
-      createdById: teachers[1].id,
-      classIds: [classes[4].id, classes[5].id], // 2B, 2C
+      createdById: teachers[1].id, // guru2
+      classIds: [classes[2].id], // 2A
     },
   ];
 
@@ -401,21 +439,28 @@ async function main() {
         // 30% GRADED
         status = SubmissionStatus.GRADED;
         grade = 70 + Math.floor(Math.random() * 30); // Random grade 70-100
-        submittedAt = new Date(assignment.createdAt.getTime() + Math.random() * (now.getTime() - assignment.createdAt.getTime()));
+        submittedAt = new Date(
+          assignment.createdAt.getTime() + Math.random() * (now.getTime() - assignment.createdAt.getTime())
+        );
         gradedAt = new Date(submittedAt.getTime() + Math.random() * (now.getTime() - submittedAt.getTime()));
-        feedback = grade >= 85
-          ? 'Karya yang sangat bagus! Kreativitas dan teknik yang ditunjukkan sangat memuaskan.'
-          : grade >= 75
-          ? 'Karya bagus, ada beberapa aspek yang bisa ditingkatkan lagi.'
-          : 'Perlu lebih banyak latihan dan perbaikan pada teknik dasar.';
+        feedback =
+          grade >= 85
+            ? 'Karya yang sangat bagus! Kreativitas dan teknik yang ditunjukkan sangat memuaskan.'
+            : grade >= 75
+            ? 'Karya bagus, ada beberapa aspek yang bisa ditingkatkan lagi.'
+            : 'Perlu lebih banyak latihan dan perbaikan pada teknik dasar.';
       } else if (statusRand < 5) {
         // 20% PENDING
         status = SubmissionStatus.PENDING;
-        submittedAt = new Date(assignment.createdAt.getTime() + Math.random() * (now.getTime() - assignment.createdAt.getTime()));
+        submittedAt = new Date(
+          assignment.createdAt.getTime() + Math.random() * (now.getTime() - assignment.createdAt.getTime())
+        );
       } else if (statusRand < 6) {
         // 10% REVISION
         status = SubmissionStatus.REVISION;
-        submittedAt = new Date(assignment.createdAt.getTime() + Math.random() * (now.getTime() - assignment.createdAt.getTime()));
+        submittedAt = new Date(
+          assignment.createdAt.getTime() + Math.random() * (now.getTime() - assignment.createdAt.getTime())
+        );
         feedback = 'Perlu revisi pada beberapa bagian. Silakan perbaiki dan kirim ulang.';
       } else {
         // 40% NOT_SUBMITTED
@@ -424,7 +469,6 @@ async function main() {
 
       if (status !== SubmissionStatus.NOT_SUBMITTED) {
         // Generate random image URLs from Picsum Photos
-        // Using different random seeds to get different images for each submission
         const randomSeed = Math.floor(Math.random() * 1000);
         const imageUrl = `https://picsum.photos/800/600?random=${randomSeed}`;
         const imageThumbnail = `https://picsum.photos/300/300?random=${randomSeed}`;
@@ -449,16 +493,13 @@ async function main() {
         });
 
         // Create initial version in SubmissionRevision (version 1)
-        // This matches the behavior in createSubmission() service
-        // Note: Prisma client needs to be regenerated after schema changes
         await prisma.submissionRevision.create({
           data: {
             submissionId: submission.id,
-            // revisionNote is optional (nullable), omit it for initial submission
             imageUrl: imageUrl,
             version: 1,
             submittedAt: submittedAt || submission.createdAt,
-          } as any, // Type assertion needed until Prisma client is regenerated
+          },
         });
 
         // If status is REVISION, create a revision record with the revision note
@@ -466,11 +507,11 @@ async function main() {
           await prisma.submissionRevision.create({
             data: {
               submissionId: submission.id,
-              revisionNote: feedback, // Use feedback as revision note
-              imageUrl: imageUrl, // Same image, but this is the version that was returned for revision
-              version: 2, // Version 2 is the revision
-              submittedAt: new Date(submittedAt!.getTime() + 1000), // Slightly after submission
-            } as any, // Type assertion needed until Prisma client is regenerated
+              revisionNote: feedback,
+              imageUrl: imageUrl,
+              version: 2,
+              submittedAt: new Date(submittedAt!.getTime() + 1000),
+            },
           });
         }
 
@@ -485,7 +526,6 @@ async function main() {
   console.log('🎖️ Creating user achievements...');
   let userAchievementCount = 0;
 
-  // Award "Pemula Seni" to students with at least 1 graded submission
   const studentsWithSubmissions = await prisma.user.findMany({
     where: {
       role: UserRole.STUDENT,
@@ -495,12 +535,11 @@ async function main() {
         },
       },
     },
-    take: 20, // Award to first 20 students
+    take: 20,
   });
 
   const pemulaAchievement = achievements.find((a) => a.name === 'Pemula Seni');
   if (pemulaAchievement) {
-    // Use createMany with skipDuplicates to avoid unique constraint errors
     const userAchievementData = studentsWithSubmissions.map((student) => ({
       userId: student.id,
       achievementId: pemulaAchievement.id,
@@ -509,11 +548,10 @@ async function main() {
     try {
       const result = await prisma.userAchievement.createMany({
         data: userAchievementData,
-        skipDuplicates: true, // Skip if already exists
+        skipDuplicates: true,
       });
       userAchievementCount = result.count;
     } catch (error) {
-      // Log error but continue
       console.error('Error creating user achievements:', error);
     }
   }
@@ -524,9 +562,7 @@ async function main() {
   console.log('🔔 Creating notifications...');
   let notificationCount = 0;
 
-  // Create assignment created notifications for some students
   for (const assignment of assignments.slice(0, 2)) {
-    // Get students assigned to this assignment
     const assignmentClasses = await prisma.assignmentClass.findMany({
       where: { assignmentId: assignment.id },
     });
@@ -548,7 +584,6 @@ async function main() {
     }
   }
 
-  // Create submission graded notifications
   const gradedSubmissions = await prisma.submission.findMany({
     where: {
       status: SubmissionStatus.GRADED,
@@ -567,7 +602,7 @@ async function main() {
         title: 'Submission Dinilai!',
         message: `Submission Anda untuk "${submission.assignment.title}" telah dinilai. Nilai: ${submission.grade}`,
         link: `/submissions/${submission.id}`,
-        isRead: Math.random() > 0.5, // Random read/unread
+        isRead: Math.random() > 0.5,
       },
     });
     notificationCount++;
@@ -579,6 +614,7 @@ async function main() {
   console.log('\n📊 Seed Summary:');
   console.log(`   - Classes: ${classes.length}`);
   console.log(`   - Teachers: ${teachers.length}`);
+  console.log(`   - Teacher-Class Relationships: ${teacherClassRelations.length}`);
   console.log(`   - Students: ${students.length}`);
   console.log(`   - Categories: ${categories.length}`);
   console.log(`   - Achievements: ${achievements.length}`);
@@ -597,4 +633,3 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
-

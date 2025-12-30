@@ -58,11 +58,12 @@ model User {
   updatedAt     DateTime  @updatedAt @map("updated_at")
 
   // Relations
-  class         Class?            @relation(fields: [classId], references: [id])
+  class         Class?            @relation("StudentClass", fields: [classId], references: [id])
   createdAssignments Assignment[]  @relation("AssignmentCreator")
   submissions   Submission[]
   notifications Notification[]
   achievements  UserAchievement[]
+  teacherClasses TeacherClass[]   @relation("TeacherClass")
 
   @@index([email])
   @@index([nip])
@@ -80,8 +81,9 @@ model Class {
   updatedAt   DateTime @updatedAt @map("updated_at")
 
   // Relations
-  students    User[]
+  students    User[]            @relation("StudentClass")
   assignments AssignmentClass[]
+  teachers    TeacherClass[]
 
   @@index([name])
   @@map("classes")
@@ -240,5 +242,21 @@ model UserAchievement {
   @@index([userId])
   @@index([achievementId])
   @@map("user_achievements")
+}
+
+model TeacherClass {
+  id        String   @id @default(uuid())
+  teacherId String   @map("teacher_id")
+  classId   String   @map("class_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  teacher   User     @relation("TeacherClass", fields: [teacherId], references: [id], onDelete: Cascade)
+  class     Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
+
+  @@unique([teacherId, classId])
+  @@index([teacherId])
+  @@index([classId])
+  @@map("teacher_classes")
 }
 
