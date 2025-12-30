@@ -7,6 +7,9 @@ export default async function usersRoutes(fastify: FastifyInstance) {
   // Get all users - Teacher only
   fastify.get('/', { preHandler: [authenticate, requireTeacher()] }, userController.getUsers.bind(userController));
 
+  // Create user - Teacher only
+  fastify.post('/', { preHandler: [authenticate, requireTeacher()] }, userController.createUser.bind(userController));
+
   // Get user by ID - Protected
   fastify.get('/:id', { preHandler: [authenticate] }, userController.getUserById.bind(userController));
 

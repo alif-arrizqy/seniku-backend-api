@@ -2,7 +2,7 @@ import { FastifyRequest, FastifyReply } from 'fastify';
 import userService from '../services/user.service';
 import { ResponseFormatter } from '../utils/response';
 import { parsePagination } from '../utils/pagination';
-import { queryUsersSchema, updateUserSchema } from '../validators/user.validator';
+import { queryUsersSchema, updateUserSchema, createUserSchema } from '../validators/user.validator';
 import { idParamSchema } from '../validators/common.validator';
 import { handleError } from '../utils/error-handler';
 
@@ -38,6 +38,31 @@ export class UserController {
     } catch (error: any) {
       return handleError(reply, error, 'Get user by ID error', {
         params: request.params,
+        userId: request.user?.id,
+      });
+    }
+  }
+
+  async createUser(request: FastifyRequest, reply: FastifyReply) {
+    try {
+      const validated = createUserSchema.parse(request.body);
+      
+      // Convert birthdate string to Date if needed
+      const createData = {
+        ...validated,
+        birthdate: validated.birthdate instanceof Date 
+          ? validated.birthdate 
+          : validated.birthdate 
+            ? new Date(validated.birthdate) 
+            : undefined,
+      };
+      
+      const user = await userService.createUser(createData);
+
+      return ResponseFormatter.success(reply, { user }, 'User created successfully', 201);
+    } catch (error: any) {
+      return handleError(reply, error, 'Create user error', {
+        body: request.body,
         userId: request.user?.id,
       });
     }
