@@ -31,10 +31,14 @@ Backend API untuk aplikasi Seniku (E-Portfolio Seni Digital).
    - Isi semua variabel yang diperlukan (database, JWT secret, Supabase Storage, dll)
 
 4. **Setup database**
+   Generate Schema
    ```bash
    npm run prisma:generate
-   
-   npm run prisma:migrate
+   ```
+
+   Migrate database
+   ```bash
+   npm run prisma:migrate:deploy
    ```
 
 5. **Seed database (optional)**
