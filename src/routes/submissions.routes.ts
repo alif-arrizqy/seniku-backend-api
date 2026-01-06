@@ -9,7 +9,11 @@ export default async function submissionsRoutes(fastify: FastifyInstance) {
   await fastify.register(multipart, {
     limits: {
       fileSize: 10 * 1024 * 1024, // 10MB
+      fieldSize: 1024 * 1024, // 1MB for fields
+      fields: 10, // Maximum number of fields
+      files: 10, // Allow multiple files (though we only use first one)
     },
+    attachFieldsToBody: false, // Keep default behavior - parse fields manually
   });
 
   // Get all submissions - Protected
