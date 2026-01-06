@@ -267,7 +267,34 @@ Sistem menggunakan **JWT (JSON Web Token) Authentication** dengan Access Token d
 **Headers:**
 - `Authorization: Bearer <accessToken>`
 
-**Response Success (200):**
+**Response Success (200) - Student:**
+```json
+{
+  "success": true,
+  "message": "User retrieved successfully",
+  "data": {
+    "user": {
+      "id": "uuid",
+      "email": "student@test.com",
+      "nip": null,
+      "nis": "2025123456789",
+      "name": "Rina Dewi",
+      "role": "STUDENT",
+      "avatar": null,
+      "phone": "081234567890",
+      "address": null,
+      "bio": null,
+      "birthdate": null,
+      "className": "2C",
+      "classId": "uuid",
+      "createdAt": "2025-12-19T06:43:34.967Z",
+      "updatedAt": "2025-12-19T06:43:34.967Z"
+    }
+  }
+}
+```
+
+**Response Success (200) - Teacher:**
 ```json
 {
   "success": true,
@@ -285,14 +312,28 @@ Sistem menggunakan **JWT (JSON Web Token) Authentication** dengan Access Token d
       "address": null,
       "bio": null,
       "birthdate": null,
-      "className": null,
-      "classId": null,
+      "classes": [
+        {
+          "id": "uuid",
+          "name": "1A",
+          "description": "Kelas 1A"
+        },
+        {
+          "id": "uuid",
+          "name": "2B",
+          "description": "Kelas 2B"
+        }
+      ],
       "createdAt": "2025-12-19T06:43:34.967Z",
       "updatedAt": "2025-12-19T06:43:34.967Z"
     }
   }
 }
 ```
+
+**Note:**
+- Untuk **STUDENT**: Response berisi `classId` dan `className` (single class)
+- Untuk **TEACHER**: Response berisi `classes` (array of classes yang diajar oleh teacher tersebut)
 
 **Response Error - Unauthorized (401):**
 ```json
@@ -967,10 +1008,12 @@ GET /portfolio?page=1&limit=10&sortBy=submittedAt&sortOrder=desc
 - `page` (optional): Page number (default: 1)
 - `limit` (optional): Items per page (default: 10, max: 100)
 - `search` (optional): Search by name
+- `teacherId` (optional): Filter classes by teacher ID (UUID)
 
 **Example Request:**
 ```
 GET /classes?page=1&limit=10&search
+GET /classes?teacherId=123e4567-e89b-12d3-a456-426614174000
 ```
 
 **Response Success (200):**
