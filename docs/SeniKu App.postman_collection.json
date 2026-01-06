@@ -349,7 +349,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n    \"success\": true,\n    \"message\": \"User retrieved successfully\",\n    \"data\": {\n        \"user\": {\n            \"id\": \"9e0a78fa-07d5-417e-81c7-9892956b15db\",\n            \"email\": \"teacher@test.com\",\n            \"nip\": \"0987654321\",\n            \"nis\": null,\n            \"name\": \"PamBudi\",\n            \"role\": \"TEACHER\",\n            \"avatar\": null,\n            \"phone\": \"081234567890\",\n            \"address\": null,\n            \"bio\": null,\n            \"birthdate\": null,\n            \"className\": null,\n            \"classId\": null,\n            \"createdAt\": \"2025-12-19T06:43:34.967Z\",\n            \"updatedAt\": \"2025-12-19T06:43:34.967Z\"\n        }\n    }\n}"
+							"body": "{\n    \"success\": true,\n    \"message\": \"User retrieved successfully\",\n    \"data\": {\n        \"user\": {\n            \"id\": \"9e0a78fa-07d5-417e-81c7-9892956b15db\",\n            \"email\": \"teacher@test.com\",\n            \"nip\": \"0987654321\",\n            \"nis\": null,\n            \"name\": \"PamBudi\",\n            \"role\": \"TEACHER\",\n            \"avatar\": null,\n            \"phone\": \"081234567890\",\n            \"address\": null,\n            \"bio\": null,\n            \"birthdate\": null,\n            \"classes\": [\n                {\n                    \"id\": \"uuid\",\n                    \"name\": \"1A\",\n                    \"description\": \"Kelas 1A\"\n                },\n                {\n                    \"id\": \"uuid\",\n                    \"name\": \"2B\",\n                    \"description\": \"Kelas 2B\"\n                }\n            ],\n            \"createdAt\": \"2025-12-19T06:43:34.967Z\",\n            \"updatedAt\": \"2025-12-19T06:43:34.967Z\"\n        }\n    }\n}"
 						}
 					]
 				},
@@ -1122,6 +1122,12 @@
 									"key": "search",
 									"value": null,
 									"description": "(optional): Search by name"
+								},
+								{
+									"key": "teacherId",
+									"value": null,
+									"description": "(optional): Filter classes by teacher ID (UUID)",
+									"disabled": true
 								}
 							]
 						}
@@ -1155,6 +1161,12 @@
 											"key": "search",
 											"value": null,
 											"description": "(optional): Search by name"
+									},
+									{
+										"key": "teacherId",
+										"value": null,
+										"description": "(optional): Filter classes by teacher ID (UUID)",
+										"disabled": true
 										}
 									]
 								}
