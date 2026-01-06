@@ -68,9 +68,27 @@ export class SubmissionController {
         return ResponseFormatter.error(reply, 'Unauthorized', 401);
       }
 
-      const data = await request.file();
+      // Check user role - students should be able to create submissions
+      if (request.user.role !== 'STUDENT' && request.user.role !== 'TEACHER') {
+        return ResponseFormatter.error(reply, 'Only students and teachers can create submissions', 403);
+      }
+
+      // Try to get file from multipart request
+      let data;
+      try {
+        data = await request.file();
+      } catch (error: any) {
+        console.error('Error parsing file upload:', error);
+        // If multipart is not registered or error occurs, provide helpful error
+        return ResponseFormatter.error(reply, `Error parsing file upload: ${error.message || 'Unknown error'}. Please ensure Content-Type is multipart/form-data`, 400);
+      }
+
       if (!data) {
-        return ResponseFormatter.error(reply, 'Image file is required', 400);
+        return ResponseFormatter.error(reply, 'Image file is required. Please upload a file using multipart/form-data with field name "image"', 400);
+      }
+
+      if (!data.filename) {
+        return ResponseFormatter.error(reply, 'File name is required', 400);
       }
 
       // Validate file type
@@ -97,12 +115,12 @@ export class SubmissionController {
 
       // Parse form fields
       const body = data.fields as any;
-      const assignmentId = body.assignmentId?.value;
-      const title = body.title?.value;
-      const description = body.description?.value;
+      const assignmentId = body.assignmentId?.value || body.assignmentId;
+      const title = body.title?.value || body.title;
+      const description = body.description?.value || body.description;
 
       if (!assignmentId || !title) {
-        return ResponseFormatter.error(reply, 'Assignment ID and title are required', 400);
+        return ResponseFormatter.error(reply, 'Assignment ID and title are required. Please include assignmentId and title in the form data', 400);
       }
 
       // Upload images to Supabase Storage
@@ -140,8 +158,8 @@ export class SubmissionController {
         );
       }
 
-      // Create submission
-      const submission = await submissionService.createSubmission({
+      // Create or update submission
+      const result = await submissionService.createSubmission({
         assignmentId,
         studentId: request.user.id,
         title,
@@ -150,6 +168,17 @@ export class SubmissionController {
         imageThumbnail,
         imageMedium,
       });
+
+      // Extract flags and clean up submission object
+      const { _isUpdate, _wasRevision, ...submission } = result as any;
+
+      // Determine appropriate message and status code
+      if (_isUpdate) {
+        const message = _wasRevision 
+          ? 'Revision uploaded successfully' 
+          : 'Submission updated successfully';
+        return ResponseFormatter.success(reply, { submission }, message, 200);
+      }
 
       return ResponseFormatter.success(reply, { submission }, 'Submission created successfully', 201);
     } catch (error: any) {

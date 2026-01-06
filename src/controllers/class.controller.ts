@@ -20,6 +20,7 @@ const queryClassesSchema = z.object({
   page: z.string().transform(Number).pipe(z.number().int().positive()).optional().default(() => 1),
   limit: z.string().transform(Number).pipe(z.number().int().positive().max(100)).optional().default(() => 10),
   search: z.string().optional(),
+  teacherId: z.string().uuid().optional(),
 });
 
 export class ClassController {
@@ -30,6 +31,7 @@ export class ClassController {
 
       const filters = {
         search: query.search,
+        teacherId: query.teacherId,
       };
 
       const { classes, total } = await classService.findClasses(filters, pagination);

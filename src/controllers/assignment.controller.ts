@@ -23,7 +23,8 @@ export class AssignmentController {
         categoryId: query.categoryId,
         classId: query.classId,
         search: query.search,
-        createdById: request.user?.role === 'TEACHER' ? request.user.id : undefined,
+        userId: request.user?.id,
+        userRole: request.user?.role,
       };
 
       const { assignments, total } = await assignmentService.findAssignments(filters, pagination);
