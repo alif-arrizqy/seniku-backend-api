@@ -1,5 +1,4 @@
 import supabaseClient from '../config/supabase';
-import env from '../config/env';
 import logger from '../utils/logger';
 import { Readable } from 'stream';
 
@@ -21,8 +20,7 @@ export class StorageService {
     bucket: string,
     objectName: string,
     file: Buffer | Readable,
-    contentType: string,
-    size?: number
+    contentType: string
   ): Promise<string> {
     try {
       let fileBuffer: Buffer;
@@ -32,7 +30,7 @@ export class StorageService {
         fileBuffer = await this.streamToBuffer(file);
       }
 
-      const { data, error } = await supabaseClient.storage.from(bucket).upload(objectName, fileBuffer, {
+      const { error } = await supabaseClient.storage.from(bucket).upload(objectName, fileBuffer, {
         contentType,
         upsert: true, // Overwrite if exists
       });
