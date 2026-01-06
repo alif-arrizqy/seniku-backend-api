@@ -84,6 +84,14 @@ export function handleError(
     if (error.code === 'P2002') {
       // Unique constraint violation
       const target = (error.meta as any)?.target;
+      // Check if it's a submission unique constraint (assignment_id, student_id)
+      if (Array.isArray(target) && target.includes('assignment_id') && target.includes('student_id')) {
+        return ResponseFormatter.error(
+          reply,
+          'Submission already exists for this assignment. Please use update endpoint to modify your submission.',
+          ErrorStatusCodes.CONFLICT
+        );
+      }
       const field = Array.isArray(target) ? target[0] : 'field';
       return ResponseFormatter.error(
         reply,
