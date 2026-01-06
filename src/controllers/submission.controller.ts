@@ -129,8 +129,7 @@ export class SubmissionController {
         env.SUPABASE_STORAGE_BUCKET_SUBMISSIONS,
         fileName,
         processed.full,
-        'image/jpeg',
-        processed.full.length
+        'image/jpeg'
       );
 
       let imageThumbnail: string | undefined;
@@ -142,8 +141,7 @@ export class SubmissionController {
           env.SUPABASE_STORAGE_BUCKET_SUBMISSIONS,
           thumbName,
           processed.thumbnail,
-          'image/jpeg',
-          processed.thumbnail.length
+          'image/jpeg'
         );
       }
 
@@ -153,8 +151,7 @@ export class SubmissionController {
           env.SUPABASE_STORAGE_BUCKET_SUBMISSIONS,
           mediumName,
           processed.medium,
-          'image/jpeg',
-          processed.medium.length
+          'image/jpeg'
         );
       }
 
@@ -242,8 +239,7 @@ export class SubmissionController {
           env.SUPABASE_STORAGE_BUCKET_SUBMISSIONS,
           fileName,
           processed.full,
-          'image/jpeg',
-          processed.full.length
+          'image/jpeg'
         );
 
         let imageThumbnail: string | undefined;
@@ -255,8 +251,7 @@ export class SubmissionController {
             env.SUPABASE_STORAGE_BUCKET_SUBMISSIONS,
             thumbName,
             processed.thumbnail,
-            'image/jpeg',
-            processed.thumbnail.length
+            'image/jpeg'
           );
         }
 
@@ -266,8 +261,7 @@ export class SubmissionController {
             env.SUPABASE_STORAGE_BUCKET_SUBMISSIONS,
             mediumName,
             processed.medium,
-            'image/jpeg',
-            processed.medium.length
+            'image/jpeg'
           );
         }
 
