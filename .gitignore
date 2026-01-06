@@ -39,9 +39,6 @@ Thumbs.db
 coverage/
 .nyc_output/
 
-# Prisma
-prisma/migrations/
-
 # Uploads
 uploads/
 minio-data/
