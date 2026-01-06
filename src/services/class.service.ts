@@ -5,6 +5,7 @@ import { ErrorMessages } from '../constants/error-messages';
 
 export interface ClassFilters {
   search?: string;
+  teacherId?: string;
 }
 
 export class ClassService {
@@ -16,6 +17,14 @@ export class ClassService {
         { name: { contains: filters.search, mode: 'insensitive' } },
         { description: { contains: filters.search, mode: 'insensitive' } },
       ];
+    }
+
+    if (filters.teacherId) {
+      where.teachers = {
+        some: {
+          teacherId: filters.teacherId,
+        },
+      };
     }
 
     const [classes, total] = await Promise.all([
@@ -81,7 +90,6 @@ export class ClassService {
 
   async createClass(data: { name: string; description?: string }) {
     try {
-      // Check if class already exists
       const classExists = await prisma.class.findUnique({
         where: { name: data.name },
       });
@@ -123,7 +131,6 @@ export class ClassService {
 
   async updateClass(classId: string, data: { name?: string; description?: string }) {
     try {
-      // Check if class exists
       const existingClass = await prisma.class.findUnique({
         where: { id: classId },
       });
@@ -132,7 +139,6 @@ export class ClassService {
         throw new Error(ErrorMessages.RESOURCE.CLASS_NOT_FOUND);
       }
 
-      // Check if new name already exists (if name is being updated)
       if (data.name && data.name !== existingClass.name) {
         const classExists = await prisma.class.findUnique({
           where: { name: data.name },
@@ -166,7 +172,6 @@ export class ClassService {
           throw new Error(`${field} ${ErrorMessages.RESOURCE.ALREADY_EXISTS}`);
         }
       }
-      // Re-throw custom errors
       if (
         error.message === ErrorMessages.RESOURCE.CLASS_NOT_FOUND ||
         error.message?.includes(ErrorMessages.RESOURCE.ALREADY_EXISTS)
@@ -179,7 +184,6 @@ export class ClassService {
 
   async deleteClass(classId: string) {
     try {
-      // Check if class exists first
       const classData = await prisma.class.findUnique({
         where: { id: classId },
       });
@@ -200,7 +204,6 @@ export class ClassService {
           throw new Error('Cannot delete class: Class has students or assignments');
         }
       }
-      // Re-throw custom errors
       if (error.message === ErrorMessages.RESOURCE.CLASS_NOT_FOUND) {
         throw error;
       }

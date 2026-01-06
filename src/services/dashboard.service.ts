@@ -4,104 +4,153 @@ import { ErrorMessages } from '../constants/error-messages';
 
 export class DashboardService {
   async getTeacherDashboard(teacherId: string) {
-    // Get total students
-    const totalStudents = await prisma.user.count({
+    const teacherClasses = await prisma.teacherClass.findMany({
       where: {
-        role: 'STUDENT',
-        isActive: true,
+        teacherId,
+      },
+      select: {
+        classId: true,
       },
     });
+    const teacherClassIds = teacherClasses.map((tc) => tc.classId);
 
-    // Get total classes
-    const totalClasses = await prisma.class.count();
+    const totalStudents =
+      teacherClassIds.length > 0
+        ? await prisma.user.count({
+            where: {
+              role: 'STUDENT',
+              isActive: true,
+              classId: {
+                in: teacherClassIds,
+              },
+            },
+          })
+        : 0;
 
-    // Get active assignments
+    const totalClasses = teacherClassIds.length;
     const activeAssignments = await prisma.assignment.count({
       where: {
         status: 'ACTIVE',
         createdById: teacherId,
-      },
-    });
+        },
+      });
 
-    // Get pending submissions
-    const pendingSubmissions = await prisma.submission.count({
+    const teacherAssignmentIds = await prisma.assignment.findMany({
       where: {
-        status: 'PENDING',
+        createdById: teacherId,
+      },
+      select: {
+        id: true,
       },
     });
+    const assignmentIds = teacherAssignmentIds.map((a) => a.id);
 
-    // Get graded submissions
-    const gradedSubmissions = await prisma.submission.count({
-      where: {
-        status: 'GRADED',
-      },
-    });
+    const pendingSubmissions =
+      assignmentIds.length > 0
+        ? await prisma.submission.count({
+            where: {
+              status: 'PENDING',
+              assignmentId: {
+                in: assignmentIds,
+              },
+            },
+          })
+        : 0;
 
-    // Get average score
-    const avgScoreResult = await prisma.submission.aggregate({
-      where: {
-        status: 'GRADED',
-        grade: { not: null },
-      },
-      _avg: {
-        grade: true,
-      },
-    });
+    const gradedSubmissions =
+      assignmentIds.length > 0
+        ? await prisma.submission.count({
+            where: {
+              status: 'GRADED',
+              assignmentId: {
+                in: assignmentIds,
+              },
+            },
+          })
+        : 0;
+
+    const avgScoreResult =
+      assignmentIds.length > 0
+        ? await prisma.submission.aggregate({
+            where: {
+              status: 'GRADED',
+              grade: { not: null },
+              assignmentId: {
+                in: assignmentIds,
+              },
+            },
+            _avg: {
+              grade: true,
+            },
+          })
+        : { _avg: { grade: null } };
     const averageScore = avgScoreResult._avg.grade || 0;
 
-    // Get recent submissions (last 5)
-    const recentSubmissions = await prisma.submission.findMany({
-      where: {
-        status: { in: ['PENDING', 'GRADED'] },
-      },
-      select: {
-        id: true,
-        grade: true,
-        status: true,
-        submittedAt: true,
-        student: {
-          select: {
-            id: true,
-            name: true,
-            nis: true,
-          },
-        },
-        assignment: {
-          select: {
-            id: true,
-            title: true,
-          },
-        },
-      },
-      orderBy: { submittedAt: 'desc' },
-      take: 5,
-    });
+    const recentSubmissions =
+      assignmentIds.length > 0
+        ? await prisma.submission.findMany({
+            where: {
+              status: { in: ['PENDING', 'GRADED'] },
+              assignmentId: {
+                in: assignmentIds,
+              },
+            },
+            select: {
+              id: true,
+              grade: true,
+              status: true,
+              submittedAt: true,
+              student: {
+                select: {
+                  id: true,
+                  name: true,
+                  nis: true,
+                },
+              },
+              assignment: {
+                select: {
+                  id: true,
+                  title: true,
+                },
+              },
+            },
+            orderBy: { submittedAt: 'desc' },
+            take: 5,
+          })
+        : [];
 
-    // Get top students (by average score)
-    const topStudents = await prisma.user.findMany({
-      where: {
-        role: 'STUDENT',
-        isActive: true,
-      },
-      select: {
-        id: true,
-        name: true,
-        nis: true,
-        className: true,
-        submissions: {
-          where: {
-            status: 'GRADED',
-            grade: { not: null },
-          },
-          select: {
-            grade: true,
-          },
-        },
-      },
-      take: 5,
-    });
+    const topStudents =
+      teacherClassIds.length > 0 && assignmentIds.length > 0
+        ? await prisma.user.findMany({
+            where: {
+              role: 'STUDENT',
+              isActive: true,
+              classId: {
+                in: teacherClassIds,
+              },
+            },
+            select: {
+              id: true,
+              name: true,
+              nis: true,
+              className: true,
+              submissions: {
+                where: {
+                  status: 'GRADED',
+                  grade: { not: null },
+                  assignmentId: {
+                    in: assignmentIds,
+                  },
+                },
+                select: {
+                  grade: true,
+                },
+              },
+            },
+            take: 20,
+          })
+        : [];
 
-    // Calculate average score for each student
     const topStudentsWithScore = topStudents
       .map((student) => {
         const grades = student.submissions.map((s) => s.grade!).filter((g) => g !== null);
@@ -118,7 +167,6 @@ export class DashboardService {
       .sort((a, b) => b.avgScore - a.avgScore)
       .slice(0, 5);
 
-    // Get upcoming deadlines (next 5)
     const upcomingDeadlines = await prisma.assignment.findMany({
       where: {
         status: 'ACTIVE',
@@ -188,7 +236,6 @@ export class DashboardService {
   }
 
   async getStudentDashboard(studentId: string) {
-    // Get portfolio count (graded submissions)
     const portfolioCount = await prisma.submission.count({
       where: {
         studentId,
@@ -196,7 +243,6 @@ export class DashboardService {
       },
     });
 
-    // Get completed assignments (submissions with status GRADED)
     const completedAssignments = await prisma.submission.count({
       where: {
         studentId,
@@ -204,7 +250,6 @@ export class DashboardService {
       },
     });
 
-    // Get total assignments (active assignments for student's class)
     const student = await prisma.user.findUnique({
       where: { id: studentId },
       select: {
@@ -227,7 +272,6 @@ export class DashboardService {
       },
     });
 
-    // Get pending assignments (assignments without submission or with PENDING submission)
     const pendingAssignments = await prisma.assignment.findMany({
       where: {
         status: 'ACTIVE',
@@ -299,7 +343,6 @@ export class DashboardService {
     });
     const averageScore = avgScoreResult._avg.grade || 0;
 
-    // Get highest score
     const highestScoreResult = await prisma.submission.findFirst({
       where: {
         studentId,
@@ -313,14 +356,12 @@ export class DashboardService {
     });
     const highestScore = highestScoreResult?.grade || 0;
 
-    // Get total submissions
     const totalSubmissions = await prisma.submission.count({
       where: {
         studentId,
       },
     });
 
-    // Get recent works (last 5 graded submissions)
     const recentWorks = await prisma.submission.findMany({
       where: {
         studentId,
@@ -332,6 +373,9 @@ export class DashboardService {
         grade: true,
         status: true,
         submittedAt: true,
+        imageUrl: true,
+        imageThumbnail: true,
+        imageMedium: true,
         assignment: {
           select: {
             category: {
@@ -353,6 +397,9 @@ export class DashboardService {
       grade: work.grade,
       status: work.status,
       submittedAt: work.submittedAt,
+      imageUrl: work.imageUrl,
+      imageThumbnail: work.imageThumbnail,
+      imageMedium: work.imageMedium,
     }));
 
     // Get achievements (placeholder - will be implemented later)

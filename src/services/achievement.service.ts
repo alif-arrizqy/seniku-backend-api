@@ -42,7 +42,6 @@ export class AchievementService {
       prisma.achievement.count({ where }),
     ]);
 
-    // Transform to include userCount
     const achievementsWithCount = achievements.map((achievement) => ({
       ...achievement,
       userCount: achievement._count.users,
@@ -86,7 +85,6 @@ export class AchievementService {
 
   async createAchievement(data: { name: string; description: string; icon: string; criteria?: any }) {
     try {
-      // Check if achievement already exists
       const achievementExists = await prisma.achievement.findUnique({
         where: { name: data.name },
       });
@@ -95,7 +93,6 @@ export class AchievementService {
         throw new Error(`Achievement name ${ErrorMessages.RESOURCE.ALREADY_EXISTS}`);
       }
 
-      // Sanitize icon
       const sanitizedIcon = data.icon.replace(/\0/g, '').trim().substring(0, 10);
 
       const achievement = await prisma.achievement.create({
@@ -136,7 +133,6 @@ export class AchievementService {
         });
         throw new Error(`Database error: ${error.message || 'Failed to create achievement'}`);
       }
-      // Re-throw custom errors
       if (error.message?.includes(ErrorMessages.RESOURCE.ALREADY_EXISTS)) {
         throw error;
       }
@@ -154,7 +150,6 @@ export class AchievementService {
     data: { name?: string; description?: string; icon?: string; criteria?: any }
   ) {
     try {
-      // Check if achievement exists
       const existingAchievement = await prisma.achievement.findUnique({
         where: { id: achievementId },
       });
@@ -163,7 +158,6 @@ export class AchievementService {
         throw new Error(ErrorMessages.RESOURCE.NOT_FOUND);
       }
 
-      // Check if new name already exists (if name is being updated)
       if (data.name && data.name !== existingAchievement.name) {
         const achievementExists = await prisma.achievement.findUnique({
           where: { name: data.name },
@@ -173,7 +167,6 @@ export class AchievementService {
         }
       }
 
-      // Sanitize icon if provided
       const updateData: any = { ...data };
       if (updateData.icon !== undefined) {
         updateData.icon = updateData.icon
@@ -215,7 +208,6 @@ export class AchievementService {
           throw new Error(`${field} ${ErrorMessages.RESOURCE.ALREADY_EXISTS}`);
         }
       }
-      // Re-throw custom errors
       if (
         error.message === ErrorMessages.RESOURCE.NOT_FOUND ||
         error.message?.includes(ErrorMessages.RESOURCE.ALREADY_EXISTS)
@@ -228,7 +220,6 @@ export class AchievementService {
 
   async deleteAchievement(achievementId: string, force: boolean = false) {
     try {
-      // Check if achievement exists
       const achievement = await prisma.achievement.findUnique({
         where: { id: achievementId },
         include: {
@@ -244,7 +235,6 @@ export class AchievementService {
         throw new Error(ErrorMessages.RESOURCE.NOT_FOUND);
       }
 
-      // Check if achievement has users
       if (achievement._count.users > 0 && !force) {
         throw new Error(
           'Cannot delete achievement: Has users. Use force=true to force delete.'
@@ -274,9 +264,6 @@ export class AchievementService {
     }
   }
 
-  /**
-   * Get user achievements
-   */
   async getUserAchievements(userId: string) {
     try {
       const userAchievements = await prisma.userAchievement.findMany({
@@ -308,12 +295,8 @@ export class AchievementService {
     }
   }
 
-  /**
-   * Unlock achievement for user (called automatically by system)
-   */
   async unlockAchievement(userId: string, achievementId: string) {
     try {
-      // Check if achievement exists
       const achievement = await prisma.achievement.findUnique({
         where: { id: achievementId },
       });
@@ -322,7 +305,6 @@ export class AchievementService {
         throw new Error(ErrorMessages.RESOURCE.NOT_FOUND);
       }
 
-      // Check if user already has this achievement
       const existing = await prisma.userAchievement.findUnique({
         where: {
           userId_achievementId: {
@@ -333,11 +315,9 @@ export class AchievementService {
       });
 
       if (existing) {
-        // Already unlocked, return existing
         return existing;
       }
 
-      // Unlock achievement
       const userAchievement = await prisma.userAchievement.create({
         data: {
           userId,
@@ -355,7 +335,6 @@ export class AchievementService {
           throw new Error(ErrorMessages.RESOURCE.NOT_FOUND);
         }
         if (error.code === 'P2002') {
-          // Already exists, return existing
           const existing = await prisma.userAchievement.findUnique({
             where: {
               userId_achievementId: {

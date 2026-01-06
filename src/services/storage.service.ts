@@ -4,9 +4,6 @@ import logger from '../utils/logger';
 import { Readable } from 'stream';
 
 export class StorageService {
-  /**
-   * Convert Readable stream to Buffer
-   */
   private async streamToBuffer(stream: Readable): Promise<Buffer> {
     const chunks: Buffer[] = [];
     for await (const chunk of stream) {
@@ -15,9 +12,6 @@ export class StorageService {
     return Buffer.concat(chunks);
   }
 
-  /**
-   * Get public URL for a file in Supabase Storage
-   */
   private getPublicUrl(bucket: string, objectName: string): string {
     const { data } = supabaseClient.storage.from(bucket).getPublicUrl(objectName);
     return data.publicUrl;
@@ -31,7 +25,6 @@ export class StorageService {
     size?: number
   ): Promise<string> {
     try {
-      // Convert Readable stream to Buffer if needed
       let fileBuffer: Buffer;
       if (Buffer.isBuffer(file)) {
         fileBuffer = file;
@@ -39,7 +32,6 @@ export class StorageService {
         fileBuffer = await this.streamToBuffer(file);
       }
 
-      // Upload to Supabase Storage
       const { data, error } = await supabaseClient.storage.from(bucket).upload(objectName, fileBuffer, {
         contentType,
         upsert: true, // Overwrite if exists
@@ -50,7 +42,6 @@ export class StorageService {
         throw new Error(`Failed to upload file: ${error.message}`);
       }
 
-      // Get public URL
       const url = this.getPublicUrl(bucket, objectName);
       logger.info({ bucket, objectName, url }, 'File uploaded successfully');
       return url;
@@ -100,12 +91,10 @@ export class StorageService {
 
   async fileExists(bucket: string, objectName: string): Promise<boolean> {
     try {
-      // Get the directory path and file name
       const pathParts = objectName.split('/');
       const fileName = pathParts.pop() || objectName;
       const directoryPath = pathParts.join('/') || '';
 
-      // List files in the directory
       const { data, error } = await supabaseClient.storage.from(bucket).list(directoryPath, {
         limit: 1000,
         search: fileName,
@@ -116,7 +105,6 @@ export class StorageService {
         return false;
       }
 
-      // Check if file exists in the list
       return data?.some((file) => file.name === fileName) || false;
     } catch (error) {
       logger.debug({ error, bucket, objectName }, 'Error checking file existence');

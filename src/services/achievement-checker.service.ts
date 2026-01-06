@@ -3,16 +3,9 @@ import achievementService from './achievement.service';
 import notificationService from './notification.service';
 import { NotificationType } from '@prisma/client';
 
-/**
- * Service untuk check dan unlock achievement secara otomatis
- */
 export class AchievementCheckerService {
-  /**
-   * Check dan unlock achievement setelah submission di-grade
-   */
   async checkAndUnlockAchievements(userId: string) {
     try {
-      // Get all achievements that user hasn't unlocked yet
       const allAchievements = await prisma.achievement.findMany({
         include: {
           users: {
@@ -21,7 +14,6 @@ export class AchievementCheckerService {
         },
       });
 
-      // Filter achievements that user hasn't unlocked
       const unlockedAchievementIds = allAchievements
         .filter((a) => a.users.length > 0)
         .map((a) => a.id);
@@ -34,10 +26,7 @@ export class AchievementCheckerService {
         },
       });
 
-      // Get user statistics for criteria checking
       const userStats = await this.getUserStatistics(userId);
-
-      // Check each achievement
       const unlockedAchievements = [];
       for (const achievement of availableAchievements) {
         const shouldUnlock = this.checkCriteria(achievement.criteria as any, userStats);
@@ -46,7 +35,6 @@ export class AchievementCheckerService {
             const userAchievement = await achievementService.unlockAchievement(userId, achievement.id);
             unlockedAchievements.push(userAchievement);
 
-            // Create notification
             await notificationService.createNotification({
               userId,
               type: NotificationType.ACHIEVEMENT_UNLOCKED,
@@ -55,7 +43,6 @@ export class AchievementCheckerService {
               link: `/achievements/${achievement.id}`,
             });
           } catch (error: any) {
-            // Log error but continue checking other achievements
             console.error(`Error unlocking achievement ${achievement.id}:`, error);
           }
         }
@@ -68,9 +55,6 @@ export class AchievementCheckerService {
     }
   }
 
-  /**
-   * Get user statistics for criteria checking
-   */
   private async getUserStatistics(userId: string) {
     const [submissions, assignments] = await Promise.all([
       prisma.submission.findMany({
@@ -125,9 +109,6 @@ export class AchievementCheckerService {
     };
   }
 
-  /**
-   * Check if criteria is met
-   */
   private checkCriteria(criteria: any, stats: any): boolean {
     if (!criteria || typeof criteria !== 'object') {
       return false;
@@ -162,9 +143,6 @@ export class AchievementCheckerService {
     }
   }
 
-  /**
-   * Compare values based on operator
-   */
   private compare(actual: number, target: number, operator: string): boolean {
     switch (operator) {
       case '>=':

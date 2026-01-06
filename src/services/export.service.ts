@@ -16,21 +16,99 @@ export interface ExportGradesFilters {
 
 export class ExportService {
   async getGradesData(filters: ExportGradesFilters, userId: string, userRole: UserRole) {
-    const where: any = {};
+    const where: any = {
+      status: 'GRADED',
+      grade: { not: null },
+    };
 
-    // If student, only show their own data (ignore studentIds filter)
     if (userRole === 'STUDENT') {
       where.studentId = userId;
+    } else if (userRole === 'TEACHER') {
+      const teacherClasses = await prisma.teacherClass.findMany({
+        where: {
+          teacherId: userId,
+        },
+        select: {
+          classId: true,
+        },
+      });
+      const teacherClassIds = teacherClasses.map((tc) => tc.classId);
+
+      if (teacherClassIds.length === 0) {
+        throw new Error('No data found for the specified filters');
+      }
+
+      if (filters.classIds && filters.classIds.length > 0) {
+        const validClassIds = filters.classIds.filter((classId) => teacherClassIds.includes(classId));
+        if (validClassIds.length === 0) {
+          throw new Error('No data found for the specified filters');
+        }
+        
+        const studentsInClasses = await prisma.user.findMany({
+          where: {
+            classId: { in: validClassIds },
+            role: 'STUDENT',
+          },
+          select: { id: true },
+        });
+        const studentIds = studentsInClasses.map((s) => s.id);
+        
+        if (filters.studentIds && filters.studentIds.length > 0) {
+          const validStudentIds = filters.studentIds.filter((sid) => studentIds.includes(sid));
+          if (validStudentIds.length === 0) {
+            throw new Error('No data found for the specified filters');
+          }
+          where.studentId = { in: validStudentIds };
+        } else {
+          where.studentId = { in: studentIds };
+        }
+      } else {
+        const studentsInClasses = await prisma.user.findMany({
+          where: {
+            classId: { in: teacherClassIds },
+            role: 'STUDENT',
+          },
+          select: { id: true },
+        });
+        const studentIds = studentsInClasses.map((s) => s.id);
+        
+        if (filters.studentIds && filters.studentIds.length > 0) {
+          const validStudentIds = filters.studentIds.filter((sid) => studentIds.includes(sid));
+          if (validStudentIds.length === 0) {
+            throw new Error('No data found for the specified filters');
+          }
+          where.studentId = { in: validStudentIds };
+        } else {
+          where.studentId = { in: studentIds };
+        }
+      }
+
     } else if (filters.studentIds && filters.studentIds.length > 0) {
       where.studentId = { in: filters.studentIds };
     }
 
     if (filters.assignmentIds && filters.assignmentIds.length > 0) {
-      where.assignmentId = { in: filters.assignmentIds };
-    }
-
-    if (filters.statuses && filters.statuses.length > 0) {
-      where.status = { in: filters.statuses };
+      if (userRole === 'TEACHER') {
+        const teacherAssignments = await prisma.assignment.findMany({
+          where: {
+            id: { in: filters.assignmentIds },
+            createdById: userId,
+          },
+          select: { id: true },
+        });
+        const validAssignmentIds = teacherAssignments.map((a) => a.id);
+        if (validAssignmentIds.length > 0) {
+          where.assignmentId = { in: validAssignmentIds };
+        } else {
+          throw new Error('No data found for the specified filters');
+        }
+        } else {
+          where.assignmentId = { in: filters.assignmentIds };
+        }
+      } else if (userRole === 'TEACHER') {
+        where.assignment = {
+        createdById: userId,
+      };
     }
 
     if (filters.startDate || filters.endDate) {
@@ -40,24 +118,6 @@ export class ExportService {
       }
       if (filters.endDate) {
         where.submittedAt.lte = new Date(filters.endDate);
-      }
-    }
-
-    // If classIds provided, filter by students in those classes
-    if (filters.classIds && filters.classIds.length > 0 && userRole !== 'STUDENT') {
-      const studentsInClasses = await prisma.user.findMany({
-        where: {
-          classId: { in: filters.classIds },
-          role: 'STUDENT',
-        },
-        select: { id: true },
-      });
-      const studentIds = studentsInClasses.map((s) => s.id);
-      if (where.studentId) {
-        const existingIds = Array.isArray(where.studentId) ? where.studentId : (where.studentId.in ? where.studentId.in : [where.studentId]);
-        where.studentId = { in: [...existingIds, ...studentIds] };
-      } else {
-        where.studentId = { in: studentIds };
       }
     }
 
@@ -128,22 +188,21 @@ export class ExportService {
 
     const totalStudents = new Set(submissions.map((s) => s.student.id)).size;
     const totalAssignments = new Set(submissions.map((s) => s.assignment.id)).size;
-    const gradedSubmissions = submissions.filter((s) => s.status === 'GRADED' && s.grade !== null);
-    const averageScore = gradedSubmissions.length > 0
-      ? gradedSubmissions.reduce((sum, s) => sum + (s.grade || 0), 0) / gradedSubmissions.length
+    const averageScore = submissions.length > 0
+      ? submissions.reduce((sum, s) => sum + (s.grade || 0), 0) / submissions.length
       : 0;
-    const highestScore = gradedSubmissions.length > 0
-      ? Math.max(...gradedSubmissions.map((s) => s.grade || 0))
+    const highestScore = submissions.length > 0
+      ? Math.max(...submissions.map((s) => s.grade || 0))
       : 0;
-    const lowestScore = gradedSubmissions.length > 0
-      ? Math.min(...gradedSubmissions.map((s) => s.grade || 0))
+    const lowestScore = submissions.length > 0
+      ? Math.min(...submissions.map((s) => s.grade || 0))
       : 0;
 
     summarySheet.addRows([
       { metric: 'Total Students', value: totalStudents },
       { metric: 'Total Assignments', value: totalAssignments },
       { metric: 'Total Submissions', value: submissions.length },
-      { metric: 'Graded Submissions', value: gradedSubmissions.length },
+      { metric: 'Graded Submissions', value: submissions.length },
       { metric: 'Average Score', value: averageScore.toFixed(2) },
       { metric: 'Highest Score', value: highestScore },
       { metric: 'Lowest Score', value: lowestScore },
@@ -159,7 +218,6 @@ export class ExportService {
     };
     summarySheet.getRow(1).font = { ...summarySheet.getRow(1).font, color: { argb: 'FFFFFFFF' } };
 
-    // Sheet 2: Grades by Student
     const byStudentSheet = workbook.addWorksheet('Grades by Student');
     byStudentSheet.columns = [
       { header: 'NIS', key: 'nis', width: 15 },
@@ -198,7 +256,6 @@ export class ExportService {
     };
     byStudentSheet.getRow(1).font = { ...byStudentSheet.getRow(1).font, color: { argb: 'FFFFFFFF' } };
 
-    // Sheet 3: Grades by Assignment
     const byAssignmentSheet = workbook.addWorksheet('Grades by Assignment');
     byAssignmentSheet.columns = [
       { header: 'Assignment', key: 'assignment', width: 40 },
@@ -212,7 +269,6 @@ export class ExportService {
       { header: 'Submitted Date', key: 'submittedDate', width: 20 },
     ];
 
-    // Sort by assignment title
     const sortedByAssignment = [...submissions].sort((a, b) => a.assignment.title.localeCompare(b.assignment.title));
     sortedByAssignment.forEach((submission) => {
       byAssignmentSheet.addRow({
@@ -257,18 +313,15 @@ export class ExportService {
       doc.on('end', () => resolve(Buffer.concat(chunks)));
       doc.on('error', reject);
 
-      // Header
       doc.fontSize(20).text('SeniKu - Grades Report', { align: 'center' });
       doc.moveDown();
       doc.fontSize(12).text(`Export Date: ${format(new Date(), 'yyyy-MM-dd HH:mm:ss')}`, { align: 'center' });
       doc.moveDown(2);
 
-      // Summary Statistics
       const totalStudents = new Set(submissions.map((s) => s.student.id)).size;
       const totalAssignments = new Set(submissions.map((s) => s.assignment.id)).size;
-      const gradedSubmissions = submissions.filter((s) => s.status === 'GRADED' && s.grade !== null);
-      const averageScore = gradedSubmissions.length > 0
-        ? gradedSubmissions.reduce((sum, s) => sum + (s.grade || 0), 0) / gradedSubmissions.length
+      const averageScore = submissions.length > 0
+        ? submissions.reduce((sum, s) => sum + (s.grade || 0), 0) / submissions.length
         : 0;
 
       doc.fontSize(16).text('Summary Statistics', { underline: true });
@@ -276,12 +329,11 @@ export class ExportService {
       doc.fontSize(11).text(`Total Students: ${totalStudents}`);
       doc.text(`Total Assignments: ${totalAssignments}`);
       doc.text(`Total Submissions: ${submissions.length}`);
-      doc.text(`Graded Submissions: ${gradedSubmissions.length}`);
+      doc.text(`Graded Submissions: ${submissions.length}`); // All are GRADED
       doc.text(`Average Score: ${averageScore.toFixed(2)}`);
       doc.moveDown(2);
 
       if (reportFormat === 'detailed') {
-        // Detailed grades table
         doc.fontSize(16).text('Detailed Grades', { underline: true });
         doc.moveDown(0.5);
 
@@ -296,7 +348,6 @@ export class ExportService {
           date: 100,
         };
 
-        // Table header
         doc.fontSize(10).font('Helvetica-Bold');
         doc.text('Student', startX, yPosition);
         doc.text('Assignment', startX + colWidths.student, yPosition);
@@ -307,11 +358,9 @@ export class ExportService {
         yPosition += 20;
         doc.moveTo(startX, yPosition).lineTo(startX + pageWidth, yPosition).stroke();
 
-        // Table rows
         doc.font('Helvetica').fontSize(9);
         submissions.forEach((submission) => {
           if (yPosition > 750) {
-            // New page
             doc.addPage();
             yPosition = 50;
           }
@@ -342,7 +391,6 @@ export class ExportService {
   }
 
   async exportReportCard(studentId: string, userId: string, userRole: UserRole, reportFormat: 'summary' | 'detailed' = 'detailed'): Promise<Buffer> {
-    // Check permission
     if (userRole === 'STUDENT' && studentId !== userId) {
       throw new Error('Forbidden: You can only export your own report card');
     }
@@ -393,7 +441,6 @@ export class ExportService {
       doc.on('end', () => resolve(Buffer.concat(chunks)));
       doc.on('error', reject);
 
-      // Cover page
       doc.fontSize(24).text('Report Card', { align: 'center' });
       doc.moveDown();
       doc.fontSize(18).text(student.name, { align: 'center' });
@@ -407,7 +454,6 @@ export class ExportService {
       doc.fontSize(12).text(`Generated: ${format(new Date(), 'yyyy-MM-dd HH:mm:ss')}`, { align: 'center' });
       doc.addPage();
 
-      // Summary Statistics
       const totalAssignments = student.submissions.length;
       const completedAssignments = student.submissions.filter((s) => s.status === 'GRADED').length;
       const averageScore = totalAssignments > 0
@@ -426,7 +472,6 @@ export class ExportService {
       doc.moveDown(2);
 
       if (reportFormat === 'detailed' && student.submissions.length > 0) {
-        // Detailed assignments list
         doc.fontSize(16).text('Assignments', { underline: true });
         doc.moveDown(0.5);
 

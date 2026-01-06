@@ -10,7 +10,6 @@ export interface UserFilters {
   classId?: string;
 }
 
-// Helper function to format date to YYYY-MM-DD
 function formatDateToYYYYMMDD(date: Date | null | undefined): string | null {
   if (!date) return null;
   const d = new Date(date);
@@ -20,7 +19,6 @@ function formatDateToYYYYMMDD(date: Date | null | undefined): string | null {
   return `${year}-${month}-${day}`;
 }
 
-// Helper function to format user object with formatted birthdate
 function formatUserResponse(user: any): any {
   if (!user) return user;
   return {
@@ -74,7 +72,6 @@ export class UserService {
       prisma.user.count({ where }),
     ]);
 
-    // Format birthdate for all users
     const formattedUsers = users.map(formatUserResponse);
 
     return { users: formattedUsers, total };
@@ -122,22 +119,18 @@ export class UserService {
     classId?: string;
     classIds?: string[];
   }) {
-    // Validate: Student must have NIS
     if (data.role === UserRole.STUDENT && !data.nis) {
       throw new Error('Student must have NIS');
     }
 
-    // Validate: Teacher must have NIP
     if (data.role === UserRole.TEACHER && !data.nip) {
       throw new Error('Teacher must have NIP');
     }
 
-    // Validate: Student must have classId
     if (data.role === UserRole.STUDENT && !data.classId) {
       throw new Error('Student must have classId');
     }
 
-    // Check if NIP already exists
     if (data.nip) {
       const existingNIP = await prisma.user.findUnique({
         where: { nip: data.nip },
@@ -147,7 +140,6 @@ export class UserService {
       }
     }
 
-    // Check if NIS already exists
     if (data.nis) {
       const existingNIS = await prisma.user.findUnique({
         where: { nis: data.nis },
@@ -157,7 +149,6 @@ export class UserService {
       }
     }
 
-    // Check if email already exists (optional)
     if (data.email) {
       const existingEmail = await prisma.user.findUnique({
         where: { email: data.email },
@@ -167,7 +158,6 @@ export class UserService {
       }
     }
 
-    // Validate classId for STUDENT
     if (data.classId) {
       const classExists = await prisma.class.findUnique({
         where: { id: data.classId },
@@ -177,7 +167,6 @@ export class UserService {
       }
     }
 
-    // Validate classIds for TEACHER (if provided)
     if (data.classIds && data.classIds.length > 0) {
       const classes = await prisma.class.findMany({
         where: { id: { in: data.classIds } },
@@ -187,10 +176,7 @@ export class UserService {
       }
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(data.password, 10);
-
-    // Create user
     const user = await prisma.user.create({
       data: {
         email: data.email,
@@ -224,7 +210,6 @@ export class UserService {
       },
     });
 
-    // Create TeacherClass relations if teacher has classIds
     if (data.role === UserRole.TEACHER && data.classIds && data.classIds.length > 0) {
       await prisma.teacherClass.createMany({
         data: data.classIds.map((classId) => ({
@@ -239,31 +224,27 @@ export class UserService {
   }
 
   async updateUser(userId: string, data: any) {
-    // Get existing user to check role
     const existingUser = await prisma.user.findUnique({
       where: { id: userId },
       select: { role: true },
     });
 
     if (!existingUser) {
-      throw new Error(ErrorMessages.RESOURCE.USER_NOT_FOUND);
-    }
+        throw new Error(ErrorMessages.RESOURCE.USER_NOT_FOUND);
+      }
 
-    // Handle classIds for TEACHER
-    const { classIds, ...updateData } = data;
+      const { classIds, ...updateData } = data;
 
-    // Validate classId for STUDENT if provided
-    if (updateData.classId) {
+      if (updateData.classId) {
       const classExists = await prisma.class.findUnique({
         where: { id: updateData.classId },
       });
       if (!classExists) {
         throw new Error('Class not found');
+        }
       }
-    }
 
-    // Validate classIds for TEACHER if provided
-    if (classIds && classIds.length > 0) {
+      if (classIds && classIds.length > 0) {
       if (existingUser.role !== UserRole.TEACHER) {
         throw new Error('classIds can only be updated for teachers');
       }
@@ -272,13 +253,11 @@ export class UserService {
       });
       if (classes.length !== classIds.length) {
         throw new Error('One or more classes not found');
+        }
       }
-    }
 
-    // Ensure birthdate is a Date object if provided (fallback if validator is bypassed)
-    if (updateData.birthdate && typeof updateData.birthdate === 'string') {
-      // If it's a string in YYYY-MM-DD format, convert to Date
-      if (/^\d{4}-\d{2}-\d{2}$/.test(updateData.birthdate)) {
+      if (updateData.birthdate && typeof updateData.birthdate === 'string') {
+        if (/^\d{4}-\d{2}-\d{2}$/.test(updateData.birthdate)) {
         updateData.birthdate = new Date(updateData.birthdate);
       }
     }
@@ -305,14 +284,11 @@ export class UserService {
       },
     });
 
-    // Update TeacherClass relations if classIds provided for TEACHER
     if (existingUser.role === UserRole.TEACHER && classIds !== undefined) {
-      // Delete existing relations
       await prisma.teacherClass.deleteMany({
         where: { teacherId: userId },
       });
 
-      // Create new relations
       if (classIds.length > 0) {
         await prisma.teacherClass.createMany({
           data: classIds.map((classId: string) => ({

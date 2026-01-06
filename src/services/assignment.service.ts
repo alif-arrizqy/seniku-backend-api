@@ -10,6 +10,8 @@ export interface AssignmentFilters {
   classId?: string;
   search?: string;
   createdById?: string;
+  userId?: string;
+  userRole?: string;
 }
 
 export class AssignmentService {
@@ -24,23 +26,77 @@ export class AssignmentService {
       where.categoryId = filters.categoryId;
     }
 
-    if (filters.createdById) {
-      where.createdById = filters.createdById;
-    }
-
-    if (filters.classId) {
-      where.classes = {
-        some: {
-          classId: filters.classId,
-        },
-      };
-    }
-
     if (filters.search) {
       where.OR = [
         { title: { contains: filters.search, mode: 'insensitive' } },
         { description: { contains: filters.search, mode: 'insensitive' } },
       ];
+    }
+
+    if (filters.userRole === 'STUDENT' && filters.userId) {
+      const student = await prisma.user.findUnique({
+        where: { id: filters.userId },
+        select: {
+          classId: true,
+        },
+      });
+
+      if (!student || !student.classId) {
+        return { assignments: [], total: 0 };
+      }
+
+      where.classes = {
+        some: {
+          classId: student.classId,
+        },
+      };
+    } else if (filters.userRole === 'TEACHER' && filters.userId) {
+      const teacherClasses = await prisma.teacherClass.findMany({
+        where: {
+          teacherId: filters.userId,
+        },
+        select: {
+          classId: true,
+        },
+      });
+      const teacherClassIds = teacherClasses.map((tc) => tc.classId);
+
+      if (teacherClassIds.length === 0) {
+        return { assignments: [], total: 0 };
+      }
+
+      where.createdById = filters.userId;
+
+      if (filters.classId) {
+        if (!teacherClassIds.includes(filters.classId)) {
+          return { assignments: [], total: 0 };
+        }
+        where.classes = {
+          some: {
+            classId: filters.classId,
+          },
+        };
+      } else {
+        where.classes = {
+          some: {
+            classId: {
+              in: teacherClassIds,
+            },
+          },
+        };
+      }
+    } else {
+      if (filters.createdById) {
+        where.createdById = filters.createdById;
+      }
+
+      if (filters.classId) {
+        where.classes = {
+          some: {
+            classId: filters.classId,
+          },
+        };
+      }
     }
 
     const [assignments, total] = await Promise.all([
@@ -67,6 +123,11 @@ export class AssignmentService {
                 select: {
                   id: true,
                   name: true,
+                  _count: {
+                    select: {
+                      students: true,
+                    },
+                  },
                 },
               },
             },
@@ -158,7 +219,6 @@ export class AssignmentService {
     }
   ) {
     try {
-      // Verify that category exists
       const category = await prisma.category.findUnique({
         where: { id: data.categoryId },
       });
@@ -167,7 +227,6 @@ export class AssignmentService {
         throw new Error(ErrorMessages.RESOURCE.NOT_FOUND);
       }
 
-      // Verify that all classes exist
       const classes = await prisma.class.findMany({
         where: { id: { in: data.classIds } },
       });
@@ -218,9 +277,7 @@ export class AssignmentService {
       },
     });
 
-    // Create notifications for all students in assigned classes (only if status is ACTIVE)
     if (data.status === AssignmentStatus.ACTIVE) {
-      // Get all students from assigned classes
       const students = await prisma.user.findMany({
         where: {
           role: 'STUDENT',
@@ -233,18 +290,16 @@ export class AssignmentService {
         },
       });
 
-      // Create notification for each student
       const notificationPromises = students.map((student) =>
         notificationService.createNotification({
           userId: student.id,
           type: NotificationType.ASSIGNMENT_CREATED,
           title: 'Tugas Baru',
           message: `Tugas baru '${data.title}' telah dibuat. Deadline: ${new Date(data.deadline).toLocaleDateString('id-ID')}`,
-          link: `/assignments/${assignment.id}`,
+          link: `/assignments`,
         })
       );
 
-      // Create notifications in parallel (don't wait for completion to avoid blocking)
       Promise.all(notificationPromises).catch((error) => {
         console.error('Error creating assignment notifications:', error);
       });
@@ -278,7 +333,6 @@ export class AssignmentService {
     }
   ) {
     try {
-      // Check if assignment exists
       const existingAssignment = await prisma.assignment.findUnique({
         where: { id: assignmentId },
       });
@@ -287,7 +341,6 @@ export class AssignmentService {
         throw new Error(ErrorMessages.RESOURCE.ASSIGNMENT_NOT_FOUND);
       }
 
-      // Verify that category exists if categoryId is provided
       if (data.categoryId) {
         const category = await prisma.category.findUnique({
           where: { id: data.categoryId },
@@ -298,14 +351,11 @@ export class AssignmentService {
         }
       }
 
-      // If classIds provided, update the classes
       if (data.classIds) {
-        // Delete existing class assignments
         await prisma.assignmentClass.deleteMany({
           where: { assignmentId },
         });
 
-        // Create new class assignments
         await prisma.assignmentClass.createMany({
           data: data.classIds.map((classId) => ({
             assignmentId,
@@ -360,7 +410,6 @@ export class AssignmentService {
 
   async deleteAssignment(assignmentId: string) {
     try {
-      // Check if assignment exists first
       const assignment = await prisma.assignment.findUnique({
         where: { id: assignmentId },
       });

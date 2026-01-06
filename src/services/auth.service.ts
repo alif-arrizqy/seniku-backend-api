@@ -34,27 +34,22 @@ export class AuthService {
   }
 
   async register(data: RegisterData) {
-    // Validate: Student must have NIS
     if (data.role === UserRole.STUDENT && !data.nis) {
       throw new Error('Student must have NIS');
     }
 
-    // Validate: Teacher must have NIP
     if (data.role === UserRole.TEACHER && !data.nip) {
       throw new Error('Teacher must have NIP');
     }
 
-    // Validate: NIS only for students
     if (data.nis && data.role !== UserRole.STUDENT) {
       throw new Error('NIS is only allowed for students');
     }
 
-    // Validate: NIP only for teachers
     if (data.nip && data.role !== UserRole.TEACHER) {
       throw new Error('NIP is only allowed for teachers');
     }
 
-    // Check if NIP already exists
     if (data.nip) {
       const existingNIP = await prisma.user.findUnique({
         where: { nip: data.nip },
@@ -64,7 +59,6 @@ export class AuthService {
       }
     }
 
-    // Check if NIS already exists
     if (data.nis) {
       const existingNIS = await prisma.user.findUnique({
         where: { nis: data.nis },
@@ -74,7 +68,6 @@ export class AuthService {
       }
     }
 
-    // Check if email already exists (optional)
     if (data.email) {
       const existingEmail = await prisma.user.findUnique({
         where: { email: data.email },
@@ -98,7 +91,6 @@ export class AuthService {
       }
     }
 
-    // Validate classIds for TEACHER (if provided)
     if (data.classIds && data.classIds.length > 0) {
       const classes = await prisma.class.findMany({
         where: { id: { in: data.classIds } },
@@ -108,10 +100,7 @@ export class AuthService {
       }
     }
 
-    // Hash password
     const hashedPassword = await this.hashPassword(data.password);
-
-    // Create user
     const user = await prisma.user.create({
       data: {
         email: data.email,
@@ -138,7 +127,6 @@ export class AuthService {
       },
     });
 
-    // Create TeacherClass relations if teacher has classIds
     if (data.role === UserRole.TEACHER && data.classIds && data.classIds.length > 0) {
       await prisma.teacherClass.createMany({
         data: data.classIds.map((classId) => ({
@@ -154,15 +142,12 @@ export class AuthService {
   }
 
   async login(data: LoginData) {
-    // Find user by NIP (for teachers) or NIS (for students)
     let user = null;
 
-    // Try NIP first (for teachers)
     user = await prisma.user.findUnique({
-      where: { nip: data.identifier },
+      where: { nip: data.identifier       },
     });
 
-    // If not found, try NIS (for students)
     if (!user) {
       user = await prisma.user.findUnique({
         where: { nis: data.identifier },
@@ -177,7 +162,6 @@ export class AuthService {
       throw new Error('Account is inactive');
     }
 
-    // Verify password
     const isValidPassword = await this.comparePassword(data.password, user.password);
     if (!isValidPassword) {
       throw new Error('Invalid credentials');
@@ -251,6 +235,17 @@ export class AuthService {
         classId: true,
         createdAt: true,
         updatedAt: true,
+        teacherClasses: {
+          select: {
+            class: {
+              select: {
+                id: true,
+                name: true,
+                description: true,
+              },
+            },
+          },
+        },
       },
     });
 
@@ -258,7 +253,18 @@ export class AuthService {
       throw new Error('User not found');
     }
 
-    return user;
+    // Format response: if teacher, add classes array from teacherClasses
+    if (user.role === UserRole.TEACHER) {
+      const classes = user.teacherClasses.map((tc) => tc.class);
+      const { teacherClasses, ...userWithoutTeacherClasses } = user;
+      return {
+        ...userWithoutTeacherClasses,
+        classes,
+      };
+    }
+
+    const { teacherClasses, ...userWithoutTeacherClasses } = user;
+    return userWithoutTeacherClasses;
   }
 }
 

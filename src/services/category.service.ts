@@ -47,7 +47,6 @@ export class CategoryService {
       prisma.category.count({ where }),
     ]);
 
-    // Transform to include assignmentCount
     const categoriesWithCount = categories.map((category) => ({
       ...category,
       assignmentCount: category._count.assignments,
@@ -91,7 +90,6 @@ export class CategoryService {
 
   async createCategory(data: { name: string; description?: string; icon?: string }) {
     try {
-      // Check if category already exists
       const categoryExists = await prisma.category.findUnique({
         where: { name: data.name },
       });
@@ -100,7 +98,6 @@ export class CategoryService {
         throw new Error(`Category name ${ErrorMessages.RESOURCE.ALREADY_EXISTS}`);
       }
 
-      // Sanitize icon - remove null bytes and trim
       const sanitizedIcon = data.icon
         ? data.icon.replace(/\0/g, '').trim().substring(0, 10)
         : undefined;
@@ -144,16 +141,13 @@ export class CategoryService {
         });
         throw new Error(`Database error: ${error.message || 'Failed to create category'}`);
       }
-      // Re-throw custom errors
       if (error.message?.includes(ErrorMessages.RESOURCE.ALREADY_EXISTS)) {
         throw error;
       }
-      // Log and re-throw with original message if it's already an Error
       if (error instanceof Error) {
         console.error('Error creating category:', error.message, error.stack);
         throw error;
       }
-      // Generic error fallback
       console.error('Unknown error creating category:', error);
       throw new Error(`Failed to create category: ${error?.message || 'Unknown error'}`);
     }
@@ -164,7 +158,6 @@ export class CategoryService {
     data: { name?: string; description?: string; icon?: string; isActive?: boolean }
   ) {
     try {
-      // Check if category exists
       const existingCategory = await prisma.category.findUnique({
         where: { id: categoryId },
       });
@@ -173,7 +166,6 @@ export class CategoryService {
         throw new Error(ErrorMessages.RESOURCE.NOT_FOUND);
       }
 
-      // Check if new name already exists (if name is being updated)
       if (data.name && data.name !== existingCategory.name) {
         const categoryExists = await prisma.category.findUnique({
           where: { name: data.name },
@@ -183,7 +175,6 @@ export class CategoryService {
         }
       }
 
-      // Sanitize icon if provided
       const updateData: any = { ...data };
       if (updateData.icon !== undefined) {
         updateData.icon = updateData.icon
@@ -225,7 +216,6 @@ export class CategoryService {
           throw new Error(`${field} ${ErrorMessages.RESOURCE.ALREADY_EXISTS}`);
         }
       }
-      // Re-throw custom errors
       if (
         error.message === ErrorMessages.RESOURCE.NOT_FOUND ||
         error.message?.includes(ErrorMessages.RESOURCE.ALREADY_EXISTS)
@@ -238,7 +228,6 @@ export class CategoryService {
 
   async deleteCategory(categoryId: string, force: boolean = false) {
     try {
-      // Check if category exists
       const category = await prisma.category.findUnique({
         where: { id: categoryId },
         include: {
@@ -254,7 +243,6 @@ export class CategoryService {
         throw new Error(ErrorMessages.RESOURCE.NOT_FOUND);
       }
 
-      // Check if category has assignments
       if (category._count.assignments > 0 && !force) {
         throw new Error(
           'Cannot delete category: Has assignments. Use force=true to force delete.'
@@ -273,7 +261,6 @@ export class CategoryService {
           throw new Error('Cannot delete category: Has assignments');
         }
       }
-      // Re-throw custom errors
       if (
         error.message === ErrorMessages.RESOURCE.NOT_FOUND ||
         error.message?.includes('Cannot delete category')
