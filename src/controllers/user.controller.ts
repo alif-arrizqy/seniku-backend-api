@@ -136,8 +136,7 @@ export class UserController {
               env.SUPABASE_STORAGE_BUCKET_AVATARS,
               fileName,
               processed.full,
-              'image/jpeg',
-              processed.full.length
+              'image/jpeg'
             );
 
             updateData.avatar = avatarUrl;
