@@ -63,6 +63,7 @@ export default async function corsPlugin(fastify: FastifyInstance) {
       'Origin',
       'Access-Control-Request-Method',
       'Access-Control-Request-Headers',
+      'Content-Length',
     ],
     exposedHeaders: [
       'Content-Length',
